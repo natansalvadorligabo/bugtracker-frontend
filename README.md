@@ -1,5 +1,8 @@
 # BugtrackerFrontend
 
+![image](https://github.com/user-attachments/assets/20cc6994-6b7e-4ebd-8e47-90eacc8963a6)
+
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0-rc.2.
 
 ## Development server
