@@ -1,0 +1,68 @@
+<div class="w-full h-full flex justify-center items-center">
+    <mat-card class="max-w-3xl mx-auto p-6 mt-5 bg-white shadow-lg rounded-lg">
+        <mat-card-header class="pb-4 mb-5 px-0!">
+          <mat-card-title class="text-2xl font-semibold">
+            {{ modoEdicao ? 'Editar Ticket' : 'Novo Ticket' }}
+          </mat-card-title>
+        </mat-card-header>
+
+      <form
+        [formGroup]="ticketForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col space-y-6"
+      >
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Descrição</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            rows="5"
+            class="resize-none"
+          ></textarea>
+          <mat-error *ngIf="description?.hasError('required')">
+            Descrição é obrigatória.
+          </mat-error>
+          <mat-error *ngIf="description?.hasError('minlength')">
+            Deve ter ao menos 10 caracteres.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="flex flex-wrap md:flex-nowrap gap-4 items-center">
+          <mat-form-field appearance="fill" class="flex-1 min-w-[160px]">
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="ticketCategoryId">
+              <mat-option *ngFor="let cat of categorias" [value]="cat.ticketCategoryId">
+                {{ cat.description }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="ticketCategoryId?.hasError('required')">
+              Selecione uma categoria.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="flex-1 min-w-[160px]">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="ticketStatus">
+              <mat-option *ngFor="let s of statuses" [value]="s">
+                {{ s }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="ticketStatus?.hasError('required')">
+              Selecione um status.
+            </mat-error>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            class="whitespace-nowrap"
+            [disabled]="ticketForm.invalid"
+          >
+            {{ modoEdicao ? 'Atualizar' : 'Criar' }} Ticket
+          </button>
+        </div>
+      </form>
+    </mat-card>
+</div>
