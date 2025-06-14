@@ -1,0 +1,52 @@
+<main class="w-full h-full flex justify-center items-center">
+  <mat-card class="max-w-7xl p-9">
+    <div class="flex justify-between gap-4">
+      <section class="w-1/2">
+        <mat-icon>pest_control</mat-icon>
+        <h1 class="text-4xl">Criar uma conta no BugTracker</h1>
+      </section>
+
+      <section class="w-1/2">
+        <form [formGroup]="form">
+          <mat-form-field class="w-full">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field class="w-full">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+          </mat-form-field>
+
+          <mat-form-field class="w-full">
+            <mat-label>Senha</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hide() ? 'password' : 'text'"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="w-full">
+            <mat-label>Confirmar</mat-label>
+            <input
+              matInput
+              formControlName="confirmPassword"
+              [type]="hide() ? 'password' : 'text'"
+            />
+          </mat-form-field>
+
+          <p>
+            <mat-checkbox [checked]="!hide()" (change)="togglePasswordVisibility()">
+              Mostrar senha
+            </mat-checkbox>
+          </p>
+
+          <p align="end">
+            <button matButton="filled" (click)="onSubmit()">Criar</button>
+          </p>
+        </form>
+      </section>
+    </div>
+  </mat-card>
+</main>
