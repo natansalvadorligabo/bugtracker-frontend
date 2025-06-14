@@ -1,4 +1,4 @@
-import { FormTicket } from './containers/form-ticket/form-ticket';
+  import { FormTicket } from './containers/form-ticket/form-ticket';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
