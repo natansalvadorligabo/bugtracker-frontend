@@ -8,7 +8,7 @@ import {
 @Injectable({
   providedIn: 'root'
 })
-export class FormUtils {
+export class FormUtilsService {
 
   constructor() { }
 
