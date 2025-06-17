@@ -13,5 +13,21 @@ html {
   ));
 }
 
+:root {
+  @include mat.card-overrides((
+    elevated-container-color: oklch(98.5% 0.002 247.839),
+  ));
+}
+
+// permite o funcionamento do
+// `mat-form-field appearance="outline"`
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border: 0;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

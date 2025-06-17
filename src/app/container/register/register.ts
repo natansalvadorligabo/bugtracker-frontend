@@ -1,11 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { UsersService } from '../../services/users-service';
+import { FormUtilsService } from '../../shared/form/form-utils';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +27,7 @@ import { MatInputModule } from '@angular/material/input';
     MatIconModule,
     MatCardModule,
     MatCheckboxModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',
@@ -28,14 +38,23 @@ export class Register {
 
   hide = signal(true);
 
-  formBuilder = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
+  private userService = inject(UsersService);
+  formUtils = inject(FormUtilsService);
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          this.validateMatchPassword,
+        ],
+      ],
     });
   }
 
@@ -44,6 +63,27 @@ export class Register {
   }
 
   onSubmit() {
-    throw new Error('Method not implemented.');
+    if (this.form.valid) {
+      this.userService.register(this.form.value).subscribe({
+        next: (data) => {
+          alert('Usuário registrado com sucesso!');
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+    } else {
+      this.formUtils.validateAllFormFields(this.form);
+    }
+  }
+
+  private validateMatchPassword(
+    control: AbstractControl
+  ): ValidationErrors | null {
+    const password = control.parent?.get('password');
+    const confirmPassword = control.parent?.get('confirmPassword');
+    return password?.value == confirmPassword?.value
+      ? null
+      : { notMatch: true };
   }
 }
