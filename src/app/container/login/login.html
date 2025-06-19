@@ -1,0 +1,63 @@
+<main class="w-full h-full flex justify-center items-center bg-gray-200">
+  <mat-card class="w-full h-full md:max-w-7xl md:h-auto p-9 md:mx-6">
+    <mat-icon class="icon-3 mb-6">pest_control</mat-icon>
+    <div class="md:flex justify-between">
+      <section class="md:w-1/2 mb-8">
+        <h1 class="text-4xl">Fazer login</h1>
+        <p class="mt-4">Use sua Conta do BugTracker</p>
+      </section>
+
+      <section class="md:w-1/2">
+        <form [formGroup]="form" class="space-y-1">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" />
+            @if (form.get('email')?.invalid) {
+            <mat-error
+              >{{ formUtils.getErrorMessage(form, "email") }}</mat-error
+            >
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full mb-0">
+            <mat-label>Senha</mat-label>
+            <input
+              matInput
+              formControlName="password"
+              [type]="hide() ? 'password' : 'text'"
+            />
+            @if (form.get('password')?.invalid) {
+            <mat-error>
+              {{ formUtils.getErrorMessage(form, "password") }}
+            </mat-error>
+            }
+          </mat-form-field>
+
+          <div class="flex justify-between items-center">
+            <mat-checkbox
+              [checked]="!hide()"
+              (change)="togglePasswordVisibility()"
+            >
+              Mostrar senha
+            </mat-checkbox>
+
+            <a class="text-blue-500 hover:text-blue-700 cursor-pointer">
+              Esqueceu sua senha?
+            </a>
+          </div>
+
+          <div class="flex justify-end items-center mt-8 gap-8">
+            <a
+              routerLink="/register"
+              class="text-blue-500 hover:text-blue-700 cursor-pointer"
+            >
+              Criar uma conta
+            </a>
+
+            <button matButton="filled" (click)="onSubmit()">Entrar</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </mat-card>
+</main>
