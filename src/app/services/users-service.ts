@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserRegister } from '../model/user';
+import { UserLogin, UserRegister } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -20,5 +20,9 @@ export class UsersService {
       `${this.API_URL}/register`,
       formData
     );
+  }
+
+  login(user: UserLogin) {
+    return this.httpClient.post<UserLogin>(`${this.API_URL}/login`, user);
   }
 }

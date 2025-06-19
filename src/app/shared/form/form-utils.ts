@@ -6,11 +6,10 @@ import {
 } from '@angular/forms';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FormUtilsService {
-
-  constructor() { }
+  constructor() {}
 
   validateAllFormFields(formGroup: UntypedFormGroup | UntypedFormArray) {
     Object.keys(formGroup.controls).forEach((field) => {
@@ -18,7 +17,10 @@ export class FormUtilsService {
 
       if (control instanceof UntypedFormControl) {
         control.markAsTouched({ onlySelf: true });
-      } else if (control instanceof UntypedFormGroup || control instanceof UntypedFormArray) {
+      } else if (
+        control instanceof UntypedFormGroup ||
+        control instanceof UntypedFormArray
+      ) {
         control.markAsTouched({ onlySelf: true });
         this.validateAllFormFields(control);
       }
@@ -46,6 +48,10 @@ export class FormUtilsService {
         : 200;
       return `Tamanho máximo excedido de ${requiredLength} caracteres.`;
     }
+    if (field?.hasError('customError')) {
+      return field.errors ? field.errors['customError'] : 'Campo inválido';
+    }
+
     return 'Campo inválido';
   }
 
@@ -70,5 +76,17 @@ export class FormUtilsService {
     return (
       formArray.invalid && formArray.hasError('required') && formArray.touched
     );
+  }
+
+  setErrorMessage(
+    formGroup: UntypedFormGroup,
+    fieldName: string,
+    message: string
+  ) {
+    const field = formGroup.get(fieldName) as UntypedFormControl;
+    if (field) {
+      field.setErrors({ customError: message });
+      field.markAsTouched();
+    }
   }
 }
