@@ -16,7 +16,7 @@ export class UserProfile {
 
   pictureUrl = signal<string | null>(null);
 
-  constructor() {
+  ngOnInit() {
     this.userService.getProfilePicture().subscribe({
       next: (blob) => {
         if (blob) {
