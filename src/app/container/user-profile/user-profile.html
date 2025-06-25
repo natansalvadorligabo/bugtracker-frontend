@@ -1,6 +1,13 @@
 <div>
   @if (user$ | async; as user) {
   <h2>{{ user.name }}</h2>
+  @if (pictureUrl()) {
+  <img
+    [src]="pictureUrl()"
+    alt="Foto de perfil"
+    class="rounded-full w-32 h-32 object-cover mb-4"
+  />
+  }
   <p><strong>E-mail:</strong> {{ user.email }}</p>
   <p><strong>ID:</strong> {{ user.id }}</p>
   <p><strong>Ativo:</strong> {{ user.enabled ? 'Sim' : 'Não' }}</p>

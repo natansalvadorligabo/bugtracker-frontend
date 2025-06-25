@@ -35,4 +35,15 @@ export class UsersService {
       headers,
     });
   }
+
+  getProfilePicture() {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+
+    return this.httpClient.get(`${this.API_URL}/users/picture`, {
+      headers,
+      responseType: 'blob',
+    });
+  }
 }
