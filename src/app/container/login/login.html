@@ -54,7 +54,23 @@
               Criar uma conta
             </a>
 
-            <button matButton="filled" (click)="onSubmit()">Entrar</button>
+            <button
+              matButton="filled"
+              (click)="onSubmit()"
+              [disabled]="form.invalid || loading()"
+              class="bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (loading()) {
+              <mat-progress-spinner
+                diameter="20"
+                mode="indeterminate"
+                color="primary"
+                class="mr-2"
+                style="vertical-align: middle"
+              >
+              </mat-progress-spinner>
+              } @else { Entrar }
+            </button>
           </div>
         </form>
       </section>
