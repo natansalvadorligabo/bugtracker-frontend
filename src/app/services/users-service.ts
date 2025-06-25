@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserLogin, UserRegister } from '../model/user';
+import { UserLogin, UserProfile, UserRegister } from '../model/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
-  private readonly API_URL = 'bugtracker/auth';
+  private readonly API_URL = 'bugtracker/';
 
   private httpClient = inject(HttpClient);
 
@@ -17,12 +17,22 @@ export class UsersService {
     formData.append('password', user.password);
 
     return this.httpClient.post<UserRegister>(
-      `${this.API_URL}/register`,
+      `${this.API_URL}/auth/register`,
       formData
     );
   }
 
   login(user: UserLogin) {
-    return this.httpClient.post<UserLogin>(`${this.API_URL}/login`, user);
+    return this.httpClient.post<UserLogin>(`${this.API_URL}/auth/login`, user);
+  }
+
+  getUserProfile() {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+
+    return this.httpClient.get<UserProfile>(`${this.API_URL}/users`, {
+      headers,
+    });
   }
 }

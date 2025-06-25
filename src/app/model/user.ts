@@ -14,3 +14,16 @@ export interface LoginResponse {
   username: string;
   roles: string[];
 }
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  profilePicture: File | null;
+  authorities: Authority[];
+  enabled: boolean;
+}
+
+export interface Authority {
+  authority: string;
+}
