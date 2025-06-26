@@ -1,23 +1,76 @@
-<div>
-  @if (user$ | async; as user) {
-  <h2>{{ user.name }}</h2>
-  @if (pictureUrl()) {
-  <img
-    [src]="pictureUrl()"
-    alt="Foto de perfil"
-    class="rounded-full w-32 h-32 object-cover mb-4"
-  />
-  }
-  <p><strong>E-mail:</strong> {{ user.email }}</p>
-  <p><strong>ID:</strong> {{ user.id }}</p>
-  <p><strong>Ativo:</strong> {{ user.enabled ? 'Sim' : 'Não' }}</p>
-  } @else {
-  <div class="spinner-center">
-    <mat-progress-spinner
-      mode="indeterminate"
-      diameter="50"
-      strokeWidth="5"
-    ></mat-progress-spinner>
-  </div>
-  }
-</div>
+<main class="w-full h-full flex justify-center items-start bg-gray-200">
+  <mat-card
+    class="w-full md:max-w-2xl mt-8 p-8 rounded-xl shadow flex flex-col gap-6"
+  >
+    @if (user$ | async; as user) {
+
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold mb-1">Informações básicas</h1>
+        <p class="text-gray-600 text-sm max-w-lg">
+          Algumas informações podem estar visíveis para outras pessoas que
+          estejam usando os serviços do BugTracker.
+        </p>
+      </div>
+    </div>
+
+    <mat-divider class="my-2"></mat-divider>
+
+    <div class="flex items-center justify-between py-4">
+      <div>
+        <span class="block text-gray-700 font-medium">Foto do perfil</span>
+        <span class="block text-gray-500 text-sm"
+          >Uma foto de perfil ajuda a personalizar sua conta</span
+        >
+      </div>
+      @if (pictureUrl()) {
+      <img
+        [src]="pictureUrl()"
+        alt="Foto de perfil"
+        class="rounded-full w-12 h-12 object-cover border border-gray-300"
+      />
+      } @else {
+      <span class="text-gray-400">Nenhuma foto</span>
+      }
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="flex items-center justify-between py-4">
+      <span class="text-gray-700 font-medium">Nome</span>
+      <a class="flex items-center gap-2" href="">
+        <span class="text-gray-600">{{ user.name }}</span>
+        <mat-icon class="text-gray-400">chevron_right</mat-icon>
+      </a>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="flex items-center justify-between py-4">
+      <span class="text-gray-700 font-medium">E-mail</span>
+      <a class="flex items-center gap-2" href="">
+        <span class="text-gray-600">{{ user.email }}</span>
+        <mat-icon class="text-gray-400">chevron_right</mat-icon>
+      </a>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="flex items-center justify-between py-4">
+      <span class="text-gray-700 font-medium">Ativo</span>
+      <a class="flex items-center gap-2" href="">
+        <span class="text-gray-600">{{ user.enabled ? 'Sim' : 'Não' }}</span>
+        <mat-icon class="text-gray-400">chevron_right</mat-icon>
+      </a>
+    </div>
+    } @else {
+    <div class="spinner-center">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="50"
+        strokeWidth="5"
+      ></mat-progress-spinner>
+    </div>
+    }
+  </mat-card>
+</main>
