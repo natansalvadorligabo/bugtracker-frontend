@@ -2,7 +2,7 @@
   <mat-card
     class="w-full md:max-w-2xl mt-8 p-8 rounded-xl shadow flex flex-col gap-6"
   >
-    @if (user$ | async; as user) {
+    @if (user(); as userData) {
 
     <div class="flex items-start justify-between">
       <div>
@@ -24,14 +24,14 @@
 
     <profile-row-link
       rowName="Nome"
-      text="{{user.name}}"
+      [text]="userData.name"
       description="Seu nome completo"
-      (rowClick)="openNameModal(user.name)"
+      (rowClick)="openNameModal(userData.name)"
     ></profile-row-link>
 
     <profile-row-link
       rowName="E-mail"
-      text="{{user.email}}"
+      [text]="userData.email"
       description="E-mail não pode ser alterado"
     ></profile-row-link>
 
@@ -43,7 +43,7 @@
       (rowClick)="openPasswordModal()"
     ></profile-row-link>
 
-    } @else {
+    } @else if (loading()) {
     <div class="spinner-center">
       <mat-progress-spinner
         mode="indeterminate"

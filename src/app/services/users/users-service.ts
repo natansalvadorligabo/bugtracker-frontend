@@ -1,6 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserLogin, UserProfile, UserRegister } from '../../model/user';
+import {
+  UserLogin,
+  UserProfile,
+  UserRegister,
+  UserUpdate,
+} from '../../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -47,14 +52,27 @@ export class UsersService {
     });
   }
 
-  updateUserProfile(data: { name?: string }) {
+  updateUserProfile(data: UserUpdate) {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
     };
 
-    return this.httpClient.put<any>('${this.API_URL}/users', data, {
-      headers,
+    const formData = new FormData();
+    if (data.name) {
+      formData.append('name', data.name);
+    }
+    if (data.password) {
+      formData.append('password', data.password);
+    }
+    if (data.newPassword) {
+      formData.append('newPassword', data.newPassword);
+    }
+    if (data.picture) {
+      formData.append('picture', data.picture);
+    }
+
+    return this.httpClient.put<UserUpdate>(`${this.API_URL}/users`, formData, {
+      headers: headers,
     });
   }
 }

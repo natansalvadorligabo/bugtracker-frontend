@@ -25,3 +25,11 @@ export interface LoginResponse {
   token: string;
   user: User;
 }
+
+export interface UserUpdate {
+  name?: string;
+  email?: string;
+  password?: string;
+  newPassword?: string;
+  picture?: File;
+}

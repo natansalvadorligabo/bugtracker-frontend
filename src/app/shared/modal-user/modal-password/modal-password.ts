@@ -38,7 +38,7 @@ export interface ModalPasswordData {
             <input
               matInput
               type="password"
-              [(ngModel)]="oldPassword"
+              [(ngModel)]="password"
               placeholder="Digite sua senha atual"
             />
             <mat-icon matSuffix>lock</mat-icon>
@@ -97,7 +97,7 @@ export interface ModalPasswordData {
   `,
 })
 export class ModalPasswordComponent {
-  oldPassword: string = '';
+  password: string = '';
   newPassword: string = '';
   confirmPassword: string = '';
 
@@ -108,7 +108,7 @@ export class ModalPasswordComponent {
 
   isValid(): boolean {
     return (
-      this.oldPassword.trim().length > 0 &&
+      this.password.trim().length > 0 &&
       this.newPassword.trim().length >= 6 &&
       this.confirmPassword.trim().length > 0 &&
       this.newPassword === this.confirmPassword
@@ -121,7 +121,7 @@ export class ModalPasswordComponent {
 
   onSave(): void {
     this.dialogRef.close({
-      oldPassword: this.oldPassword,
+      oldPassword: this.password,
       newPassword: this.newPassword,
     });
   }

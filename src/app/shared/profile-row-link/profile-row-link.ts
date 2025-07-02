@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -12,15 +22,16 @@ import { MatIconModule } from '@angular/material/icon';
         <span class="text-gray-700 font-medium">{{ rowName }}</span>
         <span class="text-gray-500 text-sm">{{ description }}</span>
       </div>
-      <div [class]="getRowClasses()" (click)="onClick()">
+      <div [class]="rowClasses" (click)="onClick()">
         @if (imgSrc) {
         <img
           [src]="imgSrc"
           alt="{{ text }}"
           class="rounded-full w-12 h-12 object-cover"
-        />} @else {
+        />
+        } @else {
         <span class="text-gray-600">{{ text }}</span>
-        } @if (isClickable()) {
+        } @if (isClickableField) {
         <mat-icon class="text-gray-400">chevron_right</mat-icon>
         }
       </div>
@@ -31,7 +42,7 @@ import { MatIconModule } from '@angular/material/icon';
     }
   `,
 })
-export class ProfileRowLinkComponent {
+export class ProfileRowLinkComponent implements OnInit, OnChanges {
   @Input() rowName = '';
   @Input() text = '';
   @Input() description = '';
@@ -39,22 +50,48 @@ export class ProfileRowLinkComponent {
   @Input() imgSrc: string | null = null;
   @Output() rowClick = new EventEmitter<void>();
 
-  isClickable(): boolean {
-    return !this.rowName.toLocaleLowerCase().includes('e-mail');
+  isClickableField = false;
+  rowClasses = '';
+
+  private cdr = inject(ChangeDetectorRef);
+
+  ngOnInit() {
+    this.computeProperties();
   }
 
-  getRowClasses(): string {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['rowName'] || changes['imgSrc']) {
+      setTimeout(() => {
+        this.computeProperties();
+        this.cdr.detectChanges();
+      }, 0);
+    }
+  }
+
+  private computeProperties() {
+    const wasClickable = this.isClickableField;
+    const oldClasses = this.rowClasses;
+
+    this.isClickableField = !this.rowName.toLowerCase().includes('e-mail');
+
     const baseClasses = 'flex items-center gap-2';
     const clickableClasses =
       'cursor-pointer hover:bg-gray-100 rounded-lg px-3 py-2 -mr-1';
 
-    return this.isClickable()
+    this.rowClasses = this.isClickableField
       ? `${baseClasses} ${clickableClasses}`
       : baseClasses;
+
+    if (
+      wasClickable !== this.isClickableField ||
+      oldClasses !== this.rowClasses
+    ) {
+      this.cdr.markForCheck();
+    }
   }
 
   onClick(): void {
-    if (this.isClickable()) {
+    if (this.isClickableField) {
       this.rowClick.emit();
     }
   }
