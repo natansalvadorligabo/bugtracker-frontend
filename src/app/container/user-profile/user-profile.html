@@ -14,55 +14,45 @@
       </div>
     </div>
 
-    <mat-divider class="my-2"></mat-divider>
+    @if (pictureUrl()) {
+    <profile-row-link
+      rowName="Foto do perfil"
+      description="Uma foto de perfil ajuda a personalizar sua conta"
+      text="Foto de perfil"
+      [imgSrc]="pictureUrl()"
+      (rowClick)="openProfilePictureModal()"
+    ></profile-row-link>
 
-    <div class="flex items-center justify-between py-4">
-      <div>
-        <span class="block text-gray-700 font-medium">Foto do perfil</span>
-        <span class="block text-gray-500 text-sm"
-          >Uma foto de perfil ajuda a personalizar sua conta</span
-        >
-      </div>
-      @if (pictureUrl()) {
-      <img
-        [src]="pictureUrl()"
-        alt="Foto de perfil"
-        class="rounded-full w-12 h-12 object-cover border border-gray-300"
-      />
-      } @else {
-      <span class="text-gray-400">Nenhuma foto</span>
-      }
-    </div>
+    } @else {
+    <profile-row-link
+      rowName="Foto do perfil"
+      description="Uma foto de perfil ajuda a personalizar sua conta"
+      text="Nenhuma foto"
+      (rowClick)="openProfilePictureModal()"
+    ></profile-row-link>
+    }
 
-    <mat-divider></mat-divider>
+    <profile-row-link
+      rowName="Nome"
+      text="{{user.name}}"
+      description="Seu nome completo"
+      (rowClick)="openNameModal(user.name)"
+    ></profile-row-link>
 
-    <div class="flex items-center justify-between py-4">
-      <span class="text-gray-700 font-medium">Nome</span>
-      <a class="flex items-center gap-2" href="">
-        <span class="text-gray-600">{{ user.name }}</span>
-        <mat-icon class="text-gray-400">chevron_right</mat-icon>
-      </a>
-    </div>
+    <profile-row-link
+      rowName="E-mail"
+      text="{{user.email}}"
+      description="E-mail não pode ser alterado"
+    ></profile-row-link>
 
-    <mat-divider></mat-divider>
+    <profile-row-link
+      rowName="Senha"
+      [line]="false"
+      text="●●●●●●●●"
+      description="Alterar sua senha"
+      (rowClick)="openPasswordModal()"
+    ></profile-row-link>
 
-    <div class="flex items-center justify-between py-4">
-      <span class="text-gray-700 font-medium">E-mail</span>
-      <a class="flex items-center gap-2" href="">
-        <span class="text-gray-600">{{ user.email }}</span>
-        <mat-icon class="text-gray-400">chevron_right</mat-icon>
-      </a>
-    </div>
-
-    <mat-divider></mat-divider>
-
-    <div class="flex items-center justify-between py-4">
-      <span class="text-gray-700 font-medium">Ativo</span>
-      <a class="flex items-center gap-2" href="">
-        <span class="text-gray-600">{{ user.enabled ? 'Sim' : 'Não' }}</span>
-        <mat-icon class="text-gray-400">chevron_right</mat-icon>
-      </a>
-    </div>
     } @else {
     <div class="spinner-center">
       <mat-progress-spinner

@@ -17,7 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../model/user';
-import { UsersService } from '../../services/users-service';
+import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 
 @Component({

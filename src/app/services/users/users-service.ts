@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserLogin, UserProfile, UserRegister } from '../model/user';
+import { UserLogin, UserProfile, UserRegister } from '../../model/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
-  private readonly API_URL = 'bugtracker/';
+  private readonly API_URL = '/bugtracker';
 
   private httpClient = inject(HttpClient);
 
@@ -44,6 +44,17 @@ export class UsersService {
     return this.httpClient.get(`${this.API_URL}/users/picture`, {
       headers,
       responseType: 'blob',
+    });
+  }
+
+  updateUserProfile(data: { name?: string }) {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    };
+
+    return this.httpClient.put<any>('${this.API_URL}/users', data, {
+      headers,
     });
   }
 }
