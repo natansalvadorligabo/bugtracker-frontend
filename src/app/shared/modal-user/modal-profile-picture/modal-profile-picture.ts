@@ -23,7 +23,7 @@ export interface ModalProfilePictureData {
       </h2>
 
       <mat-dialog-content>
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4 min-h-50">
           <div class="flex justify-center">
             @if (previewUrl()) {
             <img

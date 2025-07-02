@@ -12,16 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
         <span class="text-gray-700 font-medium">{{ rowName }}</span>
         <span class="text-gray-500 text-sm">{{ description }}</span>
       </div>
-      <div
-        class="flex items-center gap-2"
-        [class.cursor-pointer]="isClickable()"
-        [class.hover:bg-gray-100]="isClickable()"
-        [class.rounded-lg]="isClickable()"
-        [class.px-3]="isClickable()"
-        [class.py-2]="isClickable()"
-        [class.-mr-1]="isClickable()"
-        (click)="onClick()"
-      >
+      <div [class]="getRowClasses()" (click)="onClick()">
         @if (imgSrc) {
         <img
           [src]="imgSrc"
@@ -49,7 +40,17 @@ export class ProfileRowLinkComponent {
   @Output() rowClick = new EventEmitter<void>();
 
   isClickable(): boolean {
-    return !this.rowName.includes('e-mail');
+    return !this.rowName.toLocaleLowerCase().includes('e-mail');
+  }
+
+  getRowClasses(): string {
+    const baseClasses = 'flex items-center gap-2';
+    const clickableClasses =
+      'cursor-pointer hover:bg-gray-100 rounded-lg px-3 py-2 -mr-1';
+
+    return this.isClickable()
+      ? `${baseClasses} ${clickableClasses}`
+      : baseClasses;
   }
 
   onClick(): void {

@@ -14,23 +14,13 @@
       </div>
     </div>
 
-    @if (pictureUrl()) {
     <profile-row-link
       rowName="Foto do perfil"
       description="Uma foto de perfil ajuda a personalizar sua conta"
-      text="Foto de perfil"
+      [text]="pictureUrl() ? 'Foto de perfil' : 'Nenhuma foto'"
       [imgSrc]="pictureUrl()"
       (rowClick)="openProfilePictureModal()"
     ></profile-row-link>
-
-    } @else {
-    <profile-row-link
-      rowName="Foto do perfil"
-      description="Uma foto de perfil ajuda a personalizar sua conta"
-      text="Nenhuma foto"
-      (rowClick)="openProfilePictureModal()"
-    ></profile-row-link>
-    }
 
     <profile-row-link
       rowName="Nome"
