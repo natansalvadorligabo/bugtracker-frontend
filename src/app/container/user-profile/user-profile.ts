@@ -99,7 +99,6 @@ export class UserProfile implements OnInit {
   private updateUserName(newName: string): void {
     this.userService.updateUserProfile({ name: newName }).subscribe({
       next: () => {
-        // Atualiza o signal diretamente
         const currentUser = this.user();
         if (currentUser) {
           this.user.set({ ...currentUser, name: newName });

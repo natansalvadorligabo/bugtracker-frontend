@@ -68,7 +68,7 @@ export class UsersService {
       formData.append('newPassword', data.newPassword);
     }
     if (data.picture) {
-      formData.append('picture', data.picture);
+      formData.append('profilePicture', data.picture);
     }
 
     return this.httpClient.put<UserUpdate>(`${this.API_URL}/users`, formData, {
