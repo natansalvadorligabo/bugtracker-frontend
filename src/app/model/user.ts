@@ -1,7 +1,13 @@
-export interface UserRegister {
+export interface User {
+  id: number;
   name: string;
   email: string;
-  password: string;
+}
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
 }
 
 export interface UserLogin {
@@ -9,8 +15,21 @@ export interface UserLogin {
   password: string;
 }
 
+export interface UserRegister {
+  name: string;
+  email: string;
+  password: string;
+}
+
 export interface LoginResponse {
   token: string;
-  username: string;
-  roles: string[];
+  user: User;
+}
+
+export interface UserUpdate {
+  name?: string;
+  email?: string;
+  password?: string;
+  newPassword?: string;
+  picture?: File;
 }

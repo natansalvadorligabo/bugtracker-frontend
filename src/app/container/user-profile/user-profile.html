@@ -1,0 +1,56 @@
+<main class="w-full h-full flex justify-center items-start bg-gray-200">
+  <mat-card
+    class="w-full md:max-w-2xl mt-8 p-8 rounded-xl shadow flex flex-col gap-6"
+  >
+    @if (user(); as userData) {
+
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold mb-1">Informações básicas</h1>
+        <p class="text-gray-600 text-sm max-w-lg">
+          Algumas informações podem estar visíveis para outras pessoas que
+          estejam usando os serviços do BugTracker.
+        </p>
+      </div>
+    </div>
+
+    <profile-row-link
+      rowName="Foto do perfil"
+      description="Uma foto de perfil ajuda a personalizar sua conta"
+      [text]="pictureUrl() ? 'Foto de perfil' : 'Nenhuma foto'"
+      [imgSrc]="pictureUrl()"
+      (rowClick)="openProfilePictureModal()"
+    ></profile-row-link>
+
+    <profile-row-link
+      rowName="Nome"
+      [text]="userData.name"
+      description="Seu nome completo"
+      (rowClick)="openNameModal(userData.name)"
+    ></profile-row-link>
+
+    <profile-row-link
+      rowName="E-mail"
+      [text]="userData.email"
+      description="E-mail não pode ser alterado"
+    ></profile-row-link>
+
+    <profile-row-link
+      rowName="Senha"
+      [line]="false"
+      text="●●●●●●●●"
+      description="Alterar sua senha"
+      (rowClick)="openPasswordModal()"
+    ></profile-row-link>
+
+    } @else if (loading()) {
+    <div class="spinner-center">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="50"
+        strokeWidth="5"
+      ></mat-progress-spinner>
+    </div>
+    }
+  </mat-card>
+</main>

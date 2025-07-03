@@ -16,5 +16,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./container/tickets/tickets').then((m) => m.Tickets),
   },
+  {
+    path: 'user',
+    loadComponent: () =>
+      import('./container/user-profile/user-profile').then(
+        (m) => m.UserProfile
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];
