@@ -14,7 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { UsersService } from '../../services/users-service';
+import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 
 @Component({
@@ -33,7 +33,6 @@ import { FormUtilsService } from '../../shared/form/form-utils';
   styleUrl: './register.scss',
 })
 export class Register {
-
   form!: FormGroup;
 
   hide = signal(true);
