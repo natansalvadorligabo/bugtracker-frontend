@@ -1,5 +1,10 @@
-import { Component, Inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Inject, inject } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -9,6 +14,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { FormUtilsService } from '../../form/form-utils';
 
 export interface ModalNameData {
   title: string;
@@ -24,7 +30,7 @@ export interface ModalNameData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatIconModule,
   ],
   template: `
@@ -34,25 +40,37 @@ export interface ModalNameData {
       </h2>
 
       <mat-dialog-content>
-        <mat-form-field class="w-full">
-          <mat-label>{{ data.placeholder || data.title }}</mat-label>
-          <input
-            matInput
-            type="text"
-            [(ngModel)]="newValue"
-            [placeholder]="data.placeholder || ''"
-          />
-          <mat-icon matSuffix>person</mat-icon>
-        </mat-form-field>
+        <form [formGroup]="form" class="space-y-1 pt-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ data.placeholder || data.title }}</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="name"
+              [placeholder]="data.placeholder || ''"
+            />
+            <mat-icon matSuffix>person</mat-icon>
+            @if (form.get('name')?.invalid) {
+            <mat-error>{{ formUtils.getErrorMessage(form, 'name') }}</mat-error>
+            }
+          </mat-form-field>
+        </form>
       </mat-dialog-content>
 
       <mat-dialog-actions class="flex justify-end gap-2 mt-4">
-        <button mat-button (click)="onCancel()">Cancelar</button>
+        <button
+          mat-button
+          (click)="onCancel()"
+          class="text-blue-500 hover:text-blue-700"
+        >
+          Cancelar
+        </button>
         <button
           mat-raised-button
           color="primary"
           (click)="onSave()"
-          [disabled]="!isValid()"
+          [disabled]="form.invalid"
+          class="bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Salvar
         </button>
@@ -61,17 +79,21 @@ export interface ModalNameData {
   `,
 })
 export class ModalNameComponent {
-  newValue: string = '';
+  form: FormGroup;
+  formUtils = inject(FormUtilsService);
 
   constructor(
     public dialogRef: MatDialogRef<ModalNameComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ModalNameData
+    @Inject(MAT_DIALOG_DATA) public data: ModalNameData,
+    private fb: FormBuilder
   ) {
-    this.newValue = data.currentValue;
+    this.form = this.fb.group({
+      name: [data.currentValue, [Validators.required, Validators.minLength(2)]],
+    });
   }
 
   isValid(): boolean {
-    return this.newValue.trim().length > 0;
+    return this.form.valid;
   }
 
   onCancel(): void {
@@ -79,6 +101,10 @@ export class ModalNameComponent {
   }
 
   onSave(): void {
-    this.dialogRef.close(this.newValue);
+    if (this.form.valid) {
+      this.dialogRef.close(this.form.get('name')?.value);
+    } else {
+      this.formUtils.validateAllFormFields(this.form);
+    }
   }
 }

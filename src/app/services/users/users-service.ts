@@ -5,6 +5,7 @@ import {
   UserProfile,
   UserRegister,
   UserUpdate,
+  VerifyCodeResponse,
 } from '../../model/user';
 
 @Injectable({
@@ -74,5 +75,35 @@ export class UsersService {
     return this.httpClient.put<UserUpdate>(`${this.API_URL}/users`, formData, {
       headers: headers,
     });
+  }
+
+  recoveryPassword(email: string) {
+    return this.httpClient.post<string>(
+      `${this.API_URL}/auth/forgot-password`,
+      { email },
+      { responseType: 'text' as 'json' }
+    );
+  }
+
+  verifyRecoveryCode(email: string, code: string) {
+    return this.httpClient.post<VerifyCodeResponse>(
+      `${this.API_URL}/auth/verify-code`,
+      {
+        email: email,
+        code: code,
+      }
+    );
+  }
+
+  resetPassword(email: string, password: string, code: string) {
+    return this.httpClient.post(
+      `${this.API_URL}/auth/reset-password`,
+      {
+        email: email,
+        newPassword: password,
+        token: code,
+      },
+      { responseType: 'text' as 'json' }
+    );
   }
 }

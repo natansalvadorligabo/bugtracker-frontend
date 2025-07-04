@@ -1,5 +1,12 @@
-import { Component, Inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Inject, inject, signal } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -9,6 +16,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { FormUtilsService } from '../../form/form-utils';
 
 export interface ModalPasswordData {
   title: string;
@@ -22,7 +30,7 @@ export interface ModalPasswordData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatIconModule,
   ],
   template: `
@@ -32,63 +40,99 @@ export interface ModalPasswordData {
       </h2>
 
       <mat-dialog-content>
-        <div class="flex flex-col gap-4">
-          <mat-form-field class="w-full">
+        <form [formGroup]="form" class="space-y-1 pt-4">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Senha atual</mat-label>
             <input
               matInput
-              type="password"
-              [(ngModel)]="password"
+              [type]="hideCurrentPassword() ? 'password' : 'text'"
+              formControlName="currentPassword"
               placeholder="Digite sua senha atual"
             />
-            <mat-icon matSuffix>lock</mat-icon>
+            <button
+              type="button"
+              mat-icon-button
+              matSuffix
+              (click)="toggleCurrentPasswordVisibility()"
+              [attr.aria-label]="'Mostrar senha atual'"
+            >
+              <mat-icon>{{
+                hideCurrentPassword() ? 'visibility_off' : 'visibility'
+              }}</mat-icon>
+            </button>
+            @if (form.get('currentPassword')?.invalid) {
+            <mat-error>{{
+              formUtils.getErrorMessage(form, 'currentPassword')
+            }}</mat-error>
+            }
           </mat-form-field>
 
-          <mat-form-field class="w-full">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Nova senha</mat-label>
             <input
               matInput
-              type="password"
-              [(ngModel)]="newPassword"
+              [type]="hideNewPassword() ? 'password' : 'text'"
+              formControlName="newPassword"
               placeholder="Digite sua nova senha"
             />
-            <mat-icon matSuffix>lock</mat-icon>
+            <button
+              type="button"
+              mat-icon-button
+              matSuffix
+              (click)="toggleNewPasswordVisibility()"
+              [attr.aria-label]="'Mostrar nova senha'"
+            >
+              <mat-icon>{{
+                hideNewPassword() ? 'visibility_off' : 'visibility'
+              }}</mat-icon>
+            </button>
+            @if (form.get('newPassword')?.invalid) {
+            <mat-error>{{
+              formUtils.getErrorMessage(form, 'newPassword')
+            }}</mat-error>
+            }
           </mat-form-field>
 
-          <mat-form-field class="w-full">
+          <mat-form-field appearance="outline" class="w-full">
             <mat-label>Confirmar nova senha</mat-label>
             <input
               matInput
-              type="password"
-              [(ngModel)]="confirmPassword"
+              [type]="hideConfirmPassword() ? 'password' : 'text'"
+              formControlName="confirmPassword"
               placeholder="Confirme sua nova senha"
             />
-            <mat-icon matSuffix>lock</mat-icon>
+            <button
+              type="button"
+              mat-icon-button
+              matSuffix
+              (click)="toggleConfirmPasswordVisibility()"
+              [attr.aria-label]="'Mostrar confirmação de senha'"
+            >
+              <mat-icon>{{
+                hideConfirmPassword() ? 'visibility_off' : 'visibility'
+              }}</mat-icon>
+            </button>
+            @if (form.get('confirmPassword')?.invalid) {
+            <mat-error>{{ getConfirmPasswordError() }}</mat-error>
+            }
           </mat-form-field>
-
-          @if (newPassword && confirmPassword && newPassword !==
-          confirmPassword) {
-          <div class="text-red-500 text-sm mt-1">
-            <mat-icon class="text-red-500 text-sm mr-1">error</mat-icon>
-            As senhas não conferem
-          </div>
-          } @if (newPassword && newPassword.length > 0 && newPassword.length <
-          6) {
-          <div class="text-orange-500 text-sm mt-1">
-            <mat-icon class="text-orange-500 text-sm mr-1">warning</mat-icon>
-            A senha deve ter pelo menos 6 caracteres
-          </div>
-          }
-        </div>
+        </form>
       </mat-dialog-content>
 
       <mat-dialog-actions class="flex justify-end gap-2 mt-4">
-        <button mat-button (click)="onCancel()">Cancelar</button>
+        <button
+          mat-button
+          (click)="onCancel()"
+          class="text-blue-500 hover:text-blue-700"
+        >
+          Cancelar
+        </button>
         <button
           mat-raised-button
           color="primary"
           (click)="onSave()"
-          [disabled]="!isValid()"
+          [disabled]="form.invalid"
+          class="bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Salvar
         </button>
@@ -97,22 +141,66 @@ export interface ModalPasswordData {
   `,
 })
 export class ModalPasswordComponent {
-  password: string = '';
-  newPassword: string = '';
-  confirmPassword: string = '';
+  form: FormGroup;
+  formUtils = inject(FormUtilsService);
+
+  hideCurrentPassword = signal(true);
+  hideNewPassword = signal(true);
+  hideConfirmPassword = signal(true);
 
   constructor(
     public dialogRef: MatDialogRef<ModalPasswordComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ModalPasswordData
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: ModalPasswordData,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: [
+        '',
+        [Validators.required, this.validateMatchPassword.bind(this)],
+      ],
+    });
+
+    // Listener para revalidar confirmação quando nova senha mudar
+    this.form.get('newPassword')?.valueChanges.subscribe(() => {
+      this.form.get('confirmPassword')?.updateValueAndValidity();
+    });
+  }
+
+  private validateMatchPassword(
+    control: AbstractControl
+  ): ValidationErrors | null {
+    const password = control.parent?.get('newPassword')?.value;
+    const confirmPassword = control.value;
+    return password === confirmPassword ? null : { notMatch: true };
+  }
+
+  getConfirmPasswordError(): string {
+    const control = this.form.get('confirmPassword');
+    if (control?.hasError('required')) {
+      return 'Campo obrigatório';
+    }
+    if (control?.hasError('notMatch')) {
+      return 'As senhas não conferem';
+    }
+    return 'Campo inválido';
+  }
+
+  toggleCurrentPasswordVisibility() {
+    this.hideCurrentPassword.set(!this.hideCurrentPassword());
+  }
+
+  toggleNewPasswordVisibility() {
+    this.hideNewPassword.set(!this.hideNewPassword());
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.hideConfirmPassword.set(!this.hideConfirmPassword());
+  }
 
   isValid(): boolean {
-    return (
-      this.password.trim().length > 0 &&
-      this.newPassword.trim().length >= 6 &&
-      this.confirmPassword.trim().length > 0 &&
-      this.newPassword === this.confirmPassword
-    );
+    return this.form.valid;
   }
 
   onCancel(): void {
@@ -120,9 +208,13 @@ export class ModalPasswordComponent {
   }
 
   onSave(): void {
-    this.dialogRef.close({
-      oldPassword: this.password,
-      newPassword: this.newPassword,
-    });
+    if (this.form.valid) {
+      this.dialogRef.close({
+        oldPassword: this.form.get('currentPassword')?.value,
+        newPassword: this.form.get('newPassword')?.value,
+      });
+    } else {
+      this.formUtils.validateAllFormFields(this.form);
+    }
   }
 }

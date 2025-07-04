@@ -36,17 +36,29 @@ export class FormUtilsService {
     if (field?.hasError('required')) {
       return 'Campo obrigatório';
     }
+    if (field?.hasError('email')) {
+      return 'E-mail inválido';
+    }
     if (field?.hasError('minlength')) {
       const requiredLength: number = field.errors
         ? field.errors['minlength']['requiredLength']
         : 5;
-      return `Tamanho minímo precisa ser de ${requiredLength} caracteres.`;
+      return `Tamanho mínimo precisa ser de ${requiredLength} caracteres.`;
     }
     if (field?.hasError('maxlength')) {
       const requiredLength: number = field.errors
         ? field.errors['maxlength']['requiredLength']
         : 200;
       return `Tamanho máximo excedido de ${requiredLength} caracteres.`;
+    }
+    if (field?.hasError('notMatch')) {
+      return 'As senhas não conferem';
+    }
+    if (field?.hasError('invalidFileType')) {
+      return 'Tipo de arquivo inválido. Use JPG, PNG, GIF ou WebP';
+    }
+    if (field?.hasError('fileTooLarge')) {
+      return 'Arquivo muito grande. Máximo de 5MB';
     }
     if (field?.hasError('customError')) {
       return field.errors ? field.errors['customError'] : 'Campo inválido';
