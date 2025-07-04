@@ -36,6 +36,9 @@ export class FormUtilsService {
     if (field?.hasError('required')) {
       return 'Campo obrigatório';
     }
+    if (field?.hasError('email')) {
+      return 'E-mail inválido';
+    }
     if (field?.hasError('minlength')) {
       const requiredLength: number = field.errors
         ? field.errors['minlength']['requiredLength']

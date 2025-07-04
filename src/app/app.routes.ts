@@ -23,5 +23,12 @@ export const routes: Routes = [
         (m) => m.UserProfile
       ),
   },
+  {
+    path: 'account-recovery',
+    loadComponent: () =>
+      import('./container/password-recovery/password-recovery').then(
+        (m) => m.PasswordRecovery
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

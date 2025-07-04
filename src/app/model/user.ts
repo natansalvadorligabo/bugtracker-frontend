@@ -33,3 +33,7 @@ export interface UserUpdate {
   newPassword?: string;
   picture?: File;
 }
+
+export interface VerifyCodeResponse {
+  resetToken: string;
+}
