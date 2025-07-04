@@ -142,6 +142,10 @@ export class PasswordResetStepComponent {
         [Validators.required, this.validateMatchPassword.bind(this)],
       ],
     });
+
+    this.form.get('password')?.valueChanges.subscribe(() => {
+      this.form.get('confirmPassword')?.updateValueAndValidity();
+    });
   }
 
   private validateMatchPassword(
