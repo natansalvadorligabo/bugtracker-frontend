@@ -16,6 +16,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../model/user';
 import { UsersService } from '../../services/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
+import { AuthService } from '../../services/auth-service.js';
 
 @Component({
   selector: 'app-login',
@@ -41,6 +42,7 @@ export class Login {
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   formUtils = inject(FormUtilsService);
 
@@ -61,7 +63,8 @@ export class Login {
         next: (response: any) => {
           let loginResponse = response as LoginResponse;
           if (loginResponse.token)
-            localStorage.setItem('token', loginResponse.token);
+            //ocalStorage.setItem('token', loginResponse.token);
+            this.authService.setToken(loginResponse.token);
 
           this.router.navigate(['/home']);
         },
