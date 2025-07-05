@@ -13,17 +13,13 @@ export class TicketService {
   private httpClient = inject(HttpClient);
   private authService = inject(AuthService);
 
-  save(ticket: TicketSave) {
+  save(formData: FormData) {
     const token = this.authService.getToken();
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${token}`
-    );
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
 
-    return this.httpClient.post<TicketSave>(
-      `${this.API_URL}`,
-      ticket,
-      { headers }
-    );
+    return this.httpClient.post(`${this.API_URL}`, formData, { headers });
   }
+
 }

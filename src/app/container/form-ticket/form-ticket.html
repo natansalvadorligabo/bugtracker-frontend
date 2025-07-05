@@ -34,6 +34,8 @@
             }
           </mat-form-field>
 
+          <app-image-upload (filesSelected)="selectedFiles = $event"></app-image-upload>
+
           <p align="end">
             <button matButton="filled" (click)="onSubmit()">Criar</button>
           </p>

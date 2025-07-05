@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { TicketService } from '../../services/ticket-service.js';
+import { ImageUpload } from "../../components/image-upload/image-upload";
 
 @Component({
   selector: 'app-form-ticket',
@@ -32,8 +33,9 @@ import { TicketService } from '../../services/ticket-service.js';
     MatCheckboxModule,
     MatButtonModule,
     MatSelectModule,
-    MatSnackBarModule
-  ],
+    MatSnackBarModule,
+    ImageUpload
+],
   templateUrl: './form-ticket.html',
   styleUrl: './form-ticket.scss'
 })
@@ -61,15 +63,24 @@ export class FormTicket {
     this.loadCategories();
   }
 
-  onFileSelected(event: any) {
-    const files: FileList = event.target.files;
-    this.selectedFiles = Array.from(files);
-  }
-
   onSubmit() {
     if (this.form.valid) {
-      this.ticketService.save(this.form.value).subscribe({
-        next: (data) => {
+      const ticketJson = {
+        ticketCategoryId: this.form.get('ticketCategoryId')?.value,
+        description: this.form.get('description')?.value,
+        ticketStatus: this.form.get('ticketStatus')?.value,
+        imagesAttachedPaths: []
+      };
+
+      const formData = new FormData();
+      formData.append('ticket', new Blob([JSON.stringify(ticketJson)], { type: 'application/json' }));
+
+      this.selectedFiles.forEach(file => {
+        formData.append('images', file);
+      });
+
+      this.ticketService.save(formData).subscribe({
+        next: () => {
           this.snackBar.open('Ticket criado com sucesso!', 'Fechar', {
             duration: 3000,
             panelClass: ['snackbar-success'],
