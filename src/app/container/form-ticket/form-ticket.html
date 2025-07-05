@@ -1,46 +1,41 @@
-<main class="w-full h-full flex justify-center items-center bg-gray-200">
-  <mat-card class="flex items-center justify-center w-full h-full md:max-w-xl md:h-auto p-9 md:mx-6">
-    <div class="md:flex flex-col justify-between items-center">
+<div class="flex flex-col justify-between items-center py-10 px-15">
 
-      <section class="w-full mb-8">
-        <span class="text-3xl">Novo Ticket</span>
-      </section>
+  <section class="w-full mb-8">
+    <span class="text-3xl">Novo Ticket</span>
+  </section>
 
-      <section class="w-full">
-        <form [formGroup]="form" class="space-y-1">
+  <section class="w-full">
+    <form [formGroup]="form" class="space-y-1">
 
-          <!-- na edição deve ser permitido escolher o status -->
-          <input type="hidden" formControlName="ticketStatus" value="PENDING" />
+      <input type="hidden" formControlName="ticketStatus" value="PENDING" />
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Descrição</mat-label>
-            <input matInput formControlName="description" />
-            @if (form.get('description')?.invalid) {
-              <mat-error>{{ formUtils.getErrorMessage(form, "description") }}</mat-error>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput formControlName="description" placeholder="Ex. Meu PC pifou..."></textarea>
+        @if (form.get('description')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "description") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Categoria</mat-label>
+          <mat-select [(value)]="selectedCategoryId" (selectionChange)="onCategorySelected($event.value)">
+            @for (category of categories; track category.ticket_category_id) {
+              <mat-option [value]="category.ticket_category_id">
+                {{ category.description }}
+              </mat-option>
             }
-          </mat-form-field>
+          </mat-select>
+          @if (form.get('ticketCategoryId')?.invalid) {
+          <mat-error>{{ formUtils.getErrorMessage(form, 'ticketCategoryId') }}</mat-error>
+          }
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Categoria</mat-label>
-            <mat-select formControlName="ticketCategoryId">
-              @for (category of categories; track $index) {
-                <mat-option [value]="category.ticket_category_id">
-                  {{ category.description }}
-                </mat-option>
-              }
-            </mat-select>
-            @if (form.get('ticketCategoryId')?.invalid) {
-              <mat-error>{{ formUtils.getErrorMessage(form, 'ticketCategoryId') }}</mat-error>
-            }
-          </mat-form-field>
+      <app-image-upload (filesSelected)="selectedFiles = $event"></app-image-upload>
 
-          <app-image-upload (filesSelected)="selectedFiles = $event"></app-image-upload>
-
-          <p align="end">
-            <button matButton="filled" (click)="onSubmit()">Criar</button>
-          </p>
-        </form>
-      </section>
-    </div>
-  </mat-card>
-</main>
+      <p align="end">
+        <button matButton="filled" class="w-28" (click)="onSubmit()">Criar</button>
+      </p>
+    </form>
+  </section>
+</div>

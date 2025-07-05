@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
@@ -12,9 +13,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../model/user';
-import { UsersService } from '../../services/users-service';
+import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { AuthService } from '../../services/auth-service.js';
 
@@ -23,6 +26,7 @@ import { AuthService } from '../../services/auth-service.js';
   imports: [
     FormsModule,
     RouterModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -38,10 +42,12 @@ export class Login {
   form!: FormGroup;
 
   hide = signal(true);
+  loading = signal(false);
 
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
 
   formUtils = inject(FormUtilsService);
@@ -59,6 +65,7 @@ export class Login {
 
   onSubmit() {
     if (this.form.valid) {
+      this.loading.set(true);
       this.userService.login(this.form.value).subscribe({
         next: (response: any) => {
           let loginResponse = response as LoginResponse;
@@ -67,13 +74,15 @@ export class Login {
             this.authService.setToken(loginResponse.token);
 
           this.router.navigate(['/home']);
+          this.loading.set(false);
         },
-        error: (error: Error) => {
-          this.formUtils.setErrorMessage(
-            this.form,
-            'password',
-            'Usuário ou senha inválidos'
-          );
+        error: (error: HttpErrorResponse) => {
+          this.snackBar.open('E-mail ou senha incorretos.', 'Fechar', {
+            duration: 100000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+          });
+          this.loading.set(false);
         },
       });
     } else {

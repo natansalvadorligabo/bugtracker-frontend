@@ -15,11 +15,13 @@ export class TicketService {
 
   save(formData: FormData) {
     const token = this.authService.getToken();
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.httpClient.post(`${this.API_URL}`, formData, { headers });
   }
 
+  getCategories() {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.httpClient.get<any[]>('bugtracker/categories', { headers });
+  }
 }

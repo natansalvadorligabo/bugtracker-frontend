@@ -44,6 +44,7 @@ export class FormTicket {
   form!: FormGroup;
 
   categories: any[] = [];
+  selectedCategoryId: number | null = null;
 
   selectedFiles: File[] = [];
 
@@ -55,12 +56,16 @@ export class FormTicket {
   ngOnInit() {
     this.form = this.formBuilder.group({
       description: ['', [Validators.required, Validators.minLength(3)]],
-      ticketCategoryId: ['', [Validators.required, Validators.minLength(3)]],
+      ticketCategoryId: [null, [Validators.required]],
       ticketStatus: ['PENDING'],
       images: [null]
     });
 
     this.loadCategories();
+  }
+
+  onCategorySelected(value: number) {
+    this.form.get('ticketCategoryId')?.setValue(value);
   }
 
   onSubmit() {
@@ -100,11 +105,12 @@ export class FormTicket {
   }
 
   loadCategories() {
-    // recuperar no endpoint
-    this.categories = [
-      { ticket_category_id: 14, description: 'Bug', is_active: true },
-      { ticket_category_id: 15, description: 'Feature Request', is_active: true },
-      { ticket_category_id: 16, description: 'Suporte', is_active: true },
-    ];
+    this.ticketService.getCategories().subscribe({
+      next: (data) => this.categories = data,
+      error: (err) => {
+        console.error('Erro ao carregar categorias', err);
+        this.snackBar.open('Erro ao carregar categorias', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 }
