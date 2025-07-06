@@ -17,4 +17,4 @@ export const routes: Routes = [
       import('./container/tickets/tickets').then((m) => m.Tickets),
   },
   { path: '**', redirectTo: '' },
-];
+]; 

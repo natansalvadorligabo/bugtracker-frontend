@@ -1,27 +1,66 @@
-<mat-sidenav-container class="w-auto h-full" style="background-color: #eee;">
-  <mat-sidenav #sidenav mode="side" opened>
-    <div class="flex items-center">
-      <mat-toolbar>
-        <mat-icon>pest_control</mat-icon>
-        <span class="ml-2">BugTracker</span>
-      </mat-toolbar>
-    </div>
+<mat-sidenav-container class="h-screen">
+  <!-- Sidebar -->
+  <mat-sidenav #sidenav mode="side" opened class="bg-purple-700 text-white w-60">
+    <mat-toolbar color="primary">
+      <mat-icon>pest_control</mat-icon>
+      <span class="ml-2 font-bold">BugTracker</span>
+    </mat-toolbar>
 
-    <div>
-      <mat-list>
-        <mat-list-item>Tickets</mat-list-item>
-        <mat-divider></mat-divider>
-        <mat-list-item>Dashboard</mat-list-item>
-        <mat-divider></mat-divider>
-        <mat-list-item>Configurações</mat-list-item>
-      </mat-list>
-    </div>
-
+    <mat-nav-list>
+      <mat-list-item>
+        <mat-icon matListIcon>assignment</mat-icon>
+        <span class="ml-2">Quadro</span>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon matListIcon>group</mat-icon>
+        <span class="ml-2">Equipes</span>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon matListIcon>insights</mat-icon>
+        <span class="ml-2">Relatórios</span>
+      </mat-list-item>
+      <mat-list-item>
+        <mat-icon matListIcon>settings</mat-icon>
+        <span class="ml-2">Ajustes</span>
+      </mat-list-item>
+    </mat-nav-list>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <button matButton (click)="sidenav.toggle()" >toggle</button>
+  <!-- Conteúdo principal -->
+  <mat-sidenav-content class="bg-gray-100">
+    <mat-toolbar class="title bg-gray-100 flex items-center justify-between px-6">
+      <button class="tasks-button opacity-50 cursor-pointer hover:opacity-90 active:scale-99" (click)="sidenav.toggle()">Minhas Tasks</button>
+      <button class="bg-transparent border-none cursor-pointer p-0">
+        <img src="{{ user.avatarUrl }}" class="rounded-full w-13 h-13" alt="Avatar" />
+      </button>
+    </mat-toolbar>
 
-    Main content
+    <!-- Filtro e busca -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-6 mb-15 mt-6">
+      <button class="flex items-center justify-center cursor-pointer gap-2 filter-button text-white px-6 py-2 rounded transition-colors active:scale-95 active:shadow-inner h-12 w-full sm:w-auto">
+        <i class="fas fa-filter"></i>
+        Filtrar
+      </button>
+
+      <mat-form-field appearance="outline" class="flex-1 min-w-0 h-12 custom-form-field">
+        <input matInput placeholder="Buscar por cards..." class="opacity-50"/>
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12 px-6">
+      <mat-card *ngFor="let task of tasks" class="rounded-xl cursor-pointer" (click)="openTask(task)">
+        <mat-card-title>{{ task.title }}</mat-card-title>
+        <mat-card-content>
+          <p>{{ task.description }}</p>
+        </mat-card-content>
+        <mat-chip-set>
+          <mat-chip *ngFor="let tag of task.tags">{{ tag }}</mat-chip>
+        </mat-chip-set>
+      </mat-card>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
