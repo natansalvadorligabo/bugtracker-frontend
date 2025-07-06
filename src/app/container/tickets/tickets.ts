@@ -31,7 +31,8 @@ import { UsersService } from '../../services/users-service';
     MatSlideToggleModule
   ],
   templateUrl: './tickets.html',
-  styleUrl: './tickets.scss'
+  styleUrl: './tickets.scss',
+  imports: [],
 })
 export class Tickets {
   openTask(ticket: TicketResponse ) {

@@ -15,7 +15,14 @@ html {
 
 :root {
   @include mat.card-overrides((
-    elevated-container-color: oklch(98.5% 0.002 247.839),
+    elevated-container-color: #f9fafb,
+  ));
+  @include mat.sidenav-overrides((
+    container-background-color: #fff,
+    content-background-color: #f9fafb
+  ));
+  @include mat.toolbar-overrides((
+    container-background-color: #f9fafb,
   ));
 }
 
@@ -29,5 +36,6 @@ html {
   border: 0;
 }
 
-html, body { height: 100%; }
+html, body { height: 100%;  }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
