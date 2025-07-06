@@ -12,7 +12,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TicketResponse } from '../../model/ticket';
-import { UsersService } from '../../services/users-service';
 
 @Component({
   selector: 'app-tickets',
@@ -31,8 +30,7 @@ import { UsersService } from '../../services/users-service';
     MatSlideToggleModule
   ],
   templateUrl: './tickets.html',
-  styleUrl: './tickets.scss',
-  imports: [],
+  styleUrl: './tickets.scss'
 })
 export class Tickets {
   openTask(ticket: TicketResponse ) {
@@ -42,14 +40,6 @@ export class Tickets {
   }
 
   readonly panelOpenState = signal(false);
-
-  // Inject UsersService
-  constructor(private usersService: UsersService) {}
-
-  // Get logged user from service
-  get user() {
-    return this.usersService.getLoggedUser();
-  }
 
   tasks = [
     {
