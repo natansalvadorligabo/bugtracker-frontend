@@ -17,6 +17,11 @@ export const routes: Routes = [
           import('./container/form-ticket/form-ticket').then((m) => m.FormTicket),
       },
       {
+        path: 'tickets/edit/:id',
+        loadComponent: () =>
+          import('./container/form-ticket/form-ticket').then(m => m.FormTicket)
+      },
+      {
         path: 'user',
         loadComponent: () =>
           import('./container/user-profile/user-profile').then(

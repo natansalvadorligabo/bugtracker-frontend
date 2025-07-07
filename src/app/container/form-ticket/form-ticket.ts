@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { TicketService } from '../../services/ticket-service.js';
 import { ImageUpload } from "../../components/image-upload/image-upload";
@@ -47,25 +47,30 @@ export class FormTicket {
   selectedCategoryId: number | null = null;
 
   selectedFiles: File[] = [];
+  existingImageUrls: string[] = [];
 
   private formBuilder = inject(FormBuilder);
   private ticketService = inject(TicketService);
   private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
+  ticketId: number | null = null;
+
   formUtils = inject(FormUtilsService);
 
   ngOnInit() {
+    this.ticketId = this.route.snapshot.params['id'] || null;
+
     this.form = this.formBuilder.group({
       description: ['', [Validators.required, Validators.minLength(3)]],
-      ticketCategoryId: [null, [Validators.required]],
+      ticketCategoryId: ['', [Validators.required]],
       ticketStatus: ['PENDING'],
       images: [null]
     });
 
     this.loadCategories();
-  }
-
-  onCategorySelected(value: number) {
-    this.form.get('ticketCategoryId')?.setValue(value);
+    if (this.ticketId) {
+      this.loadTicket(this.ticketId);
+    }
   }
 
   onSubmit() {
@@ -84,16 +89,21 @@ export class FormTicket {
         formData.append('images', file);
       });
 
-      this.ticketService.save(formData).subscribe({
+      const request$ = this.ticketId
+        ? this.ticketService.update(this.ticketId, formData)
+        : this.ticketService.save(formData);
+
+      request$.subscribe({
         next: () => {
-          this.snackBar.open('Ticket criado com sucesso!', 'Fechar', {
-            duration: 3000,
-            panelClass: ['snackbar-success'],
-          });
+          this.snackBar.open(
+            this.ticketId ? 'Ticket atualizado com sucesso!' : 'Ticket criado com sucesso!',
+            'Fechar',
+            { duration: 3000, panelClass: ['snackbar-success'] }
+          );
         },
         error: (err) => {
           console.error(err);
-          this.snackBar.open('Erro ao criar o ticket.', 'Fechar', {
+          this.snackBar.open('Erro ao salvar o ticket.', 'Fechar', {
             duration: 3000,
             panelClass: ['snackbar-error'],
           });
@@ -110,6 +120,26 @@ export class FormTicket {
       error: (err) => {
         console.error('Erro ao carregar categorias', err);
         this.snackBar.open('Erro ao carregar categorias', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+  loadTicket(id: number) {
+    this.ticketService.getTicketById(id).subscribe({
+      next: (ticket) => {
+        this.form.patchValue({
+          description: ticket.description,
+          ticketCategoryId: ticket.ticketCategoryId,
+          ticketStatus: ticket.ticketStatus
+        });
+
+        if (ticket.imageUrls) {
+          this.existingImageUrls = ticket.imageUrls;
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar ticket', err);
+        this.snackBar.open('Erro ao carregar o ticket', 'Fechar', { duration: 3000 });
       }
     });
   }

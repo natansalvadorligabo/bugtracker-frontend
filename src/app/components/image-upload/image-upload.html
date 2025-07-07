@@ -41,10 +41,10 @@
 
 @if (fullPreviewUrl) {
   <div
-    class="fixed inset-0 bg-[rgb(0_0_0_/_60%)] flex items-center justify-center z-50"
+    class="fixed inset-0 bg-[rgb(0_0_0_/_60%)] flex items-center justify-center z-500"
     (click)="closePreview()"
   >
-    <img
+    <img  
       [src]="fullPreviewUrl"
       class="max-w-[90vw] max-h-[90vh] object-contain rounded shadow-lg"
       alt="Preview grande"

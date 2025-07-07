@@ -19,9 +19,22 @@ export class TicketService {
     return this.httpClient.post(`${this.API_URL}`, formData, { headers });
   }
 
+  update(id: number, formData: FormData) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.httpClient.put(`${this.API_URL}/${id}`, formData, { headers });
+  }
+
   getCategories() {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.httpClient.get<any[]>('bugtracker/categories', { headers });
   }
+
+  getTicketById(ticketId: number) {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.httpClient.get<any>(`${this.API_URL}/${ticketId}`, { headers });
+  }
+
 }
