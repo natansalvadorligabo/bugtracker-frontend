@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { TicketSave } from '../../model/ticket.js';
+import { Ticket } from '../../model/ticket.js';
 import { AuthService } from '../auth-service.js';
 import { Observable } from 'rxjs';
 

@@ -1,10 +1,11 @@
-export interface TicketSave {
+export interface Ticket {
+  ticketId: number;
+  senderId: number;
+  receiverId: number;
+  ticketCategoryId: number;
+  ratingId: number;
+  title: string;
   description: string;
   ticketStatus: string;
-  timestamp: number;
-  ratingId: number;
-  receiverId: number;
-  senderId: number;
-  ticketCategoryId: number;
-  userId: number;
+  timestamp: string;
 }

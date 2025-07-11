@@ -10,6 +10,14 @@
       <input type="hidden" formControlName="ticketStatus" value="PENDING" />
 
       <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Título</mat-label>
+        <textarea matInput formControlName="title" placeholder="Ex. PC pifou após jogar água nele"></textarea>
+        @if (form.get('title')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "title") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
         <mat-label>Descrição</mat-label>
         <textarea matInput formControlName="description" placeholder="Ex. Meu PC pifou..."></textarea>
         @if (form.get('description')?.invalid) {
@@ -34,6 +42,7 @@
       <app-image-upload
         [initialUrls]="existingImageUrls()"
         [readonly]="ticketId !== null"
+        (filesSelected)="selectedFiles.set($event)"
       />
 
       <p align="end">

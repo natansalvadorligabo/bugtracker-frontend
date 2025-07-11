@@ -65,6 +65,7 @@ export class FormTicket {
     this.ticketId = this.route.snapshot.params['id'] || null;
 
     this.form = this.formBuilder.group({
+      title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(3)]],
       ticketCategoryId: ['', [Validators.required]],
       ticketStatus: ['PENDING'],
@@ -80,8 +81,9 @@ export class FormTicket {
   onSubmit() {
     if (this.form.valid) {
       const ticketJson = {
-        ticketCategoryId: this.form.get('ticketCategoryId')?.value,
+        title: this.form.get('title')?.value,
         description: this.form.get('description')?.value,
+        ticketCategoryId: this.form.get('ticketCategoryId')?.value,
         ticketStatus: this.form.get('ticketStatus')?.value,
       };
 
@@ -129,6 +131,7 @@ export class FormTicket {
     this.ticketService.getTicketById(id).subscribe({
       next: (ticket) => {
         this.form.patchValue({
+          title: ticket.title,
           description: ticket.description,
           ticketCategoryId: ticket.ticketCategoryId,
           ticketStatus: ticket.ticketStatus
