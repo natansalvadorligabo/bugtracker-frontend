@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { TicketSave } from '../model/ticket.js';
-import { AuthService } from './auth-service.js';
+import { TicketSave } from '../../model/ticket.js';
+import { AuthService } from '../auth-service.js';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -37,4 +38,14 @@ export class TicketService {
     return this.httpClient.get<any>(`${this.API_URL}/${ticketId}`, { headers });
   }
 
+  getTicketImage(filename: string): Observable<Blob> {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+
+    return this.httpClient.get(`/bugtracker/tickets/image/${filename}`, {
+      headers,
+      responseType: 'blob'
+    });
+  }
 }

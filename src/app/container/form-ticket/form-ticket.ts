@@ -1,5 +1,5 @@
 import { MatSelectModule } from '@angular/material/select';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,8 +17,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormUtilsService } from '../../shared/form/form-utils';
-import { TicketService } from '../../services/ticket-service.js';
+import { TicketService } from '../../services/tickets/ticket-service.js';
 import { ImageUpload } from "../../components/image-upload/image-upload";
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-form-ticket',
@@ -46,13 +47,16 @@ export class FormTicket {
   categories: any[] = [];
   selectedCategoryId: number | null = null;
 
-  selectedFiles: File[] = [];
-  existingImageUrls: string[] = [];
+  selectedFiles = signal<File[]>([]);
+  existingImageUrls = signal<string[]>([]);
+  removedImagePaths = signal<string[]>([]);
 
   private formBuilder = inject(FormBuilder);
   private ticketService = inject(TicketService);
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+
   ticketId: number | null = null;
 
   formUtils = inject(FormUtilsService);
@@ -79,15 +83,12 @@ export class FormTicket {
         ticketCategoryId: this.form.get('ticketCategoryId')?.value,
         description: this.form.get('description')?.value,
         ticketStatus: this.form.get('ticketStatus')?.value,
-        imagesAttachedPaths: []
       };
 
       const formData = new FormData();
       formData.append('ticket', new Blob([JSON.stringify(ticketJson)], { type: 'application/json' }));
 
-      this.selectedFiles.forEach(file => {
-        formData.append('images', file);
-      });
+      this.selectedFiles().forEach(file => { formData.append('images', file); });
 
       const request$ = this.ticketId
         ? this.ticketService.update(this.ticketId, formData)
@@ -133,13 +134,17 @@ export class FormTicket {
           ticketStatus: ticket.ticketStatus
         });
 
-        if (ticket.imageUrls) {
-          this.existingImageUrls = ticket.imageUrls;
+        if (ticket.imagesAttachedPaths?.length) {
+          const imageBlobObservables = ticket.imagesAttachedPaths.map((filename: string) =>
+            this.ticketService.getTicketImage(filename).pipe(
+              map(blob => URL.createObjectURL(blob))
+            )
+          );
+
+          forkJoin<string[]>(imageBlobObservables).subscribe((urls: string[]) => {
+            this.existingImageUrls.set(urls);
+          });
         }
-      },
-      error: (err) => {
-        console.error('Erro ao carregar ticket', err);
-        this.snackBar.open('Erro ao carregar o ticket', 'Fechar', { duration: 3000 });
       }
     });
   }

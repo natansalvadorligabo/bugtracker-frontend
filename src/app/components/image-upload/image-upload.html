@@ -3,7 +3,7 @@
   (click)="fileInput.click()"
 >
   <div class="flex flex-col items-start justify-center space-y-2">
-    <button type="button" matButton="tonal">
+    <button type="button" matButton="tonal" [disabled]="readonly">
       <mat-icon>add_photo_alternate</mat-icon>
       Anexar arquivos
     </button>
@@ -15,12 +15,13 @@
     multiple
     accept="image/*"
     class="hidden"
+    [disabled]="readonly"
     (change)="onFileSelected($event)"
   />
 </div>
 
 <div class="flex flex-wrap gap-2 mt-4">
-  @for (url of previewUrls; track $index) {
+  @for (url of previewUrls(); track $index) {
     <div class="relative group">
       <img
         [src]="url"
@@ -30,6 +31,8 @@
       />
       <button
         type="button"
+        [disabled]="readonly"
+        [hidden]="readonly"
         class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-bl px-1 py-0.5 opacity-0 group-hover:opacity-100 transition"
         (click)="removeImage($index)"
       >
@@ -44,7 +47,7 @@
     class="fixed inset-0 bg-[rgb(0_0_0_/_60%)] flex items-center justify-center z-500"
     (click)="closePreview()"
   >
-    <img  
+    <img
       [src]="fullPreviewUrl"
       class="max-w-[90vw] max-h-[90vh] object-contain rounded shadow-lg"
       alt="Preview grande"

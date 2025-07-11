@@ -31,7 +31,10 @@
           }
       </mat-form-field>
 
-      <app-image-upload [initialUrls]="existingImageUrls" (filesSelected)="selectedFiles = $event"/>
+      <app-image-upload
+        [initialUrls]="existingImageUrls()"
+        [readonly]="ticketId !== null"
+      />
 
       <p align="end">
         <button matButton="filled" class="w-28" (click)="onSubmit()">

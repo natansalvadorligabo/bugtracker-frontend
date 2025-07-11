@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, NgZone, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, NgZone, OnChanges, Output, signal, Signal, WritableSignal, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -8,22 +8,24 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './image-upload.html',
   styleUrl: './image-upload.scss'
 })
-export class ImageUpload {
+export class ImageUpload implements OnChanges {
   @Input() initialUrls: string[] = [];
   @Output() filesSelected = new EventEmitter<File[]>();
 
   private zone = inject(NgZone);
+  @Input() readonly = false;
 
-  previewUrls: string[] = [];
+  previewUrls: WritableSignal<string[]> = signal([]);
   selectedFiles: File[] = [];
 
-  ngOnInit() {
-    if (this.initialUrls.length > 0) {
-      this.previewUrls = [...this.initialUrls];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialUrls']) {
+      this.previewUrls.set([...this.initialUrls]);
     }
   }
 
   onFileSelected(event: any) {
+    if (this.readonly) return;
     const files: FileList = event.target.files;
     this.addFiles(Array.from(files));
     event.target.value = '';
@@ -31,12 +33,11 @@ export class ImageUpload {
 
   addFiles(files: File[]) {
     for (let file of files) {
-      this.selectedFiles.push(file);
-
       const reader = new FileReader();
       reader.onload = () => {
         this.zone.run(() => {
-          this.previewUrls.push(reader.result as string);
+          this.previewUrls.set([...this.previewUrls(), reader.result as string]);
+          this.selectedFiles.push(file);
           this.filesSelected.emit(this.selectedFiles);
         });
       };
@@ -45,8 +46,15 @@ export class ImageUpload {
   }
 
   removeImage(index: number) {
-    this.previewUrls.splice(index, 1);
-    this.selectedFiles.splice(index, 1);
+    if (this.readonly) return;
+    const updatedPreviews = [...this.previewUrls()];
+    updatedPreviews.splice(index, 1);
+    this.previewUrls.set(updatedPreviews);
+
+    if (index < this.selectedFiles.length) {
+      this.selectedFiles.splice(index, 1);
+    }
+
     this.filesSelected.emit(this.selectedFiles);
   }
 
