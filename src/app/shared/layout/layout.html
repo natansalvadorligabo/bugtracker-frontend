@@ -1,4 +1,4 @@
-<div class="container" [class.is-mobile]="isMobile()">
+<div class="container max-w-full!" [class.is-mobile]="isMobile()">
   <div class="border-toolbar">
     <mat-toolbar>
       <button matIconButton (click)="snav.toggle()">
@@ -11,6 +11,7 @@
       <span class="spacer"></span>
       <button
         matIconButton
+        routerLink="user"
       >
         <mat-icon>account_circle</mat-icon>
       </button>

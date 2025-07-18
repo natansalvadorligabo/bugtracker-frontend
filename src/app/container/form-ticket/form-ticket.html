@@ -1,0 +1,55 @@
+<div class="flex flex-col justify-between items-center py-10 px-15">
+
+  <section class="w-full mb-8">
+    <span class="text-3xl">{{ ticketId ? 'Editar Ticket' : 'Novo Ticket' }}</span>
+  </section>
+
+  <section class="w-full">
+    <form [formGroup]="form" class="space-y-1">
+
+      <input type="hidden" formControlName="ticketStatus" value="PENDING" />
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Título</mat-label>
+        <textarea matInput formControlName="title" placeholder="Ex. PC pifou após jogar água nele"></textarea>
+        @if (form.get('title')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "title") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput formControlName="description" placeholder="Ex. Meu PC pifou..."></textarea>
+        @if (form.get('description')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "description") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Categoria</mat-label>
+          <mat-select formControlName="ticketCategoryId">
+            @for (category of categories; track $index) {
+              <mat-option [value]="category.ticketCategoryId">
+                {{ category.description }}
+              </mat-option>
+            }
+          </mat-select>
+          @if (form.get('ticketCategoryId')?.invalid) {
+            <mat-error>{{ formUtils.getErrorMessage(form, 'ticketCategoryId') }}</mat-error>
+          }
+      </mat-form-field>
+
+      <app-image-upload
+        [initialUrls]="existingImageUrls()"
+        [readonly]="ticketId !== null"
+        (filesSelected)="selectedFiles.set($event)"
+      />
+
+      <p align="end">
+        <button matButton="filled" class="w-28" (click)="onSubmit()">
+          {{ ticketId ? 'Salvar' : 'Criar' }}
+        </button>
+      </p>
+    </form>
+  </section>
+</div>
