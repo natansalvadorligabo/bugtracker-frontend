@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+  import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -11,6 +11,23 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./container/tickets/tickets').then((m) => m.Tickets),
       },
+      {
+        path: 'tickets/new',
+        loadComponent: () =>
+          import('./container/form-ticket/form-ticket').then((m) => m.FormTicket),
+      },
+      {
+        path: 'tickets/edit/:id',
+        loadComponent: () =>
+          import('./container/form-ticket/form-ticket').then(m => m.FormTicket)
+      },
+      {
+        path: 'user',
+        loadComponent: () =>
+          import('./container/user-profile/user-profile').then(
+            (m) => m.UserProfile
+          ),
+      },
     ],
   },
 
@@ -22,13 +39,6 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./container/login/login').then((m) => m.Login),
-  },
-  {
-    path: 'user',
-    loadComponent: () =>
-      import('./container/user-profile/user-profile').then(
-        (m) => m.UserProfile
-      ),
   },
   {
     path: 'account-recovery',

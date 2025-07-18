@@ -1,0 +1,7 @@
+.drag-zone {
+  transition: border 0.2s;
+}
+
+.drag-zone.dragging {
+  border-color: #3b82f6;
+}
