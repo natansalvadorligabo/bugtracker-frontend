@@ -19,7 +19,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../model/user';
 import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
-import { AuthService } from '../../services/auth-service.js';
+import { AuthService } from '../../services/auth/auth-service.js';
 
 @Component({
   selector: 'app-login',
