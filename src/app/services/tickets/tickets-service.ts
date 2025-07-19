@@ -13,12 +13,6 @@ export class TicketsService {
   private httpClient = inject(HttpClient);
 
   getTickets() {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
-    return this.httpClient.get<Ticket[]>(`${this.API_URL}/tickets`, {
-      headers,
-    });
+    return this.httpClient.get<Ticket[]>(`${this.API_URL}/tickets`);
   }
 }

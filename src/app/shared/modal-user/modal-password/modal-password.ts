@@ -162,7 +162,6 @@ export class ModalPasswordComponent {
       ],
     });
 
-    // Listener para revalidar confirmação quando nova senha mudar
     this.form.get('newPassword')?.valueChanges.subscribe(() => {
       this.form.get('confirmPassword')?.updateValueAndValidity();
     });
