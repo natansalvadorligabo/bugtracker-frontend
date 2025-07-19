@@ -16,12 +16,7 @@ export class UsersService {
 
   private httpClient = inject(HttpClient);
 
-  register(user: UserRegister) {
-    const formData = new FormData();
-    formData.append('name', user.name);
-    formData.append('email', user.email);
-    formData.append('password', user.password);
-
+  register(formData: FormData) {
     return this.httpClient.post<UserRegister>(
       `${this.API_URL}/auth/register`,
       formData

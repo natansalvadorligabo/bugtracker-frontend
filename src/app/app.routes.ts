@@ -1,4 +1,4 @@
-  import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -28,13 +28,14 @@ export const routes: Routes = [
             (m) => m.UserProfile
           ),
       },
+      {
+        path: 'users/new',
+        loadComponent: () =>
+          import('./container/form-user/form-user').then(
+            (m) => m.FormUser
+          ),
+      },
     ],
-  },
-
-  {
-    path: 'register',
-    loadComponent: () =>
-      import('./container/register/register').then((m) => m.Register),
   },
   {
     path: 'login',

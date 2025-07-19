@@ -16,56 +16,66 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-form-user',
   imports: [
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatIconModule,
     MatCardModule,
     MatCheckboxModule,
     MatButtonModule,
+    MatSnackBarModule
   ],
-  templateUrl: './register.html',
-  styleUrl: './register.scss',
+  templateUrl: './form-user.html',
+  styleUrl: './form-user.scss'
 })
-export class Register {
-  form!: FormGroup;
+export class FormUser {
+form!: FormGroup;
 
   hide = signal(true);
 
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
+  private snackBar = inject(MatSnackBar);
   formUtils = inject(FormUtilsService);
+
+  roles: any[] = [];
 
   ngOnInit() {
     this.form = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          this.validateMatchPassword,
-        ],
-      ],
+      userRole: ['', [Validators.required]]
     });
+
+    this.loadRoles();
   }
 
-  togglePasswordVisibility() {
-    this.hide.set(!this.hide());
+  loadCategories() {
+    this.roleService.getRoles().subscribe({
+      next: (data) => this.roles = data,
+      error: (err) => {
+        console.error('Erro ao carregar funções', err);
+        this.snackBar.open('Erro ao carregar funções', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit() {
     if (this.form.valid) {
       this.userService.register(this.form.value).subscribe({
         next: (data) => {
-          alert('Usuário registrado com sucesso!');
+          this.snackBar.open(
+            'Usuário registrado com sucesso!' , 'Fechar',
+            { duration: 3000, panelClass: ['snackbar-success'] }
+          );
         },
         error: (err) => {
           console.error(err);
@@ -74,15 +84,5 @@ export class Register {
     } else {
       this.formUtils.validateAllFormFields(this.form);
     }
-  }
-
-  private validateMatchPassword(
-    control: AbstractControl
-  ): ValidationErrors | null {
-    const password = control.parent?.get('password');
-    const confirmPassword = control.parent?.get('confirmPassword');
-    return password?.value == confirmPassword?.value
-      ? null
-      : { notMatch: true };
   }
 }
