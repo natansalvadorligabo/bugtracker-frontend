@@ -6,16 +6,28 @@ import { TicketCategory } from '../../model/ticket-categories';
   providedIn: 'root',
 })
 export class TicketCategoriesService {
-  private readonly API_URL = '/bugtracker';
+  private readonly API_URL = '/bugtracker/categories';
 
   private httpClient = inject(HttpClient);
+
   getTicketCategories() {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
 
-    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}/categories`, {
+    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}`, {
       headers,
     });
+  }
+
+  getTicketCategoryById(categoryId: number) {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+
+    return this.httpClient.get<TicketCategory>(
+      `${this.API_URL}/${categoryId}`,
+      { headers }
+    );
   }
 }

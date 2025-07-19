@@ -14,6 +14,16 @@ export class TicketService {
   private httpClient = inject(HttpClient);
   private authService = inject(AuthService);
 
+  getTickets() {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+
+    return this.httpClient.get<Ticket[]>(`${this.API_URL}`, {
+      headers,
+    });
+  }
+
   save(formData: FormData) {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
@@ -24,12 +34,6 @@ export class TicketService {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.httpClient.put(`${this.API_URL}/${id}`, formData, { headers });
-  }
-
-  getCategories() {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.httpClient.get<any[]>('bugtracker/categories', { headers });
   }
 
   getTicketById(ticketId: number) {
@@ -43,7 +47,7 @@ export class TicketService {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
 
-    return this.httpClient.get(`/bugtracker/tickets/image/${filename}`, {
+    return this.httpClient.get(`${this.API_URL}/image/${filename}`, {
       headers,
       responseType: 'blob'
     });
