@@ -33,31 +33,16 @@ export class UsersService {
   }
 
   getUserProfile() {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
-    return this.httpClient.get<UserProfile>(`${this.API_URL}/users`, {
-      headers,
-    });
+    return this.httpClient.get<UserProfile>(`${this.API_URL}/users`);
   }
 
   getProfilePicture() {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
     return this.httpClient.get(`${this.API_URL}/users/picture`, {
-      headers,
       responseType: 'blob',
     });
   }
 
   updateUserProfile(data: UserUpdate) {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
     const formData = new FormData();
     if (data.name) {
       formData.append('name', data.name);
@@ -72,9 +57,7 @@ export class UsersService {
       formData.append('profilePicture', data.picture);
     }
 
-    return this.httpClient.put<UserUpdate>(`${this.API_URL}/users`, formData, {
-      headers: headers,
-    });
+    return this.httpClient.put<UserUpdate>(`${this.API_URL}/users`, formData);
   }
 
   recoveryPassword(email: string) {

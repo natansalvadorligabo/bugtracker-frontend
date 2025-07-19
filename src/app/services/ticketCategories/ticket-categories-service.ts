@@ -9,13 +9,8 @@ export class TicketCategoriesService {
   private readonly API_URL = '/bugtracker';
 
   private httpClient = inject(HttpClient);
+  
   getTicketCategories() {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
-    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}/categories`, {
-      headers,
-    });
+    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}/categories`);
   }
 }
