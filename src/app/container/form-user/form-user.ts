@@ -18,6 +18,8 @@ import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { RoleService } from '../../services/roles/role-service.js';
+import { Role } from '../../model/role';
 
 @Component({
   selector: 'app-form-user',
@@ -43,24 +45,25 @@ form!: FormGroup;
 
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
+  private roleService = inject(RoleService);
   private snackBar = inject(MatSnackBar);
   formUtils = inject(FormUtilsService);
 
-  roles: any[] = [];
+  roles: Role[] = [];
 
   ngOnInit() {
     this.form = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      userRole: ['', [Validators.required]]
+      userRoles: [[], [Validators.required]]
     });
 
     this.loadRoles();
   }
 
-  loadCategories() {
+  loadRoles() {
     this.roleService.getRoles().subscribe({
-      next: (data) => this.roles = data,
+      next: (data) => { this.roles = data },
       error: (err) => {
         console.error('Erro ao carregar funções', err);
         this.snackBar.open('Erro ao carregar funções', 'Fechar', { duration: 3000 });
@@ -70,7 +73,17 @@ form!: FormGroup;
 
   onSubmit() {
     if (this.form.valid) {
-      this.userService.register(this.form.value).subscribe({
+      const selectedRoleIds = this.form.get('userRoles')?.value;
+
+      const formData = new FormData();
+      formData.append('name', this.form.get('name')?.value);
+      formData.append('email', this.form.get('email')?.value);
+
+      selectedRoleIds.forEach((roleId: number) => {
+        formData.append('userRoles', roleId.toString());
+      });
+
+      this.userService.register(formData).subscribe({
         next: (data) => {
           this.snackBar.open(
             'Usuário registrado com sucesso!' , 'Fechar',

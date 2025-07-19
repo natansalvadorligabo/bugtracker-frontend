@@ -17,9 +17,10 @@ export class UsersService {
   private httpClient = inject(HttpClient);
 
   register(formData: FormData) {
-    return this.httpClient.post<UserRegister>(
+    return this.httpClient.post(
       `${this.API_URL}/auth/register`,
-      formData
+      formData,
+      { responseType: 'text' }
     );
   }
 

@@ -24,7 +24,7 @@
 
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Função</mat-label>
-          <mat-select formControlName="userRole">
+          <mat-select formControlName="userRoles" multiple>
             @for (role of roles; track $index) {
               <mat-option [value]="role.roleId">
                 {{ role.name }}

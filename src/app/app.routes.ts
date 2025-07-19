@@ -29,6 +29,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./container/form-user/form-user').then(
+            (m) => m.FormUser
+          ),
+      },
+      {
         path: 'users/new',
         loadComponent: () =>
           import('./container/form-user/form-user').then(
