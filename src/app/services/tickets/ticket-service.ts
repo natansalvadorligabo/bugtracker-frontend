@@ -1,7 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Ticket } from '../../model/ticket.js';
-import { AuthService } from '../auth/auth-service.js';
 import { Observable } from 'rxjs';
 
 
@@ -12,39 +11,25 @@ export class TicketService {
   private readonly API_URL = 'bugtracker/tickets';
 
   private httpClient = inject(HttpClient);
-  private authService = inject(AuthService);
 
   save(formData: FormData) {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.httpClient.post(`${this.API_URL}`, formData, { headers });
+    return this.httpClient.post(`${this.API_URL}`, formData);
   }
 
   update(id: number, formData: FormData) {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.httpClient.put(`${this.API_URL}/${id}`, formData, { headers });
+    return this.httpClient.put(`${this.API_URL}/${id}`, formData);
   }
 
   getCategories() {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.httpClient.get<any[]>('bugtracker/categories', { headers });
+    return this.httpClient.get<any[]>('bugtracker/categories');
   }
 
   getTicketById(ticketId: number) {
-    const token = this.authService.getToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.httpClient.get<any>(`${this.API_URL}/${ticketId}`, { headers });
+    return this.httpClient.get<any>(`${this.API_URL}/${ticketId}`);
   }
 
   getTicketImage(filename: string): Observable<Blob> {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
     return this.httpClient.get(`/bugtracker/tickets/image/${filename}`, {
-      headers,
       responseType: 'blob'
     });
   }
