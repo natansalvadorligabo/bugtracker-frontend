@@ -1,16 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Ticket } from '../../model/ticket.js';
 import { Observable } from 'rxjs';
+import { Ticket } from '../../model/ticket.js';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketService {
-  private readonly API_URL = 'bugtracker/tickets';
+  private readonly API_URL = '/bugtracker/tickets';
 
   private httpClient = inject(HttpClient);
+
+  getTickets() {
+    return this.httpClient.get<Ticket[]>(`${this.API_URL}`);
+  }
 
   save(formData: FormData) {
     return this.httpClient.post(`${this.API_URL}`, formData);
@@ -18,10 +22,6 @@ export class TicketService {
 
   update(id: number, formData: FormData) {
     return this.httpClient.put(`${this.API_URL}/${id}`, formData);
-  }
-
-  getCategories() {
-    return this.httpClient.get<any[]>('bugtracker/categories');
   }
 
   getTicketById(ticketId: number) {

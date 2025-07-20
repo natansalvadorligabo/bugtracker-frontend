@@ -8,12 +8,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { TicketsService } from '../../services/tickets/tickets-service';
+import { TicketService } from '../../services/tickets/ticket-service';
 import { Ticket } from '../../model/ticket';
-import { TicketCategoriesService } from '../../services/ticketCategories/ticket-categories-service';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketCategory } from '../../model/ticket-categories';
 import { UsersService } from '../../services/users/users-service';
-import { UserProfile } from '../../model/user';
 
 @Component({
   selector: 'app-tickets',
@@ -33,7 +32,7 @@ import { UserProfile } from '../../model/user';
 })
 export class Tickets implements OnInit, OnDestroy {
 
-  private ticketsService = inject(TicketsService);
+  private ticketsService = inject(TicketService);
   private ticketCategoriesService = inject(TicketCategoriesService);
   private userService = inject(UsersService);
   private cdr = inject(ChangeDetectorRef);
@@ -48,7 +47,7 @@ export class Tickets implements OnInit, OnDestroy {
   selectedStatuses: string[] = [];
   allTickets: Ticket[] = [];
   availableTagsList: TicketCategory[] = [];
-  
+
   availableStatuses = [
     { value: 'PENDING', label: 'Pendente', color: 'text-yellow-500' },
     { value: 'ATTACHED', label: 'Atribuído', color: 'text-orange-500' },
@@ -74,14 +73,14 @@ export class Tickets implements OnInit, OnDestroy {
     let filteredTickets = this.allTickets;
 
     if (this.searchTerm) {
-      filteredTickets = filteredTickets.filter(ticket => 
+      filteredTickets = filteredTickets.filter(ticket =>
         ticket.title && ticket.title.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     }
 
     if (this.selectedTags.length > 0) {
       filteredTickets = filteredTickets.filter(ticket =>
-        this.selectedTags.some(selectedTag => 
+        this.selectedTags.some(selectedTag =>
           ticket.ticketCategoryId === selectedTag.ticketCategoryId
         )
       );
@@ -128,13 +127,13 @@ export class Tickets implements OnInit, OnDestroy {
     this.ticketsSubscription = this.ticketsService.getTickets().subscribe({
       next: (tickets) => {
         if (this.user && this.user.id) {
-          this.allTickets = tickets.filter(ticket => 
+          this.allTickets = tickets.filter(ticket =>
             ticket.senderId === this.user!.id
           );
         } else {
           this.allTickets = tickets;
         }
-        
+
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -162,7 +161,7 @@ export class Tickets implements OnInit, OnDestroy {
   }
 
   getStatusInfo(status: string) {
-    return this.availableStatuses.find(s => s.value === status) || 
+    return this.availableStatuses.find(s => s.value === status) ||
            { value: status, label: status, color: 'text-gray-500' };
   }
 
