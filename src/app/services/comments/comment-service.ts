@@ -15,7 +15,7 @@ export class CommentService {
     return this.httpClient.get<Message[]>(`${this.API_URL}/tickets/${ticketId}`);
   }
 
-  save(message: any): Observable<Message> {
+  save(message: MessageCreate): Observable<Message> {
     return this.httpClient.post<Message>(`${this.API_URL}/tickets/${message.ticketId}`, message);
   }
 }
