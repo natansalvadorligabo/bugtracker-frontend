@@ -149,9 +149,9 @@
       }
 
       <form [formGroup]="messageForm" class="mt-6 flex gap-3">
-        <mat-form-field appearance="fill" class="flex-grow">
+        <mat-form-field appearance="outline" class="w-full" >
           <mat-label>Nova mensagem</mat-label>
-          <textarea matInput formControlName="message" class="w-full"></textarea>
+          <textarea matInput formControlName="message"></textarea>
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="sendMessage()">
           Enviar

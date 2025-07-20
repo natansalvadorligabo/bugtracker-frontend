@@ -33,4 +33,8 @@ export class TicketService {
       responseType: 'blob'
     });
   }
+
+  getTicketImagesById(ticketId: number): Observable<Blob[]> {
+    return this.httpClient.get<Blob[]>(`${this.API_URL}/image/${ticketId}`);
+  }
 }
