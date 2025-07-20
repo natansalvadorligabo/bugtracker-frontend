@@ -99,14 +99,8 @@ export class ViewTicket {
     if (!this.ticket) return;
 
     this.ticketService.getTicketImagesById(this.ticket.ticketId).subscribe({
-      next: (images: Blob[] | Blob) => {
-        if (Array.isArray(images)) {
-          this.ticketImages = images.map((img) => URL.createObjectURL(img));
-        } else if (images instanceof Blob) {
-          this.ticketImages = [URL.createObjectURL(images)];
-        } else {
-          this.ticketImages = [];
-        }
+      next: (images: Blob[]) => {
+        this.ticketImages = images.map((img) => URL.createObjectURL(img));
       },
       error: (err) => {
         console.error('Error fetching ticket images:', err);
