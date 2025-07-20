@@ -7,13 +7,13 @@
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 px-15 mb-6 mt-6">
       <mat-form-field class="flex-1" appearance="outline">
         <mat-label>Buscar por cards</mat-label>
-        <input matInput 
-               placeholder="Digite o nome do card..." 
+        <input matInput
+               placeholder="Digite o nome do card..."
                [(ngModel)]="searchTerm"
                type="text">
-        <button *ngIf="searchTerm" 
-                matSuffix 
-                mat-icon-button 
+        <button *ngIf="searchTerm"
+                matSuffix
+                mat-icon-button
                 aria-label="Limpar busca"
                 (click)="clearSearch()"
                 type="button">
@@ -46,7 +46,7 @@
           </h4>
           <div class="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-0">
             <mat-chip-set>
-              <mat-chip-option *ngFor="let tag of availableTags" 
+              <mat-chip-option *ngFor="let tag of availableTags"
                              (click)="toggleTag(tag)"
                              [selected]="isTagSelected(tag)"
                              [value]="tag"
@@ -64,7 +64,7 @@
           </h4>
           <div class="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-0">
             <mat-chip-set>
-              <mat-chip-option *ngFor="let status of availableStatuses" 
+              <mat-chip-option *ngFor="let status of availableStatuses"
                              (click)="toggleStatus(status.value)"
                              [selected]="isStatusSelected(status.value)"
                              [value]="status.value"
@@ -77,27 +77,27 @@
 
         <mat-action-row *ngIf="selectedTags.length > 0 || selectedStatuses.length > 0" class="px-2 sm:px-0">
           <button *ngIf="selectedTags.length > 0"
-                  mat-button 
-                  (click)="clearTags()" 
+                  mat-button
+                  (click)="clearTags()"
                   color="warn"
                   class="text-xs sm:text-sm mr-2">
             <mat-icon class="text-base sm:text-lg">local_offer_off</mat-icon>
             <span class="hidden sm:inline ml-1">Limpar tags</span>
             <span class="sm:hidden ml-1">Tags</span>
           </button>
-          
+
           <button *ngIf="selectedStatuses.length > 0"
-                  mat-button 
-                  (click)="clearStatuses()" 
+                  mat-button
+                  (click)="clearStatuses()"
                   color="warn"
                   class="text-xs sm:text-sm mr-2">
             <mat-icon class="text-base sm:text-lg">assignment_turned_in</mat-icon>
             <span class="hidden sm:inline ml-1">Limpar status</span>
             <span class="sm:hidden ml-1">Status</span>
           </button>
-          
-          <button mat-button 
-                  (click)="clearFilters()" 
+
+          <button mat-button
+                  (click)="clearFilters()"
                   color="warn"
                   class="text-xs sm:text-sm">
             <mat-icon class="text-base sm:text-lg">clear_all</mat-icon>
@@ -109,7 +109,8 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-15 pb-6">
-      <div *ngFor="let ticket of tickets" class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative">
+      <div *ngFor="let ticket of tickets" class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative"
+          (click)="viewTicket(ticket.ticketId)">
         <div class="absolute top-3 right-3">
           <span class="px-2 py-1 rounded-full text-xs font-medium border"
                 [class]="getStatusInfo(ticket.ticketStatus).color"
@@ -123,7 +124,7 @@
             {{ getStatusInfo(ticket.ticketStatus).label }}
           </span>
         </div>
-        
+
         <h3 class="text-lg mb-4 pr-20">{{ ticket.title || 'Sem título' }}</h3>
         <p class="text-gray-600 line-clamp-3">{{ ticket.description }}</p>
         <div class="flex flex-wrap gap-2 mt-auto">
@@ -156,31 +157,31 @@
             <span *ngIf="isSearching && isFiltering">Nenhum card encontrado com esses critérios!</span>
           </h3>
           <p class="text-gray-500 mb-4">Tente ajustar os filtros ou limpe-os para ver todas as tarefas.</p>
-          
+
           <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <button *ngIf="isSearching" 
-                    mat-stroked-button 
+            <button *ngIf="isSearching"
+                    mat-stroked-button
                     (click)="clearSearch()">
               <mat-icon>clear</mat-icon>
               Limpar busca
             </button>
-            
-            <button *ngIf="selectedTags.length > 0" 
-                    mat-stroked-button 
+
+            <button *ngIf="selectedTags.length > 0"
+                    mat-stroked-button
                     (click)="clearTags()">
               <mat-icon>local_offer_off</mat-icon>
               Limpar tags
             </button>
 
-            <button *ngIf="selectedStatuses.length > 0" 
-                    mat-stroked-button 
+            <button *ngIf="selectedStatuses.length > 0"
+                    mat-stroked-button
                     (click)="clearStatuses()">
               <mat-icon>assignment_turned_in</mat-icon>
               Limpar status
             </button>
-            
-            <button *ngIf="(isSearching && isFiltering) || (selectedTags.length > 0 && selectedStatuses.length > 0)" 
-                    mat-stroked-button 
+
+            <button *ngIf="(isSearching && isFiltering) || (selectedTags.length > 0 && selectedStatuses.length > 0)"
+                    mat-stroked-button
                     (click)="clearFilters()">
               <mat-icon>clear_all</mat-icon>
               Limpar tudo

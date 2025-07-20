@@ -32,6 +32,10 @@ export class UsersService {
     return this.httpClient.post<UserLogin>(`${this.API_URL}/auth/login`, user);
   }
 
+  getUserById(userId: number) {
+    return this.httpClient.get<UserProfile>(`${this.API_URL}/users/${userId}`);
+  }
+
   getUserProfile() {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,

@@ -1,9 +1,13 @@
   import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
+import { noAuthGuard } from './guards/no-auth.guard';
+import { ticketResolver } from './services/tickets/ticket-resolver';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./shared/layout/layout').then((m) => m.Layout),
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'tickets', pathMatch: 'full' },
       {
@@ -22,6 +26,14 @@ export const routes: Routes = [
           import('./container/form-ticket/form-ticket').then(m => m.FormTicket)
       },
       {
+        path: 'tickets/:id',
+        loadComponent: () =>
+          import('./container/view-ticket/view-ticket').then(m => m.ViewTicket),
+        resolve: {
+          ticket: ticketResolver
+        }
+      },
+      {
         path: 'user',
         loadComponent: () =>
           import('./container/user-profile/user-profile').then(
@@ -30,15 +42,10 @@ export const routes: Routes = [
       },
     ],
   },
-
-  {
-    path: 'register',
-    loadComponent: () =>
-      import('./container/register/register').then((m) => m.Register),
-  },
   {
     path: 'login',
     loadComponent: () => import('./container/login/login').then((m) => m.Login),
+    canActivate: [noAuthGuard],
   },
   {
     path: 'account-recovery',
@@ -46,6 +53,7 @@ export const routes: Routes = [
       import('./container/password-recovery/password-recovery').then(
         (m) => m.PasswordRecovery
       ),
+    canActivate: [noAuthGuard],
   },
   { path: '**', redirectTo: '' },
 ];
