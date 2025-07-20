@@ -1,7 +1,5 @@
-  import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
-import { noAuthGuard } from './guards/no-auth.guard';
-import { ticketResolver } from './services/tickets/ticket-resolver';
 
 export const routes: Routes = [
   {
@@ -29,9 +27,6 @@ export const routes: Routes = [
         path: 'tickets/:id',
         loadComponent: () =>
           import('./container/view-ticket/view-ticket').then(m => m.ViewTicket),
-        resolve: {
-          ticket: ticketResolver
-        }
       },
       {
         path: 'user',
@@ -40,12 +35,25 @@ export const routes: Routes = [
             (m) => m.UserProfile
           ),
       },
+      // {
+      //   path: 'users',
+      //   loadComponent: () =>
+      //     import('./container/form-user/form-user').then(
+      //       (m) => m.FormUser
+      //     ),
+      // },
+      {
+        path: 'users/new',
+        loadComponent: () =>
+          import('./container/form-user/form-user').then(
+            (m) => m.FormUser
+          ),
+      },
     ],
   },
   {
     path: 'login',
     loadComponent: () => import('./container/login/login').then((m) => m.Login),
-    canActivate: [noAuthGuard],
   },
   {
     path: 'account-recovery',
@@ -53,7 +61,6 @@ export const routes: Routes = [
       import('./container/password-recovery/password-recovery').then(
         (m) => m.PasswordRecovery
       ),
-    canActivate: [noAuthGuard],
   },
   { path: '**', redirectTo: '' },
 ];

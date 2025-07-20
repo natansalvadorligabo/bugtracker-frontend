@@ -11,23 +11,13 @@ export class TicketCategoriesService {
   private httpClient = inject(HttpClient);
 
   getTicketCategories() {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
-    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}`, {
-      headers,
-    });
+    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}`);
   }
 
   getTicketCategoryById(categoryId: number) {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-
     return this.httpClient.get<TicketCategory>(
-      `${this.API_URL}/${categoryId}`,
-      { headers }
+      `${this.API_URL}/${categoryId}`
     );
   }
+
 }

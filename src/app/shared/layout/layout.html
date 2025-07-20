@@ -5,16 +5,11 @@
         <mat-icon>menu</mat-icon>
       </button>
       <mat-toolbar class="flex gap-1 items-center">
-        <img src="favicon-bug.png" alt="Bug" class="size-8">
+        <img src="favicon-bug.png" alt="Bug" class="size-8" />
         <h1>BugTracker</h1>
       </mat-toolbar>
       <span class="spacer"></span>
-      <button
-        matIconButton
-        routerLink="user"
-      >
-        <mat-icon>account_circle</mat-icon>
-      </button>
+      <app-user-button></app-user-button>
     </mat-toolbar>
   </div>
 
@@ -34,12 +29,15 @@
           <mat-icon matListItemIcon>report</mat-icon>
           <p matListItemTitle>Tickets</p>
         </a>
+        <a mat-list-item routerLink="users" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>groups</mat-icon>
+          <p matListItemTitle>Usuários</p>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
-
   </mat-sidenav-container>
 </div>

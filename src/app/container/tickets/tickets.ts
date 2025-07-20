@@ -8,13 +8,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { TicketService } from '../../services/tickets/ticket-service';
 import { Ticket } from '../../model/ticket';
-import { TicketCategoriesService } from '../../services/ticketCategories/ticket-categories-service';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketCategory } from '../../model/ticket-categories';
 import { UsersService } from '../../services/users/users-service';
-import { UserProfile } from '../../model/user';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TicketService } from '../../services/tickets/ticket-service';
 
 @Component({
   selector: 'app-tickets',

@@ -1,12 +1,12 @@
 <div class="h-screen w-auto">
-  <div class="bg-gray-100 min-h-screen">
+  <div class="min-h-screen">
     <div class="px-15 py-4">
       <button class="tickets-button text-3xl font-semibold cursor-pointer opacity-75 hover:opacity-90 active:scale-95">Meus tickets</button>
     </div>
 
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 px-15 mb-6 mt-6">
       <mat-form-field class="flex-1" appearance="outline">
-        <mat-label>Buscar por cards</mat-label>
+        <mat-label>Buscar por título</mat-label>
         <input matInput
                placeholder="Digite o nome do card..."
                [(ngModel)]="searchTerm"
@@ -152,7 +152,7 @@
             search_off
           </mat-icon>
           <h3 class="text-xl font-semibold text-gray-600 mb-2">
-            <span *ngIf="isSearching && !isFiltering">Você não possui cards com esse título!</span>
+            <span *ngIf="isSearching && !isFiltering">Você não possui tickets com esse título!</span>
             <span *ngIf="!isSearching && isFiltering">Nenhum card encontrado com esses filtros!</span>
             <span *ngIf="isSearching && isFiltering">Nenhum card encontrado com esses critérios!</span>
           </h3>
