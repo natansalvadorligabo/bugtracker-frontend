@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./shared/layout/layout').then((m) => m.Layout),
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'tickets', pathMatch: 'full' },
       {
@@ -28,13 +30,13 @@ export const routes: Routes = [
             (m) => m.UserProfile
           ),
       },
-      {
-        path: 'users',
-        loadComponent: () =>
-          import('./container/form-user/form-user').then(
-            (m) => m.FormUser
-          ),
-      },
+      // {
+      //   path: 'users',
+      //   loadComponent: () =>
+      //     import('./container/form-user/form-user').then(
+      //       (m) => m.FormUser
+      //     ),
+      // },
       {
         path: 'users/new',
         loadComponent: () =>
