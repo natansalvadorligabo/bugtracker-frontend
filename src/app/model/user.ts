@@ -1,13 +1,17 @@
 export interface User {
-  id: number;
+  userId: number;
   name: string;
   email: string;
+  profilePicturePath?: string;
+  roles: string[];
 }
 
 export interface UserProfile {
-  id: number;
+  userId: number;
   name: string;
   email: string;
+  profilePicturePath?: string;
+  roles: string[];
 }
 
 export interface UserLogin {

@@ -37,7 +37,19 @@
       </mat-form-field>
 
       <p align="end">
-        <button matButton="filled" (click)="onSubmit()">Salvar</button>
+        <button
+          matButton="filled"
+          (click)="onSubmit()"
+          [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <ng-container>
+              <mat-icon>sync</mat-icon>
+              Salvando...
+            </ng-container>
+          } @else {
+            Salvar
+          }
+        </button>
       </p>
     </form>
   </section>

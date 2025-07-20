@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
+  User,
   UserLogin,
   UserProfile,
   UserRegister,
@@ -27,7 +28,11 @@ export class UsersService {
   login(user: UserLogin) {
     return this.httpClient.post<UserLogin>(`${this.API_URL}/auth/login`, user);
   }
-
+   
+  getUsers() {
+    return this.httpClient.get<User[]>(`${this.API_URL}/users`);
+  }
+  
   getUserById(userId: number) {
     return this.httpClient.get<UserProfile>(`${this.API_URL}/users/${userId}`);
   }

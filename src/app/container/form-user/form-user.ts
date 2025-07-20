@@ -42,6 +42,7 @@ export class FormUser {
 form!: FormGroup;
 
   hide = signal(true);
+  isSubmitting = false;
 
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
@@ -72,7 +73,13 @@ form!: FormGroup;
   }
 
   onSubmit() {
+    if (this.isSubmitting) {
+      return; // Previne múltiplos submits
+    }
+
     if (this.form.valid) {
+      this.isSubmitting = true; // Inicia o loading
+
       const selectedRoleIds = this.form.get('userRoles')?.value;
 
       const formData = new FormData();
@@ -85,13 +92,22 @@ form!: FormGroup;
 
       this.userService.register(formData).subscribe({
         next: (data) => {
+          this.isSubmitting = false; // Para o loading
           this.snackBar.open(
             'Usuário registrado com sucesso!' , 'Fechar',
             { duration: 3000, panelClass: ['snackbar-success'] }
           );
+          
+          // Reset do formulário após sucesso
+          this.form.reset();
         },
         error: (err) => {
+          this.isSubmitting = false; // Para o loading em caso de erro
           console.error(err);
+          this.snackBar.open('Erro ao registrar usuário.', 'Fechar', {
+            duration: 3000,
+            panelClass: ['snackbar-error'],
+          });
         },
       });
     } else {
