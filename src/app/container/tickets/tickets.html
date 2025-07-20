@@ -109,7 +109,8 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-15 pb-6">
-      <div *ngFor="let ticket of tickets" class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative">
+      <div *ngFor="let ticket of tickets" class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative"
+          (click)="viewTicket(ticket.ticketId)">
         <div class="absolute top-3 right-3">
           <span class="px-2 py-1 rounded-full text-xs font-medium border"
                 [class]="getStatusInfo(ticket.ticketStatus).color"
