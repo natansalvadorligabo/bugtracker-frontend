@@ -126,9 +126,9 @@ export class Tickets implements OnInit, OnDestroy {
   private loadTickets(): void {
     this.ticketsSubscription = this.ticketsService.getTickets().subscribe({
       next: (tickets) => {
-        if (this.user && this.user.id) {
+        if (this.user && this.user.userId) {
           this.allTickets = tickets.filter(ticket =>
-            ticket.senderId === this.user!.id
+            ticket.senderId === this.user!.userId
           );
         } else {
           this.allTickets = tickets;
