@@ -13,4 +13,11 @@ export class TicketCategoriesService {
   getTicketCategories() {
     return this.httpClient.get<TicketCategory[]>(`${this.API_URL}`);
   }
+
+  getTicketCategoryById(categoryId: number) {
+    return this.httpClient.get<TicketCategory>(
+      `${this.API_URL}/${categoryId}`
+    );
+  }
+
 }

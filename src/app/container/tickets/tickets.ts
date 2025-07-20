@@ -13,6 +13,7 @@ import { Ticket } from '../../model/ticket';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketCategory } from '../../model/ticket-categories';
 import { UsersService } from '../../services/users/users-service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-tickets',
@@ -32,10 +33,12 @@ import { UsersService } from '../../services/users/users-service';
 })
 export class Tickets implements OnInit, OnDestroy {
 
-  private ticketsService = inject(TicketService);
+  private ticketService = inject(TicketService);
   private ticketCategoriesService = inject(TicketCategoriesService);
   private userService = inject(UsersService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   ticketCategoriesSubscription: any;
   ticketsSubscription: any;
@@ -124,7 +127,7 @@ export class Tickets implements OnInit, OnDestroy {
   }
 
   private loadTickets(): void {
-    this.ticketsSubscription = this.ticketsService.getTickets().subscribe({
+    this.ticketsSubscription = this.ticketService.getTickets().subscribe({
       next: (tickets) => {
         if (this.user && this.user.id) {
           this.allTickets = tickets.filter(ticket =>
@@ -207,5 +210,9 @@ export class Tickets implements OnInit, OnDestroy {
     this.selectedTags = [];
     this.selectedStatuses = [];
     this.searchTerm = '';
+  }
+
+  viewTicket(ticketId: number) {
+    this.router.navigate([ticketId], { relativeTo: this.route });
   }
 }
