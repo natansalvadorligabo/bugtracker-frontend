@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserProfile as UserProfileModel } from '../../model/user';
 import { ModalService } from '../../services/modal/modal-service';
+import { ProfilePictureService } from '../../services/profile-picture/profile-picture-service';
 import { UsersService } from '../../services/users/users-service';
 import { ProfileRowLinkComponent } from '../../shared/profile-row-link/profile-row-link';
 
@@ -34,6 +35,7 @@ export class UserProfile implements OnInit {
   private userService = inject(UsersService);
   private modalService = inject(ModalService);
   private snackBar = inject(MatSnackBar);
+  private profilePictureService = inject(ProfilePictureService);
 
   user = signal<UserProfileModel | null>(null);
   pictureUrl = signal<string | null>(null);
@@ -83,17 +85,11 @@ export class UserProfile implements OnInit {
   }
 
   private loadProfilePicture(): void {
-    this.userService.getProfilePicture().subscribe({
-      next: (blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          this.pictureUrl.set(url);
-        }
-      },
-      error: () => {
-        this.pictureUrl.set(null);
-      },
+    this.profilePictureService.profilePicture$.subscribe((url) => {
+      this.pictureUrl.set(url);
     });
+
+    this.profilePictureService.loadProfilePicture();
   }
 
   private updateUserName(newName: string): void {
@@ -135,6 +131,7 @@ export class UserProfile implements OnInit {
           this.pictureUrl.set(e.target?.result as string);
         };
         reader.readAsDataURL(file);
+        this.profilePictureService.refreshProfilePicture();
         this.showSuccessMessage('Foto do perfil atualizada com sucesso!');
       },
       error: () => {

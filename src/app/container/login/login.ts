@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { LoginResponse } from '../../model/user';
 import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
@@ -47,6 +47,7 @@ export class Login {
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
 
@@ -69,11 +70,12 @@ export class Login {
       this.userService.login(this.form.value).subscribe({
         next: (response: any) => {
           let loginResponse = response as LoginResponse;
-          if (loginResponse.token)
-            //ocalStorage.setItem('token', loginResponse.token);
+          if (loginResponse.token) {
             this.authService.setToken(loginResponse.token);
+          }
 
-          this.router.navigate(['/home']);
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigate([returnUrl]);
           this.loading.set(false);
         },
         error: (error: HttpErrorResponse) => {

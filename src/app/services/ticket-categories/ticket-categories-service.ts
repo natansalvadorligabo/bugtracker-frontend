@@ -6,11 +6,11 @@ import { TicketCategory } from '../../model/ticket-categories';
   providedIn: 'root',
 })
 export class TicketCategoriesService {
-  private readonly API_URL = '/bugtracker';
+  private readonly API_URL = '/bugtracker/categories';
 
   private httpClient = inject(HttpClient);
-  
+
   getTicketCategories() {
-    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}/categories`);
+    return this.httpClient.get<TicketCategory[]>(`${this.API_URL}`);
   }
 }

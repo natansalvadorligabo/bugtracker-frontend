@@ -1,18 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  Ticket
-} from '../../model/ticket';
+import { Role } from '../../model/role.js';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class TicketsService {
+export class RoleService {
   private readonly API_URL = '/bugtracker';
 
   private httpClient = inject(HttpClient);
 
-  getTickets() {
-    return this.httpClient.get<Ticket[]>(`${this.API_URL}/tickets`);
+  getRoles() {
+    return this.httpClient.get<Role[]>(`${this.API_URL}/roles`);
   }
 }

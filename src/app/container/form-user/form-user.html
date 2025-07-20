@@ -1,0 +1,44 @@
+<div class="flex flex-col justify-between items-center py-10 px-15">
+
+  <section class="w-full mb-8">
+    <span class="text-3xl">Novo Usuário</span>
+  </section>
+
+  <section class="w-full">
+    <form [formGroup]="form" class="space-y-1">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.get('name')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "name") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="email" />
+        @if (form.get('email')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "email") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Função</mat-label>
+          <mat-select formControlName="userRoles" multiple>
+            @for (role of roles; track $index) {
+              <mat-option [value]="role.roleId">
+                {{ role.name }}
+              </mat-option>
+            }
+          </mat-select>
+          @if (form.get('userRole')?.invalid) {
+            <mat-error>{{ formUtils.getErrorMessage(form, 'userRole') }}</mat-error>
+          }
+      </mat-form-field>
+
+      <p align="end">
+        <button matButton="filled" (click)="onSubmit()">Salvar</button>
+      </p>
+    </form>
+  </section>
+</div>
