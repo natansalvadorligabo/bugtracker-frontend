@@ -1,16 +1,11 @@
 <div class="h-screen w-auto">
   <div class="bg-gray-100 min-h-screen">
     <div class="px-15 py-6">
-      <div
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-      >
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
           <h1 class="text-2xl font-bold text-gray-900">Tickets</h1>
-          <span
-            class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-          >
-            {{ tickets.length }} {{ tickets.length === 1 ? 'ticket' : 'tickets'
-            }}
+          <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+            {{ tickets.length }} {{ tickets.length === 1 ? 'ticket' : 'tickets' }}
           </span>
         </div>
 
@@ -20,17 +15,10 @@
           [attr.aria-label]="'Alternar para ' + (showOnlyMyTickets ? 'todos os tickets' : 'meus tickets')"
         >
           <div class="flex items-center gap-2">
-            <mat-icon class="text-xl text-blue-600">
-              {{ showOnlyMyTickets ? 'person' : 'groups' }}
-            </mat-icon>
+            <mat-icon class="text-xl text-blue-600">{{ showOnlyMyTickets ? 'person' : 'groups' }}</mat-icon>
             <div class="flex flex-col items-start">
-              <span class="text-sm font-semibold text-blue-800">
-                {{ currentViewLabel }}
-              </span>
-              <span class="text-xs text-blue-600">
-                {{ showOnlyMyTickets ? 'Clique para ver todos' : 'Clique para
-                ver apenas seus' }}
-              </span>
+              <span class="text-sm font-semibold text-blue-800">{{ currentViewLabel }}</span>
+              <span class="text-xs text-blue-600">{{ showOnlyMyTickets ? 'Clique para ver todos' : 'Clique para ver apenas seus' }}</span>
             </div>
           </div>
           <mat-icon class="text-blue-500 text-base">swap_horiz</mat-icon>
@@ -47,17 +35,17 @@
             [class]="showOnlyMyTickets ? 'bg-green-500' : 'bg-purple-500'"
           ></div>
           <span class="text-sm font-medium">
-            {{ showOnlyMyTickets ? 'Visualizando apenas seus tickets' :
-            'Visualizando todos os tickets do sistema' }}
+            {{ showOnlyMyTickets ? 'Visualizando apenas seus tickets' : 'Visualizando todos os tickets do sistema' }}
           </span>
         </div>
       </div>
     </div>
 
-    <div
-      class="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 px-15 mb-6 mt-6"
-    >
-      <mat-form-field class="flex-1" appearance="outline">
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 px-15 mb-6 mt-6">
+      <mat-form-field
+        class="flex-1"
+        appearance="outline"
+      >
         <mat-label>Buscar por título</mat-label>
         <input
           matInput
@@ -91,9 +79,7 @@
             <span class="hidden lg:inline">Filtrar por tags e status</span>
             <span class="sm:hidden">Filtrar cards</span>
             @if (selectedTags.length > 0 || selectedStatuses.length > 0) {
-            <span class="ml-1 sm:ml-2">
-              ({{ selectedTags.length + selectedStatuses.length }})
-            </span>
+            <span class="ml-1 sm:ml-2">({{ selectedTags.length + selectedStatuses.length }})</span>
             }
           </mat-panel-description>
         </mat-expansion-panel-header>
@@ -160,9 +146,7 @@
             color="warn"
             class="text-xs sm:text-sm mr-2"
           >
-            <mat-icon class="text-base sm:text-lg"
-              >assignment_turned_in</mat-icon
-            >
+            <mat-icon class="text-base sm:text-lg">assignment_turned_in</mat-icon>
             <span class="hidden sm:inline ml-1">Limpar status</span>
             <span class="sm:hidden ml-1">Status</span>
           </button>
@@ -190,15 +174,12 @@
           diameter="60"
           mode="indeterminate"
           color="primary"
-        >
-        </mat-progress-spinner>
+        ></mat-progress-spinner>
         <p class="text-gray-600 mt-4">Carregando tickets...</p>
       </div>
     </div>
     } @if (!isLoading) {
-    <div
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-15 pb-6"
-    >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-15 pb-6">
       @for (ticket of tickets; track ticket.ticketId) {
       <div
         class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative"
@@ -224,9 +205,7 @@
         <p class="text-gray-600 line-clamp-3">{{ ticket.description }}</p>
         <div class="flex flex-wrap gap-2 mt-auto">
           @for (tag of getTagsForticket(ticket); track tag.ticketCategoryId) {
-          <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
-            >{{ tag.description }}</span
-          >
+          <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">{{ tag.description }}</span>
           }
         </div>
       </div>
@@ -251,15 +230,9 @@
           </h3>
           <p class="text-gray-500">
             @if (showOnlyMyTickets) {
-            <span
-              >Quando você criar suas primeiras tickets, elas aparecerão
-              aqui.</span
-            >
+            <span>Quando você criar suas primeiras tickets, elas aparecerão aqui.</span>
             } @if (!showOnlyMyTickets) {
-            <span
-              >Quando alguém criar tickets no sistema, eles aparecerão
-              aqui.</span
-            >
+            <span>Quando alguém criar tickets no sistema, eles aparecerão aqui.</span>
             }
           </p>
         </mat-card-content>
@@ -284,29 +257,38 @@
             <span>Nenhum ticket encontrado com esses critérios!</span>
             }
           </h3>
-          <p class="text-gray-500 mb-4">
-            Tente ajustar os filtros ou limpe-os para ver todos os tickets.
-          </p>
+          <p class="text-gray-500 mb-4">Tente ajustar os filtros ou limpe-os para ver todos os tickets.</p>
 
           <div class="flex flex-col sm:flex-row gap-3 justify-center">
             @if (isSearching) {
-            <button mat-stroked-button (click)="clearSearch()">
+            <button
+              mat-stroked-button
+              (click)="clearSearch()"
+            >
               <mat-icon>clear</mat-icon>
               Limpar busca
             </button>
             } @if (selectedTags.length > 0) {
-            <button mat-stroked-button (click)="clearTags()">
+            <button
+              mat-stroked-button
+              (click)="clearTags()"
+            >
               <mat-icon>local_offer_off</mat-icon>
               Limpar tags
             </button>
             } @if (selectedStatuses.length > 0) {
-            <button mat-stroked-button (click)="clearStatuses()">
+            <button
+              mat-stroked-button
+              (click)="clearStatuses()"
+            >
               <mat-icon>assignment_turned_in</mat-icon>
               Limpar status
             </button>
-            } @if ((isSearching && isFiltering) || (selectedTags.length > 0 &&
-            selectedStatuses.length > 0)) {
-            <button mat-stroked-button (click)="clearFilters()">
+            } @if ((isSearching && isFiltering) || (selectedTags.length > 0 && selectedStatuses.length > 0)) {
+            <button
+              mat-stroked-button
+              (click)="clearFilters()"
+            >
               <mat-icon>clear_all</mat-icon>
               Limpar tudo
             </button>
