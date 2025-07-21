@@ -1,15 +1,57 @@
 <div class="h-screen w-auto">
   <div class="bg-gray-100 min-h-screen">
-    <div class="px-15 py-4 flex items-center">
-      <button
-        class="tickets-button text-3xl font-semibold cursor-pointer opacity-75 hover:opacity-90 active:scale-95 flex items-center gap-3"
-        (click)="toggleTicketView()"
+    <div class="px-15 py-6">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
-        <mat-icon class="text-3xl">
-          {{ showOnlyMyTickets ? 'person' : 'groups' }}
-        </mat-icon>
-        {{ currentViewLabel }}
-      </button>
+        <div class="flex items-center gap-4">
+          <h1 class="text-2xl font-bold text-gray-900">Tickets</h1>
+          <span
+            class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+          >
+            {{ tickets.length }} {{ tickets.length === 1 ? 'ticket' : 'tickets'
+            }}
+          </span>
+        </div>
+
+        <button
+          class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-2 border-blue-200 hover:border-blue-300 rounded-lg transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md"
+          (click)="toggleTicketView()"
+          [attr.aria-label]="'Alternar para ' + (showOnlyMyTickets ? 'todos os tickets' : 'meus tickets')"
+        >
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-xl text-blue-600">
+              {{ showOnlyMyTickets ? 'person' : 'groups' }}
+            </mat-icon>
+            <div class="flex flex-col items-start">
+              <span class="text-sm font-semibold text-blue-800">
+                {{ currentViewLabel }}
+              </span>
+              <span class="text-xs text-blue-600">
+                {{ showOnlyMyTickets ? 'Clique para ver todos' : 'Clique para
+                ver apenas seus' }}
+              </span>
+            </div>
+          </div>
+          <mat-icon class="text-blue-500 text-base">swap_horiz</mat-icon>
+        </button>
+      </div>
+
+      <div class="mt-3 flex items-center gap-2">
+        <div
+          class="flex items-center gap-2 px-3 py-1 rounded-full"
+          [class]="showOnlyMyTickets ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'"
+        >
+          <div
+            class="w-2 h-2 rounded-full"
+            [class]="showOnlyMyTickets ? 'bg-green-500' : 'bg-purple-500'"
+          ></div>
+          <span class="text-sm font-medium">
+            {{ showOnlyMyTickets ? 'Visualizando apenas seus tickets' :
+            'Visualizando todos os tickets do sistema' }}
+          </span>
+        </div>
+      </div>
     </div>
 
     <div
