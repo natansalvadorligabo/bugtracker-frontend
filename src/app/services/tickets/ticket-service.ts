@@ -3,9 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Ticket } from '../../model/ticket.js';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TicketService {
   private readonly API_URL = '/bugtracker/tickets';
@@ -30,7 +29,7 @@ export class TicketService {
 
   getTicketImage(filename: string): Observable<Blob> {
     return this.httpClient.get(`${this.API_URL}/image/${filename}`, {
-      responseType: 'blob'
+      responseType: 'blob',
     });
   }
 

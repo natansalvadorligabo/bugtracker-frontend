@@ -132,24 +132,23 @@
     </mat-card-header>
 
     <mat-card-content>
-      @if (ticketMessages && ticketMessages.length > 0) {
-        @for (message of ticketMessages; track $index) {
-        <div class="mb-4">
-          <div class="flex items-start gap-3 mb-1">
-            <span class="font-medium">{{ message.senderId }}</span>
-            <span class="text-sm text-gray-500"
-              >{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span
-            >
-          </div>
-          <p class="text-gray-800 whitespace-pre-wrap">{{ message.message }}</p>
+      @if (ticketMessages && ticketMessages.length > 0) { @for (message of
+      ticketMessages; track $index) {
+      <div class="mb-4">
+        <div class="flex items-start gap-3 mb-1">
+          <span class="font-medium">{{ message.senderId }}</span>
+          <span class="text-sm text-gray-500"
+            >{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span
+          >
         </div>
-        }
-      } @else {
-        <p class="text-gray-600 my-2">Nenhuma mensagem ainda.</p>
+        <p class="text-gray-800 whitespace-pre-wrap">{{ message.message }}</p>
+      </div>
+      } } @else {
+      <p class="text-gray-600 my-2">Nenhuma mensagem ainda.</p>
       }
 
       <form [formGroup]="messageForm" class="mt-6 flex gap-3">
-        <mat-form-field appearance="outline" class="w-full" >
+        <mat-form-field appearance="outline" class="w-full">
           <mat-label>Nova mensagem</mat-label>
           <textarea matInput formControlName="message"></textarea>
         </mat-form-field>

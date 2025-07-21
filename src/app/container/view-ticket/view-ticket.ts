@@ -1,10 +1,10 @@
-import { DatePipe, Location } from '@angular/common';
+import { CommonModule, DatePipe, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from '../../model/message';
@@ -24,6 +25,7 @@ import { TicketService } from '../../services/tickets/ticket-service';
 @Component({
   selector: 'app-view-ticket',
   imports: [
+    CommonModule,
     DatePipe,
     MatCardModule,
     MatButtonModule,
@@ -33,6 +35,7 @@ import { TicketService } from '../../services/tickets/ticket-service';
     MatToolbarModule,
     MatBadgeModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
   ],
@@ -53,6 +56,7 @@ export class ViewTicket {
   ticketCategory: string | null = null;
   ticketImages: string[] | null = null;
   ticketMessages: Message[] = [];
+  isLoading = true;
 
   messageForm = this.fb.group({
     message: ['', [Validators.required]],
@@ -65,6 +69,8 @@ export class ViewTicket {
     this.loadCategoryService();
     this.loadTicketImages();
     this.loadMessages();
+
+    this.isLoading = false;
   }
 
   loadMessages() {
