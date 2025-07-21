@@ -1,6 +1,10 @@
 <div class="max-w-4xl mx-auto p-6">
   <div class="flex justify-between items-center mb-6">
-    <button matButton (click)="goBack()" class="flex items-center gap-2">
+    <button
+      matButton
+      (click)="goBack()"
+      class="flex items-center gap-2"
+    >
       <mat-icon>arrow_back</mat-icon>
       Voltar
     </button>
@@ -22,7 +26,7 @@
         {{ ticket?.title }}
         <span class="text-gray-600">#{{ ticket?.ticketId }}</span>
       </mat-card-title>
-      <mat-chip class="ml-2"> {{ ticket?.ticketStatus }} </mat-chip>
+      <mat-chip class="ml-2">{{ ticket?.ticketStatus }}</mat-chip>
     </mat-card-header>
 
     <mat-card-content>
@@ -40,9 +44,7 @@
             <mat-icon class="text-gray-500">schedule</mat-icon>
             <div>
               <p class="text-sm text-gray-600 font-medium">Data de criação</p>
-              <p class="text-base">
-                {{ ticket?.timestamp | date: 'dd/MM/yyyy HH:mm' }}
-              </p>
+              <p class="text-base">{{ ticket?.timestamp | date: 'dd/MM/yyyy HH:mm' }}</p>
             </div>
           </div>
         </div>
@@ -76,9 +78,7 @@
           Descrição
         </h3>
         <div class="bg-gray-50 py-2 rounded-lg">
-          <p class="text-gray-800 whitespace-pre-wrap">
-            {{ ticket?.description || 'Nenhuma descrição fornecida' }}
-          </p>
+          <p class="text-gray-800 whitespace-pre-wrap">{{ ticket?.description || 'Nenhuma descrição fornecida' }}</p>
         </div>
       </div>
 
@@ -91,9 +91,7 @@
         </h3>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           @for (image of ticketImages; track $index) {
-          <div
-            class="relative group cursor-pointer overflow-hidden rounded-lg border hover:shadow-lg transition-shadow"
-          >
+          <div class="relative group cursor-pointer overflow-hidden rounded-lg border hover:shadow-lg transition-shadow">
             <img
               [src]="image"
               [alt]="'Imagem ' + ($index + 1)"
@@ -102,10 +100,7 @@
             <div
               class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300 flex items-center justify-center"
             >
-              <mat-icon
-                class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >zoom_in</mat-icon
-              >
+              <mat-icon class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">zoom_in</mat-icon>
             </div>
           </div>
           }
@@ -132,16 +127,14 @@
     </mat-card-header>
 
     <mat-card-content class="flex flex-col min-h-0 mt-4">
-      @if (isLoadingMessages && (!ticketMessages || ticketMessages.length ===
-      0)) {
+      @if (isLoadingMessages && (!ticketMessages || ticketMessages.length === 0)) {
       <div class="flex justify-center items-center py-12">
         <div class="text-center flex flex-col items-center">
           <mat-progress-spinner
             diameter="40"
             mode="indeterminate"
             color="primary"
-          >
-          </mat-progress-spinner>
+          ></mat-progress-spinner>
           <p class="text-gray-600 mt-3 text-sm">Carregando mensagens...</p>
         </div>
       </div>
@@ -152,8 +145,7 @@
           #messagesContainer
           class="messages-container space-y-4 p-2 h-full overflow-y-auto"
         >
-          @for (message of displayedMessages; track message.messageId === -1 ?
-          message.timestamp : message.messageId) {
+          @for (message of ticketMessages; track message.messageId === -1 ? message.timestamp : message.messageId) {
           <div
             class="message-item p-4 rounded-lg border relative shadow-sm"
             [class.opacity-70]="message.messageId === -1"
@@ -164,27 +156,20 @@
           >
             <div class="flex items-start gap-3 mb-2">
               <div class="flex items-center gap-2">
-                <span class="font-semibold text-gray-900"
-                  >{{ message.senderId }}</span
-                >
+                <span class="font-semibold text-gray-900">{{ message.senderId }}</span>
               </div>
-              <span class="text-sm text-gray-500 ml-auto">
-                {{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}
-              </span>
+              <span class="text-sm text-gray-500 ml-auto">{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
             </div>
-            <p class="text-gray-800 whitespace-pre-wrap leading-relaxed">
-              {{ message.message }}
-            </p>
+            <p class="text-gray-800 whitespace-pre-wrap leading-relaxed">{{ message.message }}</p>
 
             @if (message.messageId === -1) {
-            <div
-              class="absolute bottom-2 right-3 flex items-center gap-1 text-xs text-blue-600"
-            >
+            <div class="absolute bottom-2 right-3 flex items-center gap-1 text-xs text-blue-600">
               <mat-icon
                 class="text-blue-500 animate-spin"
                 style="font-size: 14px; width: 14px; height: 14px"
-                >refresh</mat-icon
               >
+                refresh
+              </mat-icon>
               <span>Enviando...</span>
             </div>
             }
@@ -194,13 +179,9 @@
       </div>
       } @else {
       <div class="text-center py-8">
-        <mat-icon class="text-gray-400 text-4xl mb-2"
-          >chat_bubble_outline</mat-icon
-        >
+        <mat-icon class="text-gray-400 text-4xl mb-2">chat_bubble_outline</mat-icon>
         <p class="text-gray-600">Nenhuma mensagem ainda.</p>
-        <p class="text-sm text-gray-500">
-          Seja o primeiro a comentar neste ticket!
-        </p>
+        <p class="text-sm text-gray-500">Seja o primeiro a comentar neste ticket!</p>
       </div>
       }
 
@@ -212,7 +193,10 @@
         class="message-form"
       >
         <div class="flex gap-4 items-start">
-          <mat-form-field appearance="outline" class="flex-1">
+          <mat-form-field
+            appearance="outline"
+            class="flex-1"
+          >
             <mat-label>Digite sua mensagem</mat-label>
             <textarea
               matInput

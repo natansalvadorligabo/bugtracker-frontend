@@ -1,40 +1,40 @@
-import { CommonModule, DatePipe, Location } from '@angular/common';
+import { CommonModule, Location } from "@angular/common";
 import {
   AfterViewChecked,
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
   ViewChild,
-} from '@angular/core';
+} from "@angular/core";
 import {
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
   Validators,
-} from '@angular/forms';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Message } from '../../model/message';
-import { Ticket } from '../../model/ticket';
-import { AuthService } from '../../services/auth/auth-service';
-import { CommentService } from '../../services/comments/comment-service';
-import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
-import { TicketService } from '../../services/tickets/ticket-service';
+} from "@angular/forms";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Message } from "../../model/message";
+import { Ticket } from "../../model/ticket";
+import { AuthService } from "../../services/auth/auth-service";
+import { CommentService } from "../../services/comments/comment-service";
+import { TicketCategoriesService } from "../../services/ticket-categories/ticket-categories-service";
+import { TicketService } from "../../services/tickets/ticket-service";
 @Component({
-  selector: 'app-view-ticket',
+  selector: "app-view-ticket",
   imports: [
     CommonModule,
-    DatePipe,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -48,11 +48,11 @@ import { TicketService } from '../../services/tickets/ticket-service';
     FormsModule,
     ReactiveFormsModule,
   ],
-  templateUrl: './view-ticket.html',
-  styleUrl: './view-ticket.scss',
+  templateUrl: "./view-ticket.html",
+  styleUrl: "./view-ticket.scss",
 })
-export class ViewTicket implements AfterViewChecked {
-  @ViewChild('messagesContainer', { static: false })
+export class ViewTicket implements AfterViewChecked, AfterViewInit {
+  @ViewChild("messagesContainer", { static: false })
   messagesContainer!: ElementRef;
 
   private route = inject(ActivatedRoute);
@@ -71,29 +71,15 @@ export class ViewTicket implements AfterViewChecked {
   ticketMessages: Message[] = [];
   isLoading = true;
   isLoadingMessages = true;
-
-  readonly MAX_VISIBLE_MESSAGES = 5;
-  showAllMessages = true;
   private shouldScrollToBottom = false;
+
   messageForm = this.fb.group({
-    message: ['', [Validators.required]],
+    message: ["", [Validators.required]],
   });
-
-  get displayedMessages(): Message[] {
-    return this.ticketMessages;
-  }
-
-  get hasHiddenMessages(): boolean {
-    return false;
-  }
-
-  get hiddenMessagesCount(): number {
-    return 0;
-  }
 
   ngOnInit() {
     this.isLoadingMessages = true;
-    this.ticket = this.route.snapshot.data['ticket'];
+    this.ticket = this.route.snapshot.data["ticket"];
 
     this.loadCategoryService();
     this.loadTicketImages();
@@ -109,16 +95,19 @@ export class ViewTicket implements AfterViewChecked {
       next: (comments) => {
         this.ticketMessages = comments.sort(
           (a, b) =>
-            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
         );
 
         this.isLoadingMessages = false;
         this.cdr.detectChanges();
 
-        this.shouldScrollToBottom = true;
+        // Garantir scroll para baixo após carregar mensagens
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 100);
       },
       error: (err) => {
-        console.error('Erro ao carregar mensagens:', err);
+        console.error("Erro ao carregar mensagens:", err);
         this.isLoadingMessages = false;
         this.cdr.detectChanges();
       },
@@ -132,26 +121,31 @@ export class ViewTicket implements AfterViewChecked {
     }
   }
 
-  private scrollToBottom(): void {
-    if (this.messagesContainer && this.messagesContainer.nativeElement) {
-      const container = this.messagesContainer.nativeElement;
+  ngAfterViewInit() {
+    if (this.ticketMessages.length > 0 && !this.isLoadingMessages) {
       setTimeout(() => {
-        container.scrollTop = container.scrollHeight;
-      }, 0);
+        this.scrollToBottom();
+      }, 200);
     }
   }
 
-  private scrollToRecentMessages(): void {
+  private scrollToBottom(): void {
     if (this.messagesContainer && this.messagesContainer.nativeElement) {
       const container = this.messagesContainer.nativeElement;
-      setTimeout(() => {
-        if (this.ticketMessages.length > this.MAX_VISIBLE_MESSAGES) {
-          const scrollPosition = Math.max(0, container.scrollHeight * 0.7);
-          container.scrollTop = scrollPosition;
-        } else {
-          container.scrollTop = container.scrollHeight;
-        }
-      }, 100);
+
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+
+        // Fallback adicional para casos onde o scroll não funcionou
+        setTimeout(() => {
+          if (
+            container.scrollTop <
+            container.scrollHeight - container.clientHeight - 10
+          ) {
+            container.scrollTop = container.scrollHeight;
+          }
+        }, 50);
+      });
     }
   }
 
@@ -165,7 +159,7 @@ export class ViewTicket implements AfterViewChecked {
           this.ticketCategory = category.description;
         },
         error: (err) => {
-          console.error('Error fetching ticket category:', err);
+          console.error("Error fetching ticket category:", err);
         },
       });
   }
@@ -178,7 +172,7 @@ export class ViewTicket implements AfterViewChecked {
         this.ticketImages = images.map((img) => URL.createObjectURL(img));
       },
       error: (err) => {
-        console.error('Error fetching ticket images:', err);
+        console.error("Error fetching ticket images:", err);
       },
     });
   }
@@ -189,7 +183,7 @@ export class ViewTicket implements AfterViewChecked {
 
   editTicket() {
     if (this.ticket?.ticketId) {
-      this.router.navigate(['/tickets/edit', this.ticket.ticketId]);
+      this.router.navigate(["/tickets/edit", this.ticket.ticketId]);
     }
   }
 
@@ -221,7 +215,7 @@ export class ViewTicket implements AfterViewChecked {
       this.commentService.save(messageData).subscribe({
         next: (savedMessage) => {
           const index = this.ticketMessages.findIndex(
-            (m) => m.messageId === -1 && m.timestamp === tempTimestamp
+            (m) => m.messageId === -1 && m.timestamp === tempTimestamp,
           );
           if (index !== -1) {
             this.ticketMessages[index] = savedMessage;
@@ -229,9 +223,9 @@ export class ViewTicket implements AfterViewChecked {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Error sending message:', err);
+          console.error("Error sending message:", err);
           const index = this.ticketMessages.findIndex(
-            (m) => m.messageId === -1 && m.timestamp === tempTimestamp
+            (m) => m.messageId === -1 && m.timestamp === tempTimestamp,
           );
           if (index !== -1) {
             this.ticketMessages.splice(index, 1);
@@ -243,7 +237,7 @@ export class ViewTicket implements AfterViewChecked {
   }
 
   onKeydown(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'Enter') {
+    if (event.ctrlKey && event.key === "Enter") {
       event.preventDefault();
       this.sendMessage();
     }
