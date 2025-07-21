@@ -36,7 +36,7 @@ export class Tickets implements OnInit, OnDestroy {
   private ticketService = inject(TicketService);
   private ticketCategoriesService = inject(TicketCategoriesService);
   private userService = inject(UsersService);
-  private cdr = inject(ChangeDetectorRef);
+  private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -48,6 +48,7 @@ export class Tickets implements OnInit, OnDestroy {
   searchTerm = '';
   selectedTags: TicketCategory[] = [];
   selectedStatuses: string[] = [];
+  showOnlyMyTickets = true;
   allTickets: Ticket[] = [];
   availableTagsList: TicketCategory[] = [];
 
@@ -74,6 +75,12 @@ export class Tickets implements OnInit, OnDestroy {
 
   get tickets() {
     let filteredTickets = this.allTickets;
+
+    if (this.showOnlyMyTickets && this.user && this.user.userId) {
+      filteredTickets = filteredTickets.filter(ticket =>
+        ticket.senderId === this.user.userId
+      );
+    }
 
     if (this.searchTerm) {
       filteredTickets = filteredTickets.filter(ticket =>
@@ -129,15 +136,8 @@ export class Tickets implements OnInit, OnDestroy {
   private loadTickets(): void {
     this.ticketsSubscription = this.ticketService.getTickets().subscribe({
       next: (tickets) => {
-        if (this.user && this.user.userId) {
-          this.allTickets = tickets.filter(ticket =>
-            ticket.senderId === this.user!.userId
-          );
-        } else {
-          this.allTickets = tickets;
-        }
-
-        this.cdr.detectChanges();
+        this.allTickets = tickets;
+        this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.log('Erro ao carregar tickets:', error);
@@ -149,7 +149,7 @@ export class Tickets implements OnInit, OnDestroy {
     this.ticketCategoriesSubscription = this.ticketCategoriesService.getTicketCategories().subscribe({
       next: (categories) => {
         this.availableTagsList = categories.filter(category => category.isActive);
-        this.cdr.detectChanges();
+        this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.log('Erro ao carregar categorias:', error);
@@ -196,6 +196,15 @@ export class Tickets implements OnInit, OnDestroy {
 
   clearSearch() {
     this.searchTerm = '';
+  }
+
+  toggleTicketView() {
+    this.showOnlyMyTickets = !this.showOnlyMyTickets;
+    this.clearFilters();
+  }
+
+  get currentViewLabel(): string {
+    return this.showOnlyMyTickets ? 'Meus tickets' : 'Todos os tickets';
   }
 
   clearTags() {
