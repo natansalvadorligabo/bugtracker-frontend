@@ -1,38 +1,25 @@
-import { CommonModule, Location } from "@angular/common";
-import {
-  AfterViewChecked,
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  inject,
-  ViewChild,
-} from "@angular/core";
-import {
-  FormBuilder,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatChipsModule } from "@angular/material/chips";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Message } from "../../model/message";
-import { Ticket } from "../../model/ticket";
-import { AuthService } from "../../services/auth/auth-service";
-import { CommentService } from "../../services/comments/comment-service";
-import { TicketCategoriesService } from "../../services/ticket-categories/ticket-categories-service";
-import { TicketService } from "../../services/tickets/ticket-service";
+import { CommonModule, Location } from '@angular/common';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Message } from '../../model/message';
+import { Ticket } from '../../model/ticket';
+import { AuthService } from '../../services/auth/auth-service';
+import { CommentService } from '../../services/comments/comment-service';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
+import { TicketService } from '../../services/tickets/ticket-service';
 @Component({
-  selector: "app-view-ticket",
+  selector: 'app-view-ticket',
   imports: [
     CommonModule,
     MatCardModule,
@@ -48,11 +35,11 @@ import { TicketService } from "../../services/tickets/ticket-service";
     FormsModule,
     ReactiveFormsModule,
   ],
-  templateUrl: "./view-ticket.html",
-  styleUrl: "./view-ticket.scss",
+  templateUrl: './view-ticket.html',
+  styleUrl: './view-ticket.scss',
 })
 export class ViewTicket implements AfterViewChecked, AfterViewInit {
-  @ViewChild("messagesContainer", { static: false })
+  @ViewChild('messagesContainer', { static: false })
   messagesContainer!: ElementRef;
 
   private route = inject(ActivatedRoute);
@@ -74,12 +61,12 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   private shouldScrollToBottom = false;
 
   messageForm = this.fb.group({
-    message: ["", [Validators.required]],
+    message: ['', [Validators.required]],
   });
 
   ngOnInit() {
     this.isLoadingMessages = true;
-    this.ticket = this.route.snapshot.data["ticket"];
+    this.ticket = this.route.snapshot.data['ticket'];
 
     this.loadCategoryService();
     this.loadTicketImages();
@@ -92,22 +79,18 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     if (!this.ticket) return;
 
     this.commentService.loadById(this.ticket.ticketId).subscribe({
-      next: (comments) => {
-        this.ticketMessages = comments.sort(
-          (a, b) =>
-            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
-        );
+      next: comments => {
+        this.ticketMessages = comments.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
         this.isLoadingMessages = false;
         this.cdr.detectChanges();
 
-        // Garantir scroll para baixo após carregar mensagens
         setTimeout(() => {
           this.scrollToBottom();
         }, 100);
       },
-      error: (err) => {
-        console.error("Erro ao carregar mensagens:", err);
+      error: err => {
+        console.error('Erro ao carregar mensagens:', err);
         this.isLoadingMessages = false;
         this.cdr.detectChanges();
       },
@@ -136,12 +119,8 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
       requestAnimationFrame(() => {
         container.scrollTop = container.scrollHeight;
 
-        // Fallback adicional para casos onde o scroll não funcionou
         setTimeout(() => {
-          if (
-            container.scrollTop <
-            container.scrollHeight - container.clientHeight - 10
-          ) {
+          if (container.scrollTop < container.scrollHeight - container.clientHeight - 10) {
             container.scrollTop = container.scrollHeight;
           }
         }, 50);
@@ -152,16 +131,14 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   loadCategoryService() {
     if (!this.ticket) return;
 
-    this.ticketCategoriesService
-      .getTicketCategoryById(this.ticket.ticketCategoryId)
-      .subscribe({
-        next: (category) => {
-          this.ticketCategory = category.description;
-        },
-        error: (err) => {
-          console.error("Error fetching ticket category:", err);
-        },
-      });
+    this.ticketCategoriesService.getTicketCategoryById(this.ticket.ticketCategoryId).subscribe({
+      next: category => {
+        this.ticketCategory = category.description;
+      },
+      error: err => {
+        console.error('Error fetching ticket category:', err);
+      },
+    });
   }
 
   loadTicketImages() {
@@ -169,10 +146,10 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
     this.ticketService.getTicketImagesById(this.ticket.ticketId).subscribe({
       next: (images: Blob[]) => {
-        this.ticketImages = images.map((img) => URL.createObjectURL(img));
+        this.ticketImages = images.map(img => URL.createObjectURL(img));
       },
-      error: (err) => {
-        console.error("Error fetching ticket images:", err);
+      error: err => {
+        console.error('Error fetching ticket images:', err);
       },
     });
   }
@@ -183,7 +160,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
   editTicket() {
     if (this.ticket?.ticketId) {
-      this.router.navigate(["/tickets/edit", this.ticket.ticketId]);
+      this.router.navigate(['/tickets/edit', this.ticket.ticketId]);
     }
   }
 
@@ -213,20 +190,16 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
       this.cdr.detectChanges();
 
       this.commentService.save(messageData).subscribe({
-        next: (savedMessage) => {
-          const index = this.ticketMessages.findIndex(
-            (m) => m.messageId === -1 && m.timestamp === tempTimestamp,
-          );
+        next: savedMessage => {
+          const index = this.ticketMessages.findIndex(m => m.messageId === -1 && m.timestamp === tempTimestamp);
           if (index !== -1) {
             this.ticketMessages[index] = savedMessage;
           }
           this.cdr.detectChanges();
         },
-        error: (err) => {
-          console.error("Error sending message:", err);
-          const index = this.ticketMessages.findIndex(
-            (m) => m.messageId === -1 && m.timestamp === tempTimestamp,
-          );
+        error: err => {
+          console.error('Error sending message:', err);
+          const index = this.ticketMessages.findIndex(m => m.messageId === -1 && m.timestamp === tempTimestamp);
           if (index !== -1) {
             this.ticketMessages.splice(index, 1);
           }
@@ -237,7 +210,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   }
 
   onKeydown(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === "Enter") {
+    if (event.ctrlKey && event.key === 'Enter') {
       event.preventDefault();
       this.sendMessage();
     }
