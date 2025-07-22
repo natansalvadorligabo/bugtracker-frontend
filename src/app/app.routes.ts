@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { ticketResolver } from './services/tickets/ticket-resolver';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,9 @@ export const routes: Routes = [
         path: 'tickets/:id',
         loadComponent: () =>
           import('./container/view-ticket/view-ticket').then(m => m.ViewTicket),
+        resolve: {
+          ticket: ticketResolver
+        }
       },
       {
         path: 'user',

@@ -25,6 +25,7 @@ import { AuthService } from '../../services/auth/auth-service.js';
 import { UsersService } from '../../services/users/users-service';
 import { User } from '../../model/user';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { RoleService } from '../../services/role/role-service';
 
 @Component({
   selector: 'app-form-ticket',
@@ -62,6 +63,7 @@ export class FormTicket {
   private ticketCategoriesService = inject(TicketCategoriesService);
   private authService = inject(AuthService);
   private usersService = inject(UsersService);
+  private roleService = inject(RoleService);
 
   private formBuilder = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
@@ -76,15 +78,15 @@ export class FormTicket {
   formUtils = inject(FormUtilsService);
 
   get isUser(): boolean {
-    return this.userRoles.includes('ROLE_USER');
+    return this.roleService.isUser;
   }
 
   get isTechnician(): boolean {
-    return this.userRoles.includes('ROLE_TECHNICIAN');
+    return this.roleService.isTechnician;
   }
 
   get isAdmin(): boolean {
-    return this.userRoles.includes('ROLE_ADMIN');
+    return this.roleService.isAdmin;
   }
 
   get isCreatingTicket(): boolean {
@@ -130,7 +132,6 @@ export class FormTicket {
   ngOnInit() {
     const token = this.authService.getToken() ?? undefined;
     this.userRoles = this.authService.decodeToken(token).roles;
-    console.log('User roles:', this.userRoles);
 
     this.ticketId = this.route.snapshot.params['id'] || null;
 
@@ -225,7 +226,6 @@ export class FormTicket {
     this.usersService.getUsers().subscribe({
       next: (data) => {
         this.technicians = data.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
-        console.log('Técnicos carregados:', this.technicians);
         if (callback) {
           callback();
         }
