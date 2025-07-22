@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,7 +18,6 @@ import { AuthService } from '../../services/auth/auth-service';
 import { CommentService } from '../../services/comments/comment-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
-import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-view-ticket',
   imports: [
@@ -34,7 +34,7 @@ import { MatInputModule } from '@angular/material/input';
     MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
   ],
   templateUrl: './view-ticket.html',
   styleUrl: './view-ticket.scss',
@@ -67,20 +67,20 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
   getTicketStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'PENDING': 'Pendente',
-      'ATTACHED': 'Atribuído',
-      'COMPLETED': 'Completo',
-      'STOPPED': 'Pausado'
+      PENDING: 'Pendente',
+      ATTACHED: 'Atribuído',
+      COMPLETED: 'Completo',
+      STOPPED: 'Pausado',
     };
     return statusMap[status] || status;
   }
 
   getTicketStatusColor(status: string): string {
     const colorMap: { [key: string]: string } = {
-      'PENDING': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'ATTACHED': 'bg-orange-100 text-orange-800 border-orange-200',
-      'COMPLETED': 'bg-green-100 text-green-800 border-green-200',
-      'STOPPED': 'bg-red-100 text-red-800 border-red-200'
+      PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      ATTACHED: 'bg-orange-100 text-orange-800 border-orange-200',
+      COMPLETED: 'bg-green-100 text-green-800 border-green-200',
+      STOPPED: 'bg-red-100 text-red-800 border-red-200',
     };
     return colorMap[status] || 'bg-gray-100 text-gray-800 border-gray-200';
   }
@@ -94,7 +94,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     ];
 
     return (
-      availableStatuses.find((s) => s.value === status) || {
+      availableStatuses.find(s => s.value === status) || {
         value: status,
         label: status,
         color: 'text-gray-500',
@@ -204,11 +204,15 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
   sendMessage() {
     if (this.messageForm.valid && this.ticket) {
+      const now = new Date();
+      const offsetMs = now.getTimezoneOffset() * 60000;
+      const localTimestamp = new Date(now.getTime() - offsetMs).toISOString();
+
       const messageData = {
         ticketId: this.ticket.ticketId,
         senderId: this.authService.getUserFromToken().userId,
         message: this.messageForm.value.message,
-        timestamp: new Date().toISOString(),
+        timestamp: localTimestamp,
       };
 
       const optimisticMessage: Message = {
