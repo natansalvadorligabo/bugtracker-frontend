@@ -6,16 +6,13 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TicketCardComponent } from '../../components/ticket-card/ticket-card';
+import { TicketEmptyStateComponent } from '../../components/ticket-empty-state/ticket-empty-state';
+import { TicketFiltersComponent } from '../../components/ticket-filters/ticket-filters';
+import { TicketHeaderComponent } from '../../components/ticket-header/ticket-header';
+import { TicketLoadingComponent } from '../../components/ticket-loading/ticket-loading';
+import { TicketSearchComponent } from '../../components/ticket-search/ticket-search';
 import { Ticket } from '../../model/ticket';
 import { TicketCategory } from '../../model/ticket-categories';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
@@ -26,15 +23,12 @@ import { UsersService } from '../../services/users/users-service';
   selector: 'app-tickets',
   imports: [
     CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatExpansionModule,
-    MatProgressSpinnerModule,
+    TicketHeaderComponent,
+    TicketSearchComponent,
+    TicketFiltersComponent,
+    TicketCardComponent,
+    TicketEmptyStateComponent,
+    TicketLoadingComponent
   ],
   templateUrl: './tickets.html',
   styleUrl: './tickets.scss',
@@ -87,7 +81,7 @@ export class Tickets implements OnInit, OnDestroy {
 
     if (this.showOnlyMyTickets && this.user && this.user.userId) {
       filteredTickets = filteredTickets.filter(
-        (ticket) => ticket.senderId === this.user.userId
+        (ticket) => ticket.sender.userId === this.user.userId
       );
     }
 

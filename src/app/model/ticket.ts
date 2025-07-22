@@ -1,7 +1,9 @@
+import { UserReference } from "./user";
+
 export interface Ticket {
   ticketId: number;
-  senderId: number;
-  receiverId: number;
+  sender: UserReference;
+  receiver: UserReference;
   ticketCategoryId: number;
   ratingId: number;
   title: string;

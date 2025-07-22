@@ -54,16 +54,16 @@
             <mat-icon class="text-gray-500">person</mat-icon>
             <div>
               <p class="text-sm text-gray-600 font-medium">Criado por</p>
-              <p class="text-base">ID: {{ ticket?.senderId }}</p>
+              <p class="text-base"> {{ ticket?.sender?.name }}</p>
             </div>
           </div>
 
-          @if (ticket?.receiverId) {
+          @if (ticket?.receiver?.name) {
           <div class="flex items-center gap-3">
             <mat-icon class="text-gray-500">support_agent</mat-icon>
             <div>
               <p class="text-sm text-gray-600 font-medium">Atribuído para</p>
-              <p class="text-base">ID: {{ ticket?.receiverId }}</p>
+              <p class="text-base"> {{ ticket?.receiver?.name }}</p>
             </div>
           </div>
           }
@@ -156,7 +156,7 @@
           >
             <div class="flex items-start gap-3 mb-2">
               <div class="flex items-center gap-2">
-                <span class="font-semibold text-gray-900">{{ message.senderId }}</span>
+                <span class="font-semibold text-gray-500">{{ message.sender.name || "Usuário desconhecido"}}</span>
               </div>
               <span class="text-sm text-gray-500 ml-auto">{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
             </div>
