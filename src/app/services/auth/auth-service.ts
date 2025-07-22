@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { ProfilePictureService } from '../profile-picture/profile-picture-service';
+import { HttpClient } from '@angular/common/http';
+import { Role } from '../../model/role';
 
 interface JwtPayload {
   token: string,
@@ -15,6 +17,9 @@ interface JwtPayload {
 export class AuthService {
   private router = inject(Router);
   private profilePictureService = inject(ProfilePictureService);
+
+  private readonly API_URL = '/bugtracker/roles';
+  private httpClient = inject(HttpClient);
 
   setToken(token: string) {
     localStorage.setItem('token', token);
@@ -96,5 +101,21 @@ export class AuthService {
       return false;
     }
     return roles.some(role => user.roles.includes(role));
+  }
+
+  get isUser(): boolean {
+    return this.hasRole('ROLE_USER');
+  }
+
+  get isTechnician(): boolean {
+    return this.hasRole('ROLE_TECHNICIAN');
+  }
+
+  get isAdmin(): boolean {
+    return this.hasRole('ROLE_ADMIN');
+  }
+
+  getRoles() {
+    return this.httpClient.get<Role[]>(this.API_URL);
   }
 }
