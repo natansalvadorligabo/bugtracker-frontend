@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -62,6 +63,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private snackBar = inject(MatSnackBar);
 
   ticket: Ticket | null = null;
   ticketCategory: string | null = null;
@@ -260,7 +262,6 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
     const newMessage = textarea.value.trim();
     if (!newMessage) {
-      alert('A mensagem não pode estar vazia.');
       return;
     }
 
@@ -294,7 +295,10 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
           this.ticketMessages[messageIndex].message = oldMessage;
           this.ticketMessages[messageIndex].wasEdited = false;
         }
-        alert('Erro ao editar mensagem. Tente novamente.');
+        this.snackBar.open('Erro ao editar mensagem. Tente novamente.', 'Fechar', {
+          verticalPosition: 'bottom',
+          duration: 3000,
+        });
         this.cdr.detectChanges();
       },
     });
