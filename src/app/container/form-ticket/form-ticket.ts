@@ -25,7 +25,6 @@ import { AuthService } from '../../services/auth/auth-service.js';
 import { UsersService } from '../../services/users/users-service';
 import { User } from '../../model/user';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { RoleService } from '../../services/role/role-service';
 
 @Component({
   selector: 'app-form-ticket',
@@ -63,14 +62,12 @@ export class FormTicket {
   private ticketCategoriesService = inject(TicketCategoriesService);
   private authService = inject(AuthService);
   private usersService = inject(UsersService);
-  private roleService = inject(RoleService);
 
   private formBuilder = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  userRoles: string[] = [];
   ticketId: number | null = null;
 
   loading = signal(false);
@@ -78,15 +75,15 @@ export class FormTicket {
   formUtils = inject(FormUtilsService);
 
   get isUser(): boolean {
-    return this.roleService.isUser;
+    return this.authService.isUser;
   }
 
   get isTechnician(): boolean {
-    return this.roleService.isTechnician;
+    return this.authService.isTechnician;
   }
 
   get isAdmin(): boolean {
-    return this.roleService.isAdmin;
+    return this.authService.isAdmin;
   }
 
   get isCreatingTicket(): boolean {
@@ -130,9 +127,6 @@ export class FormTicket {
   }
 
   ngOnInit() {
-    const token = this.authService.getToken() ?? undefined;
-    this.userRoles = this.authService.decodeToken(token).roles;
-
     this.ticketId = this.route.snapshot.params['id'] || null;
 
     this.form = this.formBuilder.group({
