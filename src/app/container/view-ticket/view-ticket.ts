@@ -72,6 +72,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   isLoading = true;
   isLoadingMessages = true;
   isEditingMessage = false;
+  isTechnician = false;
   editingMessageId: number | null = null;
   originalMessageText = '';
   currentUser = this.authService.getUserFromToken();
@@ -128,9 +129,10 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   ngOnInit() {
     this.isLoadingMessages = true;
     this.ticket = this.route.snapshot.data['ticket'];
+    this.isTechnician = this.authService.isTechnician;
 
     this.loadCategoryService();
-    this.loadTicketImages();
+    /*  this.loadTicketImages(); */
     this.loadMessages();
 
     this.isLoading = false;

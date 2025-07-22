@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TicketCardComponent } from '../../components/ticket-card/ticket-card';
 import { TicketEmptyStateComponent } from '../../components/ticket-empty-state/ticket-empty-state';
@@ -15,10 +9,10 @@ import { TicketLoadingComponent } from '../../components/ticket-loading/ticket-l
 import { TicketSearchComponent } from '../../components/ticket-search/ticket-search';
 import { Ticket } from '../../model/ticket';
 import { TicketCategory } from '../../model/ticket-categories';
+import { AuthService } from '../../services/auth/auth-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
 import { UsersService } from '../../services/users/users-service';
-import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'app-list-tickets',
@@ -29,7 +23,7 @@ import { AuthService } from '../../services/auth/auth-service';
     TicketFiltersComponent,
     TicketCardComponent,
     TicketEmptyStateComponent,
-    TicketLoadingComponent
+    TicketLoadingComponent,
   ],
   templateUrl: './list-tickets.html',
   styleUrl: './list-tickets.scss',
@@ -67,6 +61,8 @@ export class ListTickets implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadUserProfile();
     this.loadCategories();
+
+    this.showOnlyMyTickets = sessionStorage.getItem('showOnlyMyTickets') === 'true';
   }
 
   ngOnDestroy() {
@@ -82,32 +78,21 @@ export class ListTickets implements OnInit, OnDestroy {
     let filteredTickets = this.allTickets;
 
     if (this.showOnlyMyTickets && this.user && this.user.userId) {
-      filteredTickets = filteredTickets.filter(
-        (ticket) => ticket.sender.userId === this.user.userId
-      );
+      filteredTickets = filteredTickets.filter(ticket => ticket.sender.userId === this.user.userId);
     }
 
     if (this.searchTerm) {
-      filteredTickets = filteredTickets.filter(
-        (ticket) =>
-          ticket.title &&
-          ticket.title.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+      filteredTickets = filteredTickets.filter(ticket => ticket.title && ticket.title.toLowerCase().includes(this.searchTerm.toLowerCase()));
     }
 
     if (this.selectedTags.length > 0) {
-      filteredTickets = filteredTickets.filter((ticket) =>
-        this.selectedTags.some(
-          (selectedTag) =>
-            ticket.ticketCategoryId === selectedTag.ticketCategoryId
-        )
+      filteredTickets = filteredTickets.filter(ticket =>
+        this.selectedTags.some(selectedTag => ticket.ticketCategoryId === selectedTag.ticketCategoryId)
       );
     }
 
     if (this.selectedStatuses.length > 0) {
-      filteredTickets = filteredTickets.filter((ticket) =>
-        this.selectedStatuses.includes(ticket.ticketStatus)
-      );
+      filteredTickets = filteredTickets.filter(ticket => this.selectedStatuses.includes(ticket.ticketStatus));
     }
 
     return filteredTickets;
@@ -139,11 +124,11 @@ export class ListTickets implements OnInit, OnDestroy {
 
   private loadUserProfile(): void {
     this.userService.getUserProfile().subscribe({
-      next: (user) => {
+      next: user => {
         this.user = user;
         this.loadTickets();
       },
-      error: (error) => {
+      error: error => {
         console.log('erro ao carregar perfil do usuário: ', error);
       },
     });
@@ -152,12 +137,12 @@ export class ListTickets implements OnInit, OnDestroy {
   private loadTickets(): void {
     this.isLoading = true;
     this.ticketsSubscription = this.ticketService.getTickets().subscribe({
-      next: (tickets) => {
+      next: tickets => {
         this.allTickets = tickets;
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
       },
-      error: (error) => {
+      error: error => {
         console.log('Erro ao carregar tickets:', error);
         this.isLoading = false;
       },
@@ -165,30 +150,24 @@ export class ListTickets implements OnInit, OnDestroy {
   }
 
   private loadCategories(): void {
-    this.ticketCategoriesSubscription = this.ticketCategoriesService
-      .getTicketCategories()
-      .subscribe({
-        next: (categories) => {
-          this.availableTagsList = categories.filter(
-            (category) => category.isActive
-          );
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (error) => {
-          console.log('Erro ao carregar categorias:', error);
-        },
-      });
+    this.ticketCategoriesSubscription = this.ticketCategoriesService.getTicketCategories().subscribe({
+      next: categories => {
+        this.availableTagsList = categories.filter(category => category.isActive);
+        this.changeDetectorRef.detectChanges();
+      },
+      error: error => {
+        console.log('Erro ao carregar categorias:', error);
+      },
+    });
   }
 
   getTagsForticket(ticket: Ticket): TicketCategory[] {
-    return this.availableTags.filter(
-      (tag) => ticket.ticketCategoryId === tag.ticketCategoryId
-    );
+    return this.availableTags.filter(tag => ticket.ticketCategoryId === tag.ticketCategoryId);
   }
 
   getStatusInfo(status: string) {
     return (
-      this.availableStatuses.find((s) => s.value === status) || {
+      this.availableStatuses.find(s => s.value === status) || {
         value: status,
         label: status,
         color: 'text-gray-500',
@@ -228,6 +207,7 @@ export class ListTickets implements OnInit, OnDestroy {
 
   toggleTicketView() {
     this.showOnlyMyTickets = !this.showOnlyMyTickets;
+    sessionStorage.setItem('showOnlyMyTickets', String(this.showOnlyMyTickets));
     this.clearFilters();
   }
 

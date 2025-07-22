@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TicketCategory } from '../../model/ticket-categories';
-import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { AuthService } from '../../services/auth/auth-service';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 
 @Component({
   selector: 'app-list-categories',
@@ -22,45 +22,44 @@ import { AuthService } from '../../services/auth/auth-service';
     MatTableModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './list-categories.html',
-  styleUrl: './list-categories.scss'
+  styleUrl: './list-categories.scss',
 })
 export class ListCategories implements OnInit {
-
   private ticketCategoriesService = inject(TicketCategoriesService);
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private cdr = inject(ChangeDetectorRef);
 
   categories: TicketCategory[] = [];
   isLoading = true;
+  isAdmin = false;
   displayedColumns: string[] = ['description', 'actions'];
 
-  get isAdmin(): boolean {
-    return this.authService.isAdmin;
-  }
-
   ngOnInit() {
+    this.isAdmin = this.authService.isAdmin;
     this.loadCategories();
   }
 
   loadCategories() {
     this.isLoading = true;
     this.ticketCategoriesService.getTicketCategories().subscribe({
-      next: (categories) => {
+      next: categories => {
         this.categories = categories;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erro ao carregar categorias:', err);
+      error: err => {
         this.snackBar.open('Erro ao carregar categorias.', 'Fechar', {
           duration: 3000,
           panelClass: ['snackbar-error'],
         });
         this.isLoading = false;
-      }
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -80,7 +79,8 @@ export class ListCategories implements OnInit {
             duration: 3000,
             panelClass: ['snackbar-success'],
           });
-          this.loadCategories();
+          this.categories = this.categories.filter(cat => cat.ticketCategoryId !== category.ticketCategoryId);
+          this.cdr.detectChanges();
         },
         error: (err: any) => {
           console.error('Erro ao excluir categoria:', err);
@@ -88,7 +88,7 @@ export class ListCategories implements OnInit {
             duration: 3000,
             panelClass: ['snackbar-error'],
           });
-        }
+        },
       });
     }
   }
