@@ -1,4 +1,13 @@
-<div class="flex flex-col justify-between items-center py-10 px-15">
+<div class="flex flex-col justify-between items-start p-6">
+  <button
+      matButton
+      (click)="goBack()"
+      class="flex items-center gap-2  mb-6"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+  </button>
+
   <section class="w-full mb-8">
     <span class="text-3xl"
       >{{ ticketId ? 'Editar Ticket' : 'Novo Ticket' }}</span
@@ -99,7 +108,7 @@
       </div>
 
       @if (canCreateTicket || isTechnician || isAdmin || isUser) {
-      <p align="end">
+      <div class="flex justify-end gap-4 pt-4">
         <button matButton="filled" class="w-28" (click)="onSubmit()" [disabled]="form.invalid || loading()">
           @if (loading()) {
               <mat-progress-spinner
@@ -112,7 +121,7 @@
               </mat-progress-spinner>
               } @else { {{ ticketId ? 'Salvar' : 'Criar' }} }
         </button>
-      </p>
+      </div>
       }
     </form>
   </section>

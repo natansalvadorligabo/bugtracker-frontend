@@ -67,7 +67,7 @@ export class Login {
   onSubmit() {
     if (this.form.valid) {
       this.loading.set(true);
-      this.userService.login(this.form.value).subscribe({
+      this.authService.login(this.form.value).subscribe({
         next: (response: any) => {
           let loginResponse = response as LoginResponse;
           if (loginResponse.token) {

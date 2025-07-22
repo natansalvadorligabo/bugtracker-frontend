@@ -76,6 +76,7 @@ export class UserProfile implements OnInit {
     this.userService.getUserProfile().subscribe({
       next: (user) => {
         this.user.set(user);
+
         this.loading.set(false);
       },
       error: () => {

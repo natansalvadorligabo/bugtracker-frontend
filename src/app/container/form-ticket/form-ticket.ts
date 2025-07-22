@@ -1,5 +1,5 @@
 import { MatSelectModule } from '@angular/material/select';
-import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -25,6 +25,7 @@ import { AuthService } from '../../services/auth/auth-service.js';
 import { UsersService } from '../../services/users/users-service';
 import { User } from '../../model/user';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-form-ticket',
@@ -62,6 +63,8 @@ export class FormTicket {
   private ticketCategoriesService = inject(TicketCategoriesService);
   private authService = inject(AuthService);
   private usersService = inject(UsersService);
+
+  private location = inject(Location);
 
   private formBuilder = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
@@ -217,9 +220,10 @@ export class FormTicket {
   }
 
   loadTechnicians(callback?: () => void) {
-    this.usersService.getUsers().subscribe({
-      next: (data) => {
-        this.technicians = data.users.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
+    this.usersService.getTechnicians().subscribe({
+      next: (technicians) => {
+        this.technicians = technicians || [];
+
         if (callback) {
           callback();
         }
@@ -227,6 +231,7 @@ export class FormTicket {
       error: (err) => {
         console.error('Erro ao carregar técnicos', err);
         this.snackBar.open('Erro ao carregar técnicos', 'Fechar', { duration: 3000 });
+        this.technicians = [];
       }
     });
   }
@@ -239,8 +244,9 @@ export class FormTicket {
           description: ticket.description,
           ticketCategoryId: ticket.ticketCategoryId,
           ticketStatus: ticket.ticketStatus,
-          receiverId: ticket.receiverId || null
+          receiverId: ticket.receiver?.userId || null
         });
+
 
         this.updateFormPermissions();
 
@@ -289,5 +295,9 @@ export class FormTicket {
     } else {
       this.form.get('receiverId')?.enable();
     }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

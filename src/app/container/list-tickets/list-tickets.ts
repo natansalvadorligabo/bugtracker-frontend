@@ -18,9 +18,10 @@ import { TicketCategory } from '../../model/ticket-categories';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
 import { UsersService } from '../../services/users/users-service';
+import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
-  selector: 'app-tickets',
+  selector: 'app-list-tickets',
   imports: [
     CommonModule,
     TicketHeaderComponent,
@@ -30,13 +31,14 @@ import { UsersService } from '../../services/users/users-service';
     TicketEmptyStateComponent,
     TicketLoadingComponent
   ],
-  templateUrl: './tickets.html',
-  styleUrl: './tickets.scss',
+  templateUrl: './list-tickets.html',
+  styleUrl: './list-tickets.scss',
 })
-export class Tickets implements OnInit, OnDestroy {
+export class ListTickets implements OnInit, OnDestroy {
   private ticketService = inject(TicketService);
   private ticketCategoriesService = inject(TicketCategoriesService);
   private userService = inject(UsersService);
+  private authService = inject(AuthService);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -125,6 +127,14 @@ export class Tickets implements OnInit, OnDestroy {
 
   get hasNoResults() {
     return this.tickets.length === 0;
+  }
+
+  get canCreateTicket(): boolean {
+    return this.authService.isUser || this.authService.isAdmin;
+  }
+
+  createTicket() {
+    this.router.navigate(['/tickets/new']);
   }
 
   private loadUserProfile(): void {

@@ -14,6 +14,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -33,7 +36,8 @@ import { Role } from '../../model/role';
     MatCardModule,
     MatCheckboxModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './form-user.html',
   styleUrl: './form-user.scss'
@@ -48,6 +52,8 @@ form!: FormGroup;
   private userService = inject(UsersService);
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+  private location = inject(Location);
   formUtils = inject(FormUtilsService);
 
   roles: Role[] = [];
@@ -90,7 +96,7 @@ form!: FormGroup;
         formData.append('userRoles', roleId.toString());
       });
 
-      this.userService.register(formData).subscribe({
+      this.authService.register(formData).subscribe({
         next: (data) => {
           this.isSubmitting = false;
           this.snackBar.open(
@@ -112,5 +118,9 @@ form!: FormGroup;
     } else {
       this.formUtils.validateAllFormFields(this.form);
     }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

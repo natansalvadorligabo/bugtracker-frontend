@@ -1,0 +1,50 @@
+<div class="flex flex-col justify-between items-start p-6">
+  <button
+      matButton
+      (click)="goBack()"
+      class="flex items-center gap-2 mb-6"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+  </button>
+
+  <section class="w-full mb-8">
+    <span class="text-3xl">
+      {{ categoryId ? 'Editar Categoria' : 'Nova Categoria' }}
+    </span>
+  </section>
+
+  <section class="w-full">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descrição da Categoria</mat-label>
+        <input
+          matInput
+          formControlName="description"
+          placeholder="Ex. Hardware, Software, Rede..."
+        />
+        @if (form.get('description')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "description") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="flex justify-end gap-4 pt-4">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || loading()"
+          class="flex items-center gap-2"
+        >
+          @if (loading()) {
+          <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+          } @else {
+            {{ categoryId ? 'Salvar' : 'Criar' }}
+          }
+        </button>
+      </div>
+
+    </form>
+  </section>
+</div>

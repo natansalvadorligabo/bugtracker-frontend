@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { VerifyCodeResponse } from '../../model/user';
-import { UsersService } from '../../services/users/users-service';
+import { AuthService } from '../../services/auth/auth-service';
 import { CodeVerificationStepComponent } from '../../shared/code-verification-step/code-verification-step';
 import { EmailStepComponent } from '../../shared/email-step/email-step';
 import {
@@ -33,7 +33,7 @@ export class PasswordRecovery {
   userEmail = signal('');
   token = signal('');
 
-  private userService = inject(UsersService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
@@ -41,7 +41,7 @@ export class PasswordRecovery {
     this.loading.set(true);
     this.userEmail.set(email);
 
-    this.userService.recoveryPassword(email).subscribe({
+    this.authService.recoveryPassword(email).subscribe({
       next: (response: any) => {
         this.currentStep.set(2);
         this.loading.set(false);
@@ -70,7 +70,7 @@ export class PasswordRecovery {
   onCodeSubmitted(code: string) {
     this.loading.set(true);
 
-    this.userService.verifyRecoveryCode(this.userEmail(), code).subscribe({
+    this.authService.verifyRecoveryCode(this.userEmail(), code).subscribe({
       next: (response: VerifyCodeResponse) => {
         this.token.set(response.resetToken);
         this.currentStep.set(3);
@@ -95,7 +95,7 @@ export class PasswordRecovery {
   onPasswordSubmitted(passwordData: NewPasswordData) {
     this.loading.set(true);
 
-    this.userService
+    this.authService
       .resetPassword(this.userEmail(), passwordData.password, this.token())
       .subscribe({
         next: (response: any) => {
