@@ -7,12 +7,19 @@ import { AuthService } from '../auth/auth-service';
 export class RoleService {
   private authService = inject(AuthService);
 
+  private cachedRoles: string[] | null = null;
+
   private getUserRoles(): string[] {
+    if (this.cachedRoles !== null) {
+      return this.cachedRoles;
+    }
     const token = this.authService.getToken() ?? undefined;
     if (!token) {
-      return [];
+      this.cachedRoles = [];
+      return this.cachedRoles;
     }
-    return this.authService.decodeToken(token).roles || [];
+    this.cachedRoles = this.authService.decodeToken(token).roles || [];
+    return this.cachedRoles;
   }
 
   get isUser(): boolean {
