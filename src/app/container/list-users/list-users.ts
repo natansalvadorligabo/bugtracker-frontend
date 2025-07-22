@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { User, UserPage } from '../../model/user';
 import { UsersService } from '../../services/users/users-service';
+import { AuthService } from '../../services/auth/auth-service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,6 +32,7 @@ import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmatio
 })
 export class ListUsers {
   private usersService = inject(UsersService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private _snackBar = inject(MatSnackBar);
@@ -44,6 +46,10 @@ export class ListUsers {
   pageSize = 10;
 
   displayedColumns: string[] = ['name', 'email', 'roles', 'actions'];
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin;
+  }
 
   ngOnInit() {
     this.refresh();

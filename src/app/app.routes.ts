@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 import { ticketResolver } from './services/tickets/ticket-resolver';
 
 export const routes: Routes = [
@@ -12,7 +13,7 @@ export const routes: Routes = [
       {
         path: 'tickets',
         loadComponent: () =>
-          import('./container/tickets/tickets').then((m) => m.Tickets),
+          import('./container/list-tickets/list-tickets').then((m) => m.ListTickets),
       },
       {
         path: 'tickets/new',
@@ -54,11 +55,37 @@ export const routes: Routes = [
           import('./container/list-users/list-users').then(
             (m) => m.ListUsers
           ),
+        canActivate: [adminGuard],
       },
       {
         path: 'users/new',
         loadComponent: () =>
           import('./container/form-user/form-user').then((m) => m.FormUser),
+        canActivate: [adminGuard],
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./container/list-categories/list-categories').then(
+            (m) => m.ListCategories
+          ),
+        canActivate: [adminGuard],
+      },
+      {
+        path: 'categories/new',
+        loadComponent: () =>
+          import('./container/form-category/form-category').then(
+            (m) => m.FormCategory
+          ),
+        canActivate: [adminGuard],
+      },
+      {
+        path: 'categories/edit/:id',
+        loadComponent: () =>
+          import('./container/form-category/form-category').then(
+            (m) => m.FormCategory
+          ),
+        canActivate: [adminGuard],
       },
     ],
   },

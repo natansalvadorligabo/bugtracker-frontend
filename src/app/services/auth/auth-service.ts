@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { ProfilePictureService } from '../profile-picture/profile-picture-service';
 import { HttpClient } from '@angular/common/http';
 import { Role } from '../../model/role';
+import { UserLogin, VerifyCodeResponse } from '../../model/user';
 
 interface JwtPayload {
   token: string,
@@ -18,7 +19,7 @@ export class AuthService {
   private router = inject(Router);
   private profilePictureService = inject(ProfilePictureService);
 
-  private readonly API_URL = '/bugtracker/roles';
+  private readonly API_URL = '/bugtracker/auth';
   private httpClient = inject(HttpClient);
 
   setToken(token: string) {
@@ -116,6 +117,48 @@ export class AuthService {
   }
 
   getRoles() {
-    return this.httpClient.get<Role[]>(this.API_URL);
+    return this.httpClient.get<Role[]>(`${this.API_URL}/roles`);
+  }
+
+  register(formData: FormData) {
+    return this.httpClient.post(
+      `${this.API_URL}/register`,
+      formData,
+      { responseType: 'text' }
+    );
+  }
+
+  login(user: UserLogin) {
+    return this.httpClient.post<UserLogin>(`${this.API_URL}/login`, user);
+  }
+
+  recoveryPassword(email: string) {
+    return this.httpClient.post<string>(
+      `${this.API_URL}/forgot-password`,
+      { email },
+      { responseType: 'text' as 'json' }
+    );
+  }
+
+  verifyRecoveryCode(email: string, code: string) {
+    return this.httpClient.post<VerifyCodeResponse>(
+      `${this.API_URL}/verify-code`,
+      {
+        email: email,
+        code: code,
+      }
+    );
+  }
+
+  resetPassword(email: string, password: string, code: string) {
+    return this.httpClient.post(
+      `${this.API_URL}/reset-password`,
+      {
+        email: email,
+        newPassword: password,
+        token: code,
+      },
+      { responseType: 'text' as 'json' }
+    );
   }
 }

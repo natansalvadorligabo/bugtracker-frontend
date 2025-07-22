@@ -20,4 +20,15 @@ export class TicketCategoriesService {
     );
   }
 
+  save(categoryData: { description: string }) {
+    return this.httpClient.post<TicketCategory>(`${this.API_URL}`, categoryData);
+  }
+
+  update(categoryId: number, categoryData: { description: string }) {
+    return this.httpClient.put<TicketCategory>(`${this.API_URL}/${categoryId}`, categoryData);
+  }
+
+  remove(categoryId: number) {
+    return this.httpClient.delete<void>(`${this.API_URL}/${categoryId}`);
+  }
 }

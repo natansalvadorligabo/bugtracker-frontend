@@ -29,10 +29,16 @@
           <mat-icon matListItemIcon>report</mat-icon>
           <p matListItemTitle>Tickets</p>
         </a>
-        <a mat-list-item routerLink="users" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>groups</mat-icon>
-          <p matListItemTitle>Usuários</p>
-        </a>
+        @if (isAdmin) {
+          <a mat-list-item routerLink="users" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>groups</mat-icon>
+            <p matListItemTitle>Usuários</p>
+          </a>
+          <a mat-list-item routerLink="categories" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>category</mat-icon>
+            <p matListItemTitle>Categorias</p>
+          </a>
+        }
       </mat-nav-list>
     </mat-sidenav>
 

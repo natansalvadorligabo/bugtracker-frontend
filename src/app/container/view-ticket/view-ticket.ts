@@ -65,6 +65,43 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     message: ['', [Validators.required]],
   });
 
+  getTicketStatusLabel(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'PENDING': 'Pendente',
+      'ATTACHED': 'Atribuído',
+      'COMPLETED': 'Completo',
+      'STOPPED': 'Pausado'
+    };
+    return statusMap[status] || status;
+  }
+
+  getTicketStatusColor(status: string): string {
+    const colorMap: { [key: string]: string } = {
+      'PENDING': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      'ATTACHED': 'bg-orange-100 text-orange-800 border-orange-200',
+      'COMPLETED': 'bg-green-100 text-green-800 border-green-200',
+      'STOPPED': 'bg-red-100 text-red-800 border-red-200'
+    };
+    return colorMap[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+
+  getStatusInfo(status: string) {
+    const availableStatuses = [
+      { value: 'PENDING', label: 'Pendente', color: 'text-yellow-500' },
+      { value: 'ATTACHED', label: 'Atribuído', color: 'text-orange-500' },
+      { value: 'STOPPED', label: 'Pausado', color: 'text-red-500' },
+      { value: 'COMPLETED', label: 'Completo', color: 'text-green-500' },
+    ];
+
+    return (
+      availableStatuses.find((s) => s.value === status) || {
+        value: status,
+        label: status,
+        color: 'text-gray-500',
+      }
+    );
+  }
+
   ngOnInit() {
     this.isLoadingMessages = true;
     this.ticket = this.route.snapshot.data['ticket'];

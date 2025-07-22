@@ -1,65 +1,82 @@
-<h1 class="text-2xl p-4">Usuários</h1>
+<div class="h-screen w-auto">
+  <div class="min-h-screen">
+    <div class="flex justify-between items-center mb-6 px-6 pt-6">
+      <h1 class="text-3xl font-semibold text-gray-900">Gerenciar Usuários</h1>
 
-@if (users$ | async; as userPage) {
-  <div class="px-4 pb-6">
-    <mat-table [dataSource]="userPage.users">
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
-        <mat-cell *matCellDef="let user"> {{ user.name }} </mat-cell>
-      </ng-container>
+      @if (isAdmin) {
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onAdd()"
+        class="flex items-center gap-2"
+      >
+        <mat-icon>add</mat-icon>
+        Novo Usuário
+      </button>
+      }
+    </div>
 
-      <ng-container matColumnDef="email">
-        <mat-header-cell *matHeaderCellDef> E-mail </mat-header-cell>
-        <mat-cell *matCellDef="let user"> {{ user.email }} </mat-cell>
-      </ng-container>
+    <div class="px-6">
+      @if (users$ | async; as userPage) {
+      <mat-table [dataSource]="userPage.users">
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
+          <mat-cell *matCellDef="let user"> {{ user.name }} </mat-cell>
+        </ng-container>
 
-      <ng-container matColumnDef="roles">
-        <mat-header-cell *matHeaderCellDef> Funções </mat-header-cell>
-        <mat-cell *matCellDef="let user">
-          <div class="role-chips flex flex-wrap gap-1">
-            @for (role of user.roles; track $index) {
-              <mat-chip [class]="getRoleChipClass(role)">
-                {{ getRoleDisplayName(role) }}
-              </mat-chip>
+        <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef> E-mail </mat-header-cell>
+          <mat-cell *matCellDef="let user"> {{ user.email }} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="roles">
+          <mat-header-cell *matHeaderCellDef> Funções </mat-header-cell>
+          <mat-cell *matCellDef="let user">
+            <div class="role-chips flex flex-wrap gap-1">
+              @for (role of user.roles; track $index) {
+                <mat-chip [class]="getRoleChipClass(role)">
+                  {{ getRoleDisplayName(role) }}
+                </mat-chip>
+              }
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef class="action-column">
+          </mat-header-cell>
+
+          <mat-cell *matCellDef="let user" class="action-column">
+            @if (isAdmin) {
+            <button mat-icon-button (click)="onEdit(user)" aria-label="Editar Usuário">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button mat-icon-button color="error" (click)="onDelete(user)" aria-label="Remover usuário">
+              <mat-icon>delete</mat-icon>
+            </button>
             }
-          </div>
-        </mat-cell>
-      </ng-container>
+          </mat-cell>
+        </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <mat-header-cell *matHeaderCellDef class="action-column">
-          <button mat-mini-fab (click)="onAdd()" aria-label="Adicionar um usuário">
-            <mat-icon>add</mat-icon>
-          </button>
-        </mat-header-cell>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
 
-        <mat-cell *matCellDef="let user" class="action-column">
-          <button mat-icon-button (click)="onEdit(user)" aria-label="Editar Usuário">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button mat-icon-button color="error" (click)="onDelete(user)" aria-label="Remover usuário">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 15, 20]"
-      showFirstLastButtons
-      [pageIndex]="pageIndex"
-      [pageSize]="pageSize"
-      [length]="userPage.totalElements"
-      (page)="refresh($event)"
-      aria-label="Selecione a página de usuários"
-    ></mat-paginator>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 15, 20]"
+        showFirstLastButtons
+        [pageIndex]="pageIndex"
+        [pageSize]="pageSize"
+        [length]="userPage.totalElements"
+        (page)="refresh($event)"
+        aria-label="Selecione a página de usuários"
+      ></mat-paginator>
+      } @else {
+      <div class="flex items-center justify-center p-6">
+        <mat-spinner></mat-spinner>
+      </div>
+      }
+    </div>
   </div>
-} @else {
-  <div class="flex items-center justify-center p-6">
-    <mat-spinner></mat-spinner>
-  </div>
-}
+</div>

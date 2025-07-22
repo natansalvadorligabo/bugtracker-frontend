@@ -7,6 +7,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { UserButtonComponent } from '../user-button/user-button';
+import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'app-layout',
@@ -26,9 +27,14 @@ import { UserButtonComponent } from '../user-button/user-button';
 })
 export class Layout {
   protected readonly isMobile = signal(true);
+  private authService = inject(AuthService);
 
   private readonly _mobileQuery: MediaQueryList;
   private readonly _mobileQueryListener: () => void;
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin;
+  }
 
   constructor() {
     const media = inject(MediaMatcher);

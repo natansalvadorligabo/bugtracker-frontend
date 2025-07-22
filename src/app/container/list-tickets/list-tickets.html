@@ -1,11 +1,13 @@
 <div class="h-screen w-auto">
-  <div class="bg-gray-100 min-h-screen">
-    
+  <div class="min-h-screen">
+
     <app-ticket-header
       [ticketCount]="tickets.length"
       [showOnlyMyTickets]="showOnlyMyTickets"
       [currentViewLabel]="currentViewLabel"
+      [canCreateTicket]="canCreateTicket"
       (toggleView)="toggleTicketView()"
+      (createTicket)="createTicket()"
     ></app-ticket-header>
 
     <app-ticket-search
