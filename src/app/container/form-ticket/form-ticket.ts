@@ -219,7 +219,7 @@ export class FormTicket {
   loadTechnicians(callback?: () => void) {
     this.usersService.getUsers().subscribe({
       next: (data) => {
-        this.technicians = data.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
+        this.technicians = data.users.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
         if (callback) {
           callback();
         }

@@ -41,3 +41,9 @@ export interface UserUpdate {
 export interface VerifyCodeResponse {
   resetToken: string;
 }
+
+export interface UserPage {
+  users: User[];
+  totalElements: number;
+  totalPages: number;
+}

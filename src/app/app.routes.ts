@@ -48,13 +48,13 @@ export const routes: Routes = [
             (m) => m.UserProfile
           ),
       },
-      // {
-      //   path: 'users',
-      //   loadComponent: () =>
-      //     import('./container/form-user/form-user').then(
-      //       (m) => m.FormUser
-      //     ),
-      // },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./container/list-users/list-users').then(
+            (m) => m.ListUsers
+          ),
+      },
       {
         path: 'users/new',
         loadComponent: () =>
