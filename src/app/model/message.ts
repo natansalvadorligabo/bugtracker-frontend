@@ -1,6 +1,8 @@
+import { UserReference } from "./user";
+
 export interface Message {
   messageId: number;
-  senderId: number;
+  sender: UserReference;
   ticketId: number;
   message: string;
   timestamp: string;

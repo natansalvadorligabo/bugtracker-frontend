@@ -177,7 +177,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
       const optimisticMessage: Message = {
         messageId: -1,
         ticketId: messageData.ticketId,
-        senderId: messageData.senderId,
+        sender: this.authService.getUserFromToken(),
         message: messageData.message!,
         timestamp: messageData.timestamp,
         wasEdited: false,
