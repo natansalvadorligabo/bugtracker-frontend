@@ -145,10 +145,10 @@
       </div>
       } @else if (ticketMessages && ticketMessages.length > 0) {
 
-      <div class="flex-1 min-h-0 mb-4">
+      <div class="flex-1 min-h-0 mb-4 rounded-lg">
         <div
           #messagesContainer
-          class="messages-container space-y-4 p-2 h-full overflow-y-auto"
+          class="messages-container space-y-4 p-2 h-full overflow-y-auto rounded-lg"
         >
           @for (message of ticketMessages; track trackMessage($index, message)) { @if (message) {
           <div
