@@ -1,10 +1,11 @@
 import { CommonModule, Location } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroupDirective, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +19,13 @@ import { AuthService } from '../../services/auth/auth-service';
 import { CommentService } from '../../services/comments/comment-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
+
+export class NoErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return false;
+  }
+}
+
 @Component({
   selector: 'app-view-ticket',
   imports: [
@@ -64,6 +72,9 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   messageForm = this.fb.group({
     message: ['', [Validators.required]],
   });
+
+  // ErrorStateMatcher que nunca mostra erro visual
+  noErrorMatcher = new NoErrorStateMatcher();
 
   getTicketStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
@@ -226,10 +237,12 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
       this.ticketMessages.push(optimisticMessage);
       const tempTimestamp = messageData.timestamp;
-      this.messageForm.reset();
+
       this.shouldScrollToBottom = true;
       this.isLoadingMessages = false;
       this.cdr.detectChanges();
+
+      this.messageForm.reset();
 
       this.commentService.save(messageData).subscribe({
         next: savedMessage => {

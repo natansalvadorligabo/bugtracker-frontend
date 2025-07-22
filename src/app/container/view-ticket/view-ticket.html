@@ -28,7 +28,8 @@
       </mat-card-title>
       <span
         class="ml-2 p-2 rounded-full text-xs font-medium border"
-        [ngClass]="ticket && ticket.ticketStatus ? getTicketStatusColor(ticket.ticketStatus) : 'bg-gray-100 text-gray-800 border-gray-200'">
+        [ngClass]="ticket && ticket.ticketStatus ? getTicketStatusColor(ticket.ticketStatus) : 'bg-gray-100 text-gray-800 border-gray-200'"
+      >
         {{ ticket && ticket.ticketStatus ? getTicketStatusLabel(ticket.ticketStatus) : '' }}
       </span>
     </mat-card-header>
@@ -58,7 +59,7 @@
             <mat-icon class="text-gray-500">person</mat-icon>
             <div>
               <p class="text-sm text-gray-600 font-medium">Criado por</p>
-              <p class="text-base"> {{ ticket?.sender?.name }}</p>
+              <p class="text-base">{{ ticket?.sender?.name }}</p>
             </div>
           </div>
 
@@ -67,7 +68,7 @@
             <mat-icon class="text-gray-500">support_agent</mat-icon>
             <div>
               <p class="text-sm text-gray-600 font-medium">Atribuído para</p>
-              <p class="text-base"> {{ ticket?.receiver?.name }}</p>
+              <p class="text-base">{{ ticket?.receiver?.name }}</p>
             </div>
           </div>
           }
@@ -206,14 +207,12 @@
               matInput
               formControlName="message"
               rows="3"
+              [errorStateMatcher]="noErrorMatcher"
               placeholder="Adicione um comentário..."
               class="resize-none"
               (keydown)="onKeydown($event)"
             ></textarea>
             <mat-hint>Pressione Ctrl+Enter para enviar</mat-hint>
-            @if (messageForm.get('message')?.hasError('required')) {
-            <mat-error>Mensagem é obrigatória</mat-error>
-            }
           </mat-form-field>
           <button
             mat-raised-button
