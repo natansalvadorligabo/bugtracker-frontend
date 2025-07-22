@@ -17,20 +17,29 @@ export const routes: Routes = [
       {
         path: 'tickets/new',
         loadComponent: () =>
-          import('./container/form-ticket/form-ticket').then((m) => m.FormTicket),
+          import('./container/form-ticket/form-ticket').then(
+            (m) => m.FormTicket
+          ),
       },
       {
         path: 'tickets/edit/:id',
         loadComponent: () =>
-          import('./container/form-ticket/form-ticket').then(m => m.FormTicket)
+          import('./container/form-ticket/form-ticket').then(
+            (m) => m.FormTicket
+          ),
+        resolve: {
+          ticket: ticketResolver,
+        },
       },
       {
         path: 'tickets/:id',
         loadComponent: () =>
-          import('./container/view-ticket/view-ticket').then(m => m.ViewTicket),
+          import('./container/view-ticket/view-ticket').then(
+            (m) => m.ViewTicket
+          ),
         resolve: {
-          ticket: ticketResolver
-        }
+          ticket: ticketResolver,
+        },
       },
       {
         path: 'user',
@@ -49,9 +58,7 @@ export const routes: Routes = [
       {
         path: 'users/new',
         loadComponent: () =>
-          import('./container/form-user/form-user').then(
-            (m) => m.FormUser
-          ),
+          import('./container/form-user/form-user').then((m) => m.FormUser),
       },
     ],
   },
