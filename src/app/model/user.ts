@@ -14,6 +14,13 @@ export interface UserProfile {
   roles: string[];
 }
 
+export interface UserReference {
+  userId: number;
+  email: string;
+  name: string;
+  profilePicturePath?: string;
+}
+
 export interface UserLogin {
   email: string;
   password: string;

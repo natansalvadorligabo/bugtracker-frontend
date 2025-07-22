@@ -1,0 +1,99 @@
+<div class="px-15 mb-6 sm:mb-15 md:mb-15">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title class="text-sm sm:text-base">
+        <mat-icon class="mr-1 sm:mr-2">filter_list</mat-icon>
+        <span class="hidden lg:inline">Filtros</span>
+        <span class="lg:hidden">Filtros</span>
+      </mat-panel-title>
+      <mat-panel-description class="text-xs sm:text-sm">
+        <span class="hidden lg:inline">Filtrar por tags e status</span>
+        <span class="sm:hidden">Filtrar cards</span>
+        @if (selectedTags.length > 0 || selectedStatuses.length > 0) {
+        <span class="ml-1 sm:ml-2">({{ selectedTags.length + selectedStatuses.length }})</span>
+        }
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div class="mb-4">
+      <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+        <mat-icon class="mr-1 text-base">local_offer</mat-icon>
+        Tags
+      </h4>
+      <div class="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-0">
+        <mat-chip-set>
+          @for (tag of availableTags; track tag.ticketCategoryId) {
+          <mat-chip-option
+            (click)="onToggleTag(tag)"
+            [selected]="isTagSelected(tag)"
+            [value]="tag"
+            class="text-xs sm:text-sm"
+          >
+            {{ tag.description }}
+          </mat-chip-option>
+          }
+        </mat-chip-set>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+        <mat-icon class="mr-1 text-base">assignment</mat-icon>
+        Status
+      </h4>
+      <div class="flex flex-wrap gap-1 sm:gap-2 p-2 sm:p-0">
+        <mat-chip-set>
+          @for (status of availableStatuses; track status.value) {
+          <mat-chip-option
+            (click)="onToggleStatus(status.value)"
+            [selected]="isStatusSelected(status.value)"
+            [value]="status.value"
+            class="text-xs sm:text-sm"
+          >
+            <span [class]="status.color">{{ status.label }}</span>
+          </mat-chip-option>
+          }
+        </mat-chip-set>
+      </div>
+    </div>
+
+    @if (selectedTags.length > 0 || selectedStatuses.length > 0) {
+    <mat-action-row class="px-2 sm:px-0">
+      @if (selectedTags.length > 0) {
+      <button
+        mat-button
+        (click)="onClearTags()"
+        color="warn"
+        class="text-xs sm:text-sm mr-2"
+      >
+        <mat-icon class="text-base sm:text-lg">local_offer_off</mat-icon>
+        <span class="hidden sm:inline ml-1">Limpar tags</span>
+        <span class="sm:hidden ml-1">Tags</span>
+      </button>
+      } @if (selectedStatuses.length > 0) {
+      <button
+        mat-button
+        (click)="onClearStatuses()"
+        color="warn"
+        class="text-xs sm:text-sm mr-2"
+      >
+        <mat-icon class="text-base sm:text-lg">assignment_turned_in</mat-icon>
+        <span class="hidden sm:inline ml-1">Limpar status</span>
+        <span class="sm:hidden ml-1">Status</span>
+      </button>
+      }
+
+      <button
+        mat-button
+        (click)="onClearFilters()"
+        color="warn"
+        class="text-xs sm:text-sm"
+      >
+        <mat-icon class="text-base sm:text-lg">clear_all</mat-icon>
+        <span class="hidden sm:inline ml-1">Limpar tudo</span>
+        <span class="sm:hidden ml-1">Tudo</span>
+      </button>
+    </mat-action-row>
+    }
+  </mat-expansion-panel>
+</div>
