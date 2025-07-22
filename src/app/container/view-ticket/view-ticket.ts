@@ -73,7 +73,6 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     message: ['', [Validators.required]],
   });
 
-  // ErrorStateMatcher que nunca mostra erro visual
   noErrorMatcher = new NoErrorStateMatcher();
 
   getTicketStatusLabel(status: string): string {

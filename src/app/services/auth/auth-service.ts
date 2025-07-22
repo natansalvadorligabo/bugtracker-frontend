@@ -1,19 +1,19 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { ProfilePictureService } from '../profile-picture/profile-picture-service';
-import { HttpClient } from '@angular/common/http';
 import { Role } from '../../model/role';
 import { UserLogin, VerifyCodeResponse } from '../../model/user';
+import { ProfilePictureService } from '../profile-picture/profile-picture-service';
 
 interface JwtPayload {
-  token: string,
-  username: string,
-  roles: string[]
+  token: string;
+  username: string;
+  roles: string[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private router = inject(Router);
@@ -87,7 +87,8 @@ export class AuthService {
     return {
       email: decoded.sub,
       userId: decoded.userId,
-      roles: decoded.roles || []
+      name: decoded.name,
+      roles: decoded.roles || [],
     };
   }
 
@@ -121,11 +122,7 @@ export class AuthService {
   }
 
   register(formData: FormData) {
-    return this.httpClient.post(
-      `${this.API_URL}/register`,
-      formData,
-      { responseType: 'text' }
-    );
+    return this.httpClient.post(`${this.API_URL}/register`, formData, { responseType: 'text' });
   }
 
   login(user: UserLogin) {
@@ -133,21 +130,14 @@ export class AuthService {
   }
 
   recoveryPassword(email: string) {
-    return this.httpClient.post<string>(
-      `${this.API_URL}/forgot-password`,
-      { email },
-      { responseType: 'text' as 'json' }
-    );
+    return this.httpClient.post<string>(`${this.API_URL}/forgot-password`, { email }, { responseType: 'text' as 'json' });
   }
 
   verifyRecoveryCode(email: string, code: string) {
-    return this.httpClient.post<VerifyCodeResponse>(
-      `${this.API_URL}/verify-code`,
-      {
-        email: email,
-        code: code,
-      }
-    );
+    return this.httpClient.post<VerifyCodeResponse>(`${this.API_URL}/verify-code`, {
+      email: email,
+      code: code,
+    });
   }
 
   resetPassword(email: string, password: string, code: string) {
