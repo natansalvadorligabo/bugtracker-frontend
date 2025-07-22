@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Role } from '../../model/role';
-import { UserLogin, VerifyCodeResponse } from '../../model/user';
+import { User, UserLogin, VerifyCodeResponse } from '../../model/user';
 import { ProfilePictureService } from '../profile-picture/profile-picture-service';
 
 interface JwtPayload {
@@ -78,7 +78,7 @@ export class AuthService {
     return decoded.exp < currentTime;
   }
 
-  getUserFromToken(): any {
+  getUserFromToken(): User | any {
     const decoded = this.decodeToken();
     if (!decoded) {
       return null;
@@ -86,10 +86,10 @@ export class AuthService {
 
     return {
       email: decoded.sub,
-      userId: decoded.userId,
+      userId: decoded.id,
       name: decoded.name,
       roles: decoded.roles || [],
-    };
+    } as User;
   }
 
   hasRole(role: string): boolean {

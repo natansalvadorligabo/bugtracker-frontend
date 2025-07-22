@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from '../../model/message';
 import { Ticket } from '../../model/ticket';
@@ -43,6 +44,7 @@ export class NoErrorStateMatcher implements ErrorStateMatcher {
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatTooltipModule,
   ],
   templateUrl: './view-ticket.html',
   styleUrl: './view-ticket.scss',
@@ -67,6 +69,10 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   ticketMessages: Message[] = [];
   isLoading = true;
   isLoadingMessages = true;
+  isEditingMessage = false;
+  editingMessageId: number | null = null;
+  originalMessageText = '';
+  currentUser = this.authService.getUserFromToken();
   private shouldScrollToBottom = false;
 
   messageForm = this.fb.group({
@@ -74,6 +80,11 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   });
 
   noErrorMatcher = new NoErrorStateMatcher();
+
+  trackMessage(index: number, message: Message): any {
+    if (!message) return index;
+    return message.messageId === -1 ? `temp-${message.timestamp}` : message.messageId;
+  }
 
   getTicketStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
@@ -212,6 +223,93 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     }
   }
 
+  editMessage(message: Message) {
+    if (message.messageId !== -1 && message.message) {
+      this.isEditingMessage = true;
+      this.editingMessageId = message.messageId;
+      this.originalMessageText = message.message;
+
+      setTimeout(() => {
+        const textarea = document.getElementById(`message-${message.messageId}`) as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.focus();
+          textarea.select();
+        }
+      }, 100);
+    }
+  }
+
+  cancelEdit() {
+    if (this.editingMessageId) {
+      const textarea = document.getElementById(`message-${this.editingMessageId}`) as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.value = this.originalMessageText;
+      }
+    }
+
+    this.isEditingMessage = false;
+    this.editingMessageId = null;
+    this.originalMessageText = '';
+  }
+
+  saveEditedMessage() {
+    if (!this.editingMessageId) return;
+
+    const textarea = document.getElementById(`message-${this.editingMessageId}`) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const newMessage = textarea.value.trim();
+    if (!newMessage) {
+      alert('A mensagem não pode estar vazia.');
+      return;
+    }
+
+    if (newMessage === this.originalMessageText) {
+      this.cancelEdit();
+      return;
+    }
+
+    const messageIndex = this.ticketMessages.findIndex(m => m.messageId === this.editingMessageId);
+    if (messageIndex === -1) return;
+
+    const oldMessage = this.ticketMessages[messageIndex].message;
+    this.ticketMessages[messageIndex].message = newMessage;
+    this.ticketMessages[messageIndex].wasEdited = true;
+
+    this.isEditingMessage = false;
+    const currentEditingId = this.editingMessageId;
+    this.editingMessageId = null;
+    this.originalMessageText = '';
+
+    this.commentService.update(currentEditingId, newMessage).subscribe({
+      next: updatedMessage => {
+        const index = this.ticketMessages.findIndex(m => m && m.messageId === currentEditingId);
+        if (index !== -1 && updatedMessage) {
+          this.ticketMessages[index] = updatedMessage;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        if (messageIndex !== -1) {
+          this.ticketMessages[messageIndex].message = oldMessage;
+          this.ticketMessages[messageIndex].wasEdited = false;
+        }
+        alert('Erro ao editar mensagem. Tente novamente.');
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  onEditKeydown(event: KeyboardEvent, messageId: number) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.saveEditedMessage();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancelEdit();
+    }
+  }
+
   sendMessage() {
     if (this.messageForm.valid && this.ticket) {
       const now = new Date();
@@ -220,7 +318,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
       const messageData = {
         ticketId: this.ticket.ticketId,
-        senderId: this.authService.getUserFromToken().userId,
+        senderId: this.authService?.getUserFromToken().userId,
         message: this.messageForm.value.message,
         timestamp: localTimestamp,
       };
