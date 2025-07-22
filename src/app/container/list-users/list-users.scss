@@ -1,0 +1,20 @@
+.role-chips {
+  mat-chip {
+    &.role-user {
+      background-color: #dbeafe !important;
+    }
+
+    &.role-technician {
+      background-color: #dcfce7 !important;
+    }
+
+    &.role-admin {
+      background-color: #fee2e2 !important;
+    }
+
+    &.role-default {
+      background-color: #f3f4f6 !important;
+    }
+  }
+}
+
