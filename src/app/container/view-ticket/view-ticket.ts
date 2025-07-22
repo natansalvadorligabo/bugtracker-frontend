@@ -1,15 +1,19 @@
 import { CommonModule, Location } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroupDirective, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from '../../model/message';
 import { Ticket } from '../../model/ticket';
@@ -17,7 +21,13 @@ import { AuthService } from '../../services/auth/auth-service';
 import { CommentService } from '../../services/comments/comment-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
-import { MatInputModule } from '@angular/material/input';
+
+export class NoErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return false;
+  }
+}
+
 @Component({
   selector: 'app-view-ticket',
   imports: [
@@ -34,7 +44,8 @@ import { MatInputModule } from '@angular/material/input';
     MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule,
   ],
   templateUrl: './view-ticket.html',
   styleUrl: './view-ticket.scss',
@@ -52,6 +63,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private snackBar = inject(MatSnackBar);
 
   ticket: Ticket | null = null;
   ticketCategory: string | null = null;
@@ -59,28 +71,39 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   ticketMessages: Message[] = [];
   isLoading = true;
   isLoadingMessages = true;
+  isEditingMessage = false;
+  editingMessageId: number | null = null;
+  originalMessageText = '';
+  currentUser = this.authService.getUserFromToken();
   private shouldScrollToBottom = false;
 
   messageForm = this.fb.group({
     message: ['', [Validators.required]],
   });
 
+  noErrorMatcher = new NoErrorStateMatcher();
+
+  trackMessage(index: number, message: Message): any {
+    if (!message) return index;
+    return message.messageId === -1 ? `temp-${message.timestamp}` : message.messageId;
+  }
+
   getTicketStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'PENDING': 'Pendente',
-      'ATTACHED': 'Atribuído',
-      'COMPLETED': 'Completo',
-      'STOPPED': 'Pausado'
+      PENDING: 'Pendente',
+      ATTACHED: 'Atribuído',
+      COMPLETED: 'Completo',
+      STOPPED: 'Pausado',
     };
     return statusMap[status] || status;
   }
 
   getTicketStatusColor(status: string): string {
     const colorMap: { [key: string]: string } = {
-      'PENDING': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'ATTACHED': 'bg-orange-100 text-orange-800 border-orange-200',
-      'COMPLETED': 'bg-green-100 text-green-800 border-green-200',
-      'STOPPED': 'bg-red-100 text-red-800 border-red-200'
+      PENDING: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      ATTACHED: 'bg-orange-100 text-orange-800 border-orange-200',
+      COMPLETED: 'bg-green-100 text-green-800 border-green-200',
+      STOPPED: 'bg-red-100 text-red-800 border-red-200',
     };
     return colorMap[status] || 'bg-gray-100 text-gray-800 border-gray-200';
   }
@@ -94,7 +117,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     ];
 
     return (
-      availableStatuses.find((s) => s.value === status) || {
+      availableStatuses.find(s => s.value === status) || {
         value: status,
         label: status,
         color: 'text-gray-500',
@@ -202,13 +225,106 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
     }
   }
 
+  editMessage(message: Message) {
+    if (message.messageId !== -1 && message.message) {
+      this.isEditingMessage = true;
+      this.editingMessageId = message.messageId;
+      this.originalMessageText = message.message;
+
+      setTimeout(() => {
+        const textarea = document.getElementById(`message-${message.messageId}`) as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.focus();
+          textarea.select();
+        }
+      }, 100);
+    }
+  }
+
+  cancelEdit() {
+    if (this.editingMessageId) {
+      const textarea = document.getElementById(`message-${this.editingMessageId}`) as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.value = this.originalMessageText;
+      }
+    }
+
+    this.isEditingMessage = false;
+    this.editingMessageId = null;
+    this.originalMessageText = '';
+  }
+
+  saveEditedMessage() {
+    if (!this.editingMessageId) return;
+
+    const textarea = document.getElementById(`message-${this.editingMessageId}`) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const newMessage = textarea.value.trim();
+    if (!newMessage) {
+      return;
+    }
+
+    if (newMessage === this.originalMessageText) {
+      this.cancelEdit();
+      return;
+    }
+
+    const messageIndex = this.ticketMessages.findIndex(m => m.messageId === this.editingMessageId);
+    if (messageIndex === -1) return;
+
+    const oldMessage = this.ticketMessages[messageIndex].message;
+    this.ticketMessages[messageIndex].message = newMessage;
+    this.ticketMessages[messageIndex].wasEdited = true;
+
+    this.isEditingMessage = false;
+    const currentEditingId = this.editingMessageId;
+    this.editingMessageId = null;
+    this.originalMessageText = '';
+
+    this.commentService.update(currentEditingId, newMessage).subscribe({
+      next: updatedMessage => {
+        const index = this.ticketMessages.findIndex(m => m && m.messageId === currentEditingId);
+        if (index !== -1 && updatedMessage) {
+          this.ticketMessages[index] = updatedMessage;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        if (messageIndex !== -1) {
+          this.ticketMessages[messageIndex].message = oldMessage;
+          this.ticketMessages[messageIndex].wasEdited = false;
+        }
+        this.snackBar.open('Erro ao editar mensagem. Tente novamente.', 'Fechar', {
+          verticalPosition: 'bottom',
+          duration: 3000,
+        });
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  onEditKeydown(event: KeyboardEvent, messageId: number) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.saveEditedMessage();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancelEdit();
+    }
+  }
+
   sendMessage() {
     if (this.messageForm.valid && this.ticket) {
+      const now = new Date();
+      const offsetMs = now.getTimezoneOffset() * 60000;
+      const localTimestamp = new Date(now.getTime() - offsetMs).toISOString();
+
       const messageData = {
         ticketId: this.ticket.ticketId,
-        senderId: this.authService.getUserFromToken().userId,
+        senderId: this.authService?.getUserFromToken().userId,
         message: this.messageForm.value.message,
-        timestamp: new Date().toISOString(),
+        timestamp: localTimestamp,
       };
 
       const optimisticMessage: Message = {
@@ -222,10 +338,12 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
 
       this.ticketMessages.push(optimisticMessage);
       const tempTimestamp = messageData.timestamp;
-      this.messageForm.reset();
+
       this.shouldScrollToBottom = true;
       this.isLoadingMessages = false;
       this.cdr.detectChanges();
+
+      this.messageForm.reset();
 
       this.commentService.save(messageData).subscribe({
         next: savedMessage => {
