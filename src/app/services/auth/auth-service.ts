@@ -110,7 +110,7 @@ export class AuthService {
   }
 
   get isTechnician(): boolean {
-    return this.hasRole('ROLE_TECHNICIAN');
+    return this.hasRole('ROLE_TECHNICIAN') || this.hasRole('ROLE_ADMIN');
   }
 
   get isAdmin(): boolean {
