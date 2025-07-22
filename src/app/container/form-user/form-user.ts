@@ -18,7 +18,7 @@ import { UsersService } from '../../services/users/users-service';
 import { FormUtilsService } from '../../shared/form/form-utils';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { RoleService } from '../../services/roles/role-service.js';
+import { AuthService } from '../../services/auth/auth-service.js';
 import { Role } from '../../model/role';
 
 @Component({
@@ -46,7 +46,7 @@ form!: FormGroup;
 
   private formBuilder = inject(FormBuilder);
   private userService = inject(UsersService);
-  private roleService = inject(RoleService);
+  private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   formUtils = inject(FormUtilsService);
 
@@ -63,7 +63,7 @@ form!: FormGroup;
   }
 
   loadRoles() {
-    this.roleService.getRoles().subscribe({
+    this.authService.getRoles().subscribe({
       next: (data) => { this.roles = data },
       error: (err) => {
         console.error('Erro ao carregar funções', err);
@@ -74,11 +74,11 @@ form!: FormGroup;
 
   onSubmit() {
     if (this.isSubmitting) {
-      return; // Previne múltiplos submits
+      return;
     }
 
     if (this.form.valid) {
-      this.isSubmitting = true; // Inicia o loading
+      this.isSubmitting = true;
 
       const selectedRoleIds = this.form.get('userRoles')?.value;
 
@@ -92,17 +92,16 @@ form!: FormGroup;
 
       this.userService.register(formData).subscribe({
         next: (data) => {
-          this.isSubmitting = false; // Para o loading
+          this.isSubmitting = false;
           this.snackBar.open(
             'Usuário registrado com sucesso!' , 'Fechar',
             { duration: 3000, panelClass: ['snackbar-success'] }
           );
-          
-          // Reset do formulário após sucesso
+
           this.form.reset();
         },
         error: (err) => {
-          this.isSubmitting = false; // Para o loading em caso de erro
+          this.isSubmitting = false;
           console.error(err);
           this.snackBar.open('Erro ao registrar usuário.', 'Fechar', {
             duration: 3000,

@@ -68,7 +68,6 @@ export class FormTicket {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  userRoles: string[] = [];
   ticketId: number | null = null;
 
   loading = signal(false);
@@ -76,15 +75,15 @@ export class FormTicket {
   formUtils = inject(FormUtilsService);
 
   get isUser(): boolean {
-    return this.userRoles.includes('ROLE_USER');
+    return this.authService.isUser;
   }
 
   get isTechnician(): boolean {
-    return this.userRoles.includes('ROLE_TECHNICIAN');
+    return this.authService.isTechnician;
   }
 
   get isAdmin(): boolean {
-    return this.userRoles.includes('ROLE_ADMIN');
+    return this.authService.isAdmin;
   }
 
   get isCreatingTicket(): boolean {
@@ -128,10 +127,6 @@ export class FormTicket {
   }
 
   ngOnInit() {
-    const token = this.authService.getToken() ?? undefined;
-    this.userRoles = this.authService.decodeToken(token).roles;
-    console.log('User roles:', this.userRoles);
-
     this.ticketId = this.route.snapshot.params['id'] || null;
 
     this.form = this.formBuilder.group({
@@ -224,8 +219,7 @@ export class FormTicket {
   loadTechnicians(callback?: () => void) {
     this.usersService.getUsers().subscribe({
       next: (data) => {
-        this.technicians = data.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
-        console.log('Técnicos carregados:', this.technicians);
+        this.technicians = data.users.filter(user => user.roles.includes('ROLE_TECHNICIAN'));
         if (callback) {
           callback();
         }

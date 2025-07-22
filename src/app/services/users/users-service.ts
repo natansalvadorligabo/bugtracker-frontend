@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   User,
   UserLogin,
+  UserPage,
   UserProfile,
   UserRegister,
   UserUpdate,
@@ -28,11 +29,20 @@ export class UsersService {
   login(user: UserLogin) {
     return this.httpClient.post<UserLogin>(`${this.API_URL}/auth/login`, user);
   }
-   
-  getUsers() {
-    return this.httpClient.get<User[]>(`${this.API_URL}/users`);
+
+  getUsers(page = 0, pageSize = 10) {
+    return this.httpClient.get<UserPage>(`${this.API_URL}/users`, {
+      params: {
+        page: page,
+        pageSize: pageSize,
+      },
+    });
   }
-  
+
+  remove(id: number) {
+    return this.httpClient.delete(`${this.API_URL}/users/${id}`);
+  }
+
   getUserById(userId: number) {
     return this.httpClient.get<UserProfile>(`${this.API_URL}/users/${userId}`);
   }

@@ -8,7 +8,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +17,7 @@ import { AuthService } from '../../services/auth/auth-service';
 import { CommentService } from '../../services/comments/comment-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
 import { TicketService } from '../../services/tickets/ticket-service';
+import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-view-ticket',
   imports: [
@@ -34,6 +34,7 @@ import { TicketService } from '../../services/tickets/ticket-service';
     MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
+    MatInputModule
   ],
   templateUrl: './view-ticket.html',
   styleUrl: './view-ticket.scss',
