@@ -1,0 +1,22 @@
+<div class="flex justify-between items-center mb-6">
+  <button
+    matButton
+    (click)="onGoBack()"
+    class="flex items-center gap-2"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    Voltar
+  </button>
+
+  @if (isTechnician) {
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onEditTicket()"
+    class="flex items-center gap-2"
+  >
+    <mat-icon>edit</mat-icon>
+    Editar
+  </button>
+  }
+</div>

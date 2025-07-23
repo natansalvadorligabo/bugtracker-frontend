@@ -1,20 +1,12 @@
 import { CommonModule, Location } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroupDirective, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ViewTicketDetailsComponent } from '../../components/ticket/view-ticket-details/view-ticket-details';
+import { ViewTicketHeaderComponent } from '../../components/ticket/view-ticket-header/view-ticket-header';
+import { ViewTicketMessagesComponent } from '../../components/ticket/view-ticket-messages/view-ticket-messages';
 import { Message } from '../../model/message';
 import { Ticket } from '../../model/ticket';
 import { AuthService } from '../../services/auth/auth-service';
@@ -30,29 +22,12 @@ export class NoErrorStateMatcher implements ErrorStateMatcher {
 
 @Component({
   selector: 'app-view-ticket',
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatToolbarModule,
-    MatBadgeModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatTooltipModule,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ViewTicketHeaderComponent, ViewTicketDetailsComponent, ViewTicketMessagesComponent],
   templateUrl: './view-ticket.html',
   styleUrl: './view-ticket.scss',
 })
 export class ViewTicket implements AfterViewChecked, AfterViewInit {
-  @ViewChild('messagesContainer', { static: false })
-  messagesContainer!: ElementRef;
+  @ViewChild(ViewTicketMessagesComponent) viewTicketMessagesComponent!: ViewTicketMessagesComponent;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -176,18 +151,8 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   }
 
   private scrollToBottom(): void {
-    if (this.messagesContainer && this.messagesContainer.nativeElement) {
-      const container = this.messagesContainer.nativeElement;
-
-      requestAnimationFrame(() => {
-        container.scrollTop = container.scrollHeight;
-
-        setTimeout(() => {
-          if (container.scrollTop < container.scrollHeight - container.clientHeight - 10) {
-            container.scrollTop = container.scrollHeight;
-          }
-        }, 50);
-      });
+    if (this.viewTicketMessagesComponent) {
+      this.viewTicketMessagesComponent.scrollToBottom();
     }
   }
 
@@ -314,6 +279,10 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
       event.preventDefault();
       this.cancelEdit();
     }
+  }
+
+  handleEditKeydown(eventData: { event: KeyboardEvent; messageId: number }) {
+    this.onEditKeydown(eventData.event, eventData.messageId);
   }
 
   sendMessage() {

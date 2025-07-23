@@ -1,0 +1,35 @@
+<form
+  [formGroup]="messageForm"
+  (ngSubmit)="onSendMessage()"
+  class="message-form"
+>
+  <div class="flex gap-4 items-start">
+    <mat-form-field
+      appearance="outline"
+      class="flex-1"
+    >
+      <mat-label>Digite sua mensagem</mat-label>
+      <textarea
+        matInput
+        formControlName="message"
+        rows="3"
+        [errorStateMatcher]="noErrorMatcher"
+        placeholder="Adicione um comentário..."
+        class="resize-none"
+        (keydown)="onKeydown($event)"
+      ></textarea>
+      <mat-hint>Pressione Ctrl+Enter para enviar</mat-hint>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="messageForm.invalid"
+      class="mt-1"
+      style="height: 56px; min-width: 100px"
+    >
+      <mat-icon class="mr-1">send</mat-icon>
+      Enviar
+    </button>
+  </div>
+</form>

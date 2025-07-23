@@ -1,0 +1,40 @@
+<mat-card class="mb-6">
+  <mat-card-header>
+    <mat-card-title class="text-xl font-semibold">Mensagens</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content
+    class="flex flex-col"
+    style="min-height: 500px rounded-3xl"
+  >
+    <div class="flex-1 min-h-0 mt-4">
+      @if (isLoadingMessages && (!ticketMessages || ticketMessages.length === 0)) {
+      <app-messages-loading></app-messages-loading>
+      } @else if (ticketMessages && ticketMessages.length > 0) {
+      <app-messages-list
+        [ticketMessages]="ticketMessages"
+        [currentUser]="currentUser"
+        [isEditingMessage]="isEditingMessage"
+        [editingMessageId]="editingMessageId"
+        (editMessage)="onEditMessage($event)"
+        (saveEditedMessage)="onSaveEditedMessage()"
+        (cancelEdit)="onCancelEdit()"
+        (editKeydown)="onEditKeydown($event.event, $event.messageId)"
+      ></app-messages-list>
+      } @else {
+      <app-messages-empty-state></app-messages-empty-state>
+      }
+    </div>
+
+    <mat-divider class="my-6"></mat-divider>
+
+    <div class="flex-shrink-0">
+      <app-message-form
+        [messageForm]="messageForm"
+        [noErrorMatcher]="noErrorMatcher"
+        (sendMessage)="onSendMessage()"
+        (keydown)="onKeydown($event)"
+      ></app-message-form>
+    </div>
+  </mat-card-content>
+</mat-card>
