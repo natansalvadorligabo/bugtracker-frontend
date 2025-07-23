@@ -6,9 +6,9 @@
       (createUser)="onAdd()"
     ></app-user-header>
 
-    <div class="px-6">
-      <mat-card>
-        <mat-card-content>
+    <div class="px-3 sm:px-6">
+      <mat-card class="mx-0 sm:mx-auto max-w-7xl">
+        <mat-card-content class="p-3 sm:p-6">
           @if (users$ | async; as userPage) { @if (userPage.users.length === 0) {
           <app-user-empty-state
             [isAdmin]="isAdmin"

@@ -3,14 +3,15 @@
   [class.is-mobile]="isMobile()"
 >
   <div class="border-toolbar">
-    <mat-toolbar>
+    <mat-toolbar class="px-2 sm:px-4">
       <button
         matIconButton
         (click)="snav.toggle()"
+        class="mr-2"
       >
         <mat-icon>menu</mat-icon>
       </button>
-      <mat-toolbar class="flex gap-1 items-center">
+      <div class="flex gap-1 items-center flex-1">
         <a
           routerLink="/"
           class="flex items-center gap-2"
@@ -20,12 +21,10 @@
             alt="Bug"
             class="size-8"
           />
-
-          <h1>BugTracker</h1>
+          <h1 class="text-lg sm:text-xl font-medium sm:block">BugTracker</h1>
         </a>
-      </mat-toolbar>
-      <span class="spacer"></span>
-      <app-user-button></app-user-button>
+      </div>
+      <app-user-button class="ml-auto"></app-user-button>
     </mat-toolbar>
   </div>
 
@@ -39,12 +38,15 @@
       [fixedInViewport]="isMobile()"
       fixedTopGap="56"
       [opened]="!isMobile()"
+      class="w-64 sm:w-72"
     >
-      <mat-nav-list>
+      <mat-nav-list class="pt-4">
         <a
           mat-list-item
           routerLink="tickets"
           routerLinkActive="active-link"
+          class="mb-1"
+          (click)="isMobile() && snav.close()"
         >
           <mat-icon matListItemIcon>report</mat-icon>
           <p matListItemTitle>Tickets</p>
@@ -54,6 +56,8 @@
           mat-list-item
           routerLink="users"
           routerLinkActive="active-link"
+          class="mb-1"
+          (click)="isMobile() && snav.close()"
         >
           <mat-icon matListItemIcon>groups</mat-icon>
           <p matListItemTitle>Usuários</p>
@@ -62,6 +66,8 @@
           mat-list-item
           routerLink="categories"
           routerLinkActive="active-link"
+          class="mb-1"
+          (click)="isMobile() && snav.close()"
         >
           <mat-icon matListItemIcon>category</mat-icon>
           <p matListItemTitle>Categorias</p>
@@ -70,7 +76,7 @@
       </mat-nav-list>
     </mat-sidenav>
 
-    <mat-sidenav-content>
+    <mat-sidenav-content class="p-2 sm:p-4 lg:p-6">
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

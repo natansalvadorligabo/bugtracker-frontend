@@ -36,6 +36,47 @@ html {
   border: 0;
 }
 
-html, body { height: 100%;  }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { height: 100%; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.mat-mdc-table {
+  overflow-x: auto;
+  
+  @media (max-width: 768px) {
+    min-width: 100%;
+    
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      padding: 8px 4px;
+      font-size: 14px;
+    }
+  }
+}
+
+.mat-mdc-form-field {
+  @media (max-width: 768px) {
+    width: 100% !important;
+  }
+}
+
+.mat-mdc-card {
+  @media (max-width: 768px) {
+    margin: 8px;
+    padding: 12px;
+  }
+}
+
+.mat-mdc-button-base {
+  @media (max-width: 768px) {
+    min-height: 44px; // Touch target size
+  }
+}
 

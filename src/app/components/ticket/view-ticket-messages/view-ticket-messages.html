@@ -1,13 +1,13 @@
-<mat-card class="mb-6">
-  <mat-card-header>
-    <mat-card-title class="text-xl font-semibold">Mensagens</mat-card-title>
+<mat-card class="mb-4 sm:mb-6 mx-2 sm:mx-0">
+  <mat-card-header class="pb-2">
+    <mat-card-title class="text-lg sm:text-xl font-semibold">Mensagens</mat-card-title>
   </mat-card-header>
 
   <mat-card-content
-    class="flex flex-col"
-    style="min-height: 500px rounded-3xl"
+    class="flex flex-col px-2 sm:px-4"
+    style="min-height: 400px"
   >
-    <div class="flex-1 min-h-0 mt-4">
+    <div class="flex-1 min-h-0 mt-2 sm:mt-4">
       @if (isLoadingMessages && (!ticketMessages || ticketMessages.length === 0)) {
       <app-messages-loading></app-messages-loading>
       } @else if (ticketMessages && ticketMessages.length > 0) {

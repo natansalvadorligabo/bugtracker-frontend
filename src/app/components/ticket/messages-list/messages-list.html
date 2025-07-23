@@ -1,8 +1,8 @@
-<div class="flex-1 min-h-0 mb-4 rounded-3xl">
+<div class="flex-1 min-h-0 mb-4 rounded-2xl sm:rounded-3xl">
   <div
     #messagesContainer
-    class="messages-container p-4 h-full overflow-y-auto rounded-3xl border"
-    style="min-height: 300px; max-height: 300px"
+    class="messages-container p-2 sm:p-4 h-full overflow-y-auto rounded-2xl sm:rounded-3xl border"
+    style="min-height: 250px; max-height: 350px"
   >
     @for (message of ticketMessages; track trackMessage($index, message); let isLast = $last) { @if (message) {
     <div [class]="isLast ? 'mb-0' : 'mb-4'">

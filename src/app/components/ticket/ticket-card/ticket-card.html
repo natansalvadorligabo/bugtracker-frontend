@@ -1,21 +1,21 @@
 <div
-  class="bg-white rounded-xl cursor-pointer shadow-sm transition-shadow p-6 min-h-[190px] flex flex-col relative"
+  class="bg-white rounded-lg sm:rounded-xl cursor-pointer shadow-sm transition-shadow p-4 sm:p-6 min-h-[170px] sm:min-h-[190px] flex flex-col relative"
   (click)="onTicketClick()"
 >
-  <div class="absolute top-3 right-3 flex flex-col items-end gap-2">
+  <div class="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col items-end gap-2">
     <div class="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-full">
-      <mat-icon class="text-xs text-blue-600" style="font-size: 14px; width: 14px; height: 14px;">person</mat-icon>
-      <span class="text-xs font-medium text-blue-800">
-        @if (senderName && senderName !== 'ID do remetente não encontrado') {
-        {{ senderName }}
-        } @else if (showOnlyMyTickets) {
-        Você
-        } @else {
-        Desconhecido
-        }
+      <mat-icon
+        class="text-xs text-blue-600"
+        style="font-size: 12px; width: 12px; height: 12px"
+      >
+        person
+      </mat-icon>
+      <span class="text-xs font-medium text-blue-800 truncate max-w-20 sm:max-w-none">
+        @if (senderName && senderName !== 'ID do remetente não encontrado') { {{ senderName }} } @else if (showOnlyMyTickets) { Você } @else {
+        Desconhecido }
       </span>
     </div>
-    
+
     <span
       class="px-2 py-1 rounded-full text-xs font-medium border"
       [class]="statusInfo.color"
@@ -26,16 +26,16 @@
         'bg-green-50 border-green-200': ticket.ticketStatus === 'COMPLETED',
         'bg-gray-50 border-gray-200': !['PENDING', 'ATTACHED', 'STOPPED', 'COMPLETED'].includes(ticket.ticketStatus)
       }"
-    >
-      {{ statusInfo.label }}
-    </span>
+    ></span>
   </div>
 
-  <h3 class="text-lg mb-4 pr-32">{{ ticket.title || 'Sem título' }}</h3>
-  <p class="text-gray-600 line-clamp-3">{{ ticket.description }}</p>
-  <div class="flex flex-wrap gap-2 mt-auto">
+  <h3 class="text-base sm:text-lg mb-3 sm:mb-4 pr-24 sm:pr-32 line-clamp-2">{{ ticket.title || 'Sem título' }}</h3>
+  <p class="text-gray-600 text-sm sm:text-base line-clamp-2 sm:line-clamp-3 mb-3">{{ ticket.description }}</p>
+  <div class="flex flex-wrap gap-1 sm:gap-2 mt-auto">
     @for (tag of tags; track tag.ticketCategoryId) {
-    <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">{{ tag.description }}</span>
+    <span class="px-2 sm:px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs sm:text-sm truncate max-w-24 sm:max-w-none">
+      {{ tag.description }}
+    </span>
     }
   </div>
 </div>
