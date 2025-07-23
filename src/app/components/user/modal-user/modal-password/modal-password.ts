@@ -1,22 +1,11 @@
 import { Component, Inject, inject, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { FormUtilsService } from '../../form/form-utils';
+import { FormUtilsService } from '../../../../shared/form/form-utils';
 
 export interface ModalPasswordData {
   title: string;
@@ -25,23 +14,25 @@ export interface ModalPasswordData {
 @Component({
   selector: 'app-modal-password',
   standalone: true,
-  imports: [
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-  ],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, ReactiveFormsModule, MatIconModule],
   template: `
     <div class="p-6">
-      <h2 mat-dialog-title class="text-xl font-semibold mb-4">
+      <h2
+        mat-dialog-title
+        class="text-xl font-semibold mb-4"
+      >
         {{ data.title }}
       </h2>
 
       <mat-dialog-content>
-        <form [formGroup]="form" class="space-y-1 pt-4">
-          <mat-form-field appearance="outline" class="w-full">
+        <form
+          [formGroup]="form"
+          class="space-y-1 pt-4"
+        >
+          <mat-form-field
+            appearance="outline"
+            class="w-full"
+          >
             <mat-label>Senha atual</mat-label>
             <input
               matInput
@@ -56,18 +47,17 @@ export interface ModalPasswordData {
               (click)="toggleCurrentPasswordVisibility()"
               [attr.aria-label]="'Mostrar senha atual'"
             >
-              <mat-icon>{{
-                hideCurrentPassword() ? 'visibility_off' : 'visibility'
-              }}</mat-icon>
+              <mat-icon>{{ hideCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
             @if (form.get('currentPassword')?.invalid) {
-            <mat-error>{{
-              formUtils.getErrorMessage(form, 'currentPassword')
-            }}</mat-error>
+            <mat-error>{{ formUtils.getErrorMessage(form, 'currentPassword') }}</mat-error>
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
+          <mat-form-field
+            appearance="outline"
+            class="w-full"
+          >
             <mat-label>Nova senha</mat-label>
             <input
               matInput
@@ -82,18 +72,17 @@ export interface ModalPasswordData {
               (click)="toggleNewPasswordVisibility()"
               [attr.aria-label]="'Mostrar nova senha'"
             >
-              <mat-icon>{{
-                hideNewPassword() ? 'visibility_off' : 'visibility'
-              }}</mat-icon>
+              <mat-icon>{{ hideNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
             @if (form.get('newPassword')?.invalid) {
-            <mat-error>{{
-              formUtils.getErrorMessage(form, 'newPassword')
-            }}</mat-error>
+            <mat-error>{{ formUtils.getErrorMessage(form, 'newPassword') }}</mat-error>
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
+          <mat-form-field
+            appearance="outline"
+            class="w-full"
+          >
             <mat-label>Confirmar nova senha</mat-label>
             <input
               matInput
@@ -108,9 +97,7 @@ export interface ModalPasswordData {
               (click)="toggleConfirmPasswordVisibility()"
               [attr.aria-label]="'Mostrar confirmação de senha'"
             >
-              <mat-icon>{{
-                hideConfirmPassword() ? 'visibility_off' : 'visibility'
-              }}</mat-icon>
+              <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
             @if (form.get('confirmPassword')?.invalid) {
             <mat-error>{{ getConfirmPasswordError() }}</mat-error>
@@ -156,10 +143,7 @@ export class ModalPasswordComponent {
     this.form = this.fb.group({
       currentPassword: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: [
-        '',
-        [Validators.required, this.validateMatchPassword.bind(this)],
-      ],
+      confirmPassword: ['', [Validators.required, this.validateMatchPassword.bind(this)]],
     });
 
     this.form.get('newPassword')?.valueChanges.subscribe(() => {
@@ -167,9 +151,7 @@ export class ModalPasswordComponent {
     });
   }
 
-  private validateMatchPassword(
-    control: AbstractControl
-  ): ValidationErrors | null {
+  private validateMatchPassword(control: AbstractControl): ValidationErrors | null {
     const password = control.parent?.get('newPassword')?.value;
     const confirmPassword = control.value;
     return password === confirmPassword ? null : { notMatch: true };

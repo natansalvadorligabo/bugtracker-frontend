@@ -1,38 +1,36 @@
 import { Component, inject, input, output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormUtilsService } from '../form/form-utils';
+import { FormUtilsService } from '../../../shared/form/form-utils';
 
 @Component({
-  selector: 'app-code-verification-step',
+  selector: 'app-email-step',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule],
   template: `
     <section class="mb-8">
       <h2 class="text-2xl mb-4">{{ title() }}</h2>
       <p class="text-gray-600">{{ description() }}</p>
     </section>
 
-    <form [formGroup]="form" class="space-y-1">
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Código de verificação</mat-label>
-        <input matInput formControlName="code" maxlength="6" />
-        @if (form.get('code')?.invalid && form.get('code')?.touched) {
-        <mat-error>{{ formUtils.getErrorMessage(form, 'code') }}</mat-error>
+    <form
+      [formGroup]="form"
+      class="space-y-1"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>E-mail</mat-label>
+        <input
+          matInput
+          formControlName="email"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <mat-error>{{ formUtils.getErrorMessage(form, 'email') }}</mat-error>
         }
       </mat-form-field>
 
@@ -60,22 +58,21 @@ import { FormUtilsService } from '../form/form-utils';
             color="primary"
             class="mr-2"
             style="vertical-align: middle"
-          >
-          </mat-progress-spinner>
+          ></mat-progress-spinner>
           } @else { {{ submitButtonText() }} }
         </button>
       </div>
     </form>
   `,
 })
-export class CodeVerificationStepComponent {
+export class EmailStepComponent {
   title = input.required<string>();
   description = input.required<string>();
   loading = input.required<boolean>();
   submitButtonText = input.required<string>();
   backButtonText = input.required<string>();
 
-  codeSubmitted = output<string>();
+  emailSubmitted = output<string>();
   backClicked = output<void>();
 
   form: FormGroup;
@@ -83,16 +80,13 @@ export class CodeVerificationStepComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      code: [
-        '',
-        [Validators.required, Validators.minLength(6), Validators.maxLength(6)],
-      ],
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
   onSubmit() {
     if (this.form.valid) {
-      this.codeSubmitted.emit(this.form.get('code')?.value);
+      this.emailSubmitted.emit(this.form.get('email')?.value);
     } else {
       this.formUtils.validateAllFormFields(this.form);
     }

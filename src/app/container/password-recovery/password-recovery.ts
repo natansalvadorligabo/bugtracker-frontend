@@ -4,26 +4,16 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { CodeVerificationStepComponent } from '../../components/auth/code-verification-step/code-verification-step';
+import { EmailStepComponent } from '../../components/auth/email-step/email-step';
+import { NewPasswordData, PasswordResetStepComponent } from '../../components/auth/password-reset-step/password-reset-step';
+import { StepIndicatorComponent } from '../../components/auth/step-indicator/step-indicator';
 import { VerifyCodeResponse } from '../../model/user';
 import { AuthService } from '../../services/auth/auth-service';
-import { CodeVerificationStepComponent } from '../../shared/code-verification-step/code-verification-step';
-import { EmailStepComponent } from '../../shared/email-step/email-step';
-import {
-  NewPasswordData,
-  PasswordResetStepComponent,
-} from '../../shared/password-reset-step/password-reset-step';
-import { StepIndicatorComponent } from '../../shared/step-indicator/step-indicator';
 
 @Component({
   selector: 'app-password-recovery',
-  imports: [
-    MatCardModule,
-    MatIconModule,
-    StepIndicatorComponent,
-    EmailStepComponent,
-    CodeVerificationStepComponent,
-    PasswordResetStepComponent,
-  ],
+  imports: [MatCardModule, MatIconModule, StepIndicatorComponent, EmailStepComponent, CodeVerificationStepComponent, PasswordResetStepComponent],
   templateUrl: './password-recovery.html',
   styleUrl: './password-recovery.scss',
 })
@@ -53,15 +43,11 @@ export class PasswordRecovery {
       },
       error: (error: HttpErrorResponse) => {
         console.error('Erro ao enviar código de recuperação:', error);
-        this.snackBar.open(
-          'E-mail inválido ou não cadastrado no BugTracker.',
-          'Fechar',
-          {
-            duration: 5000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-          }
-        );
+        this.snackBar.open('E-mail inválido ou não cadastrado no BugTracker.', 'Fechar', {
+          duration: 5000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+        });
         this.loading.set(false);
       },
     });
@@ -95,27 +81,25 @@ export class PasswordRecovery {
   onPasswordSubmitted(passwordData: NewPasswordData) {
     this.loading.set(true);
 
-    this.authService
-      .resetPassword(this.userEmail(), passwordData.password, this.token())
-      .subscribe({
-        next: (response: any) => {
-          this.snackBar.open('Senha alterada com sucesso!', 'Fechar', {
-            duration: 5000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-          });
-          this.router.navigate(['/login']);
-          this.loading.set(false);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.snackBar.open('Erro ao alterar senha.', 'Fechar', {
-            duration: 5000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-          });
-          this.loading.set(false);
-        },
-      });
+    this.authService.resetPassword(this.userEmail(), passwordData.password, this.token()).subscribe({
+      next: (response: any) => {
+        this.snackBar.open('Senha alterada com sucesso!', 'Fechar', {
+          duration: 5000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+        });
+        this.router.navigate(['/login']);
+        this.loading.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.snackBar.open('Erro ao alterar senha.', 'Fechar', {
+          duration: 5000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+        });
+        this.loading.set(false);
+      },
+    });
   }
 
   onBackClicked() {

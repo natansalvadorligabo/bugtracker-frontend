@@ -1,32 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProfileRowLinkComponent } from '../../components/user/profile-row-link/profile-row-link';
 import { UserProfile as UserProfileModel } from '../../model/user';
 import { ModalService } from '../../services/modal/modal-service';
 import { ProfilePictureService } from '../../services/profile-picture/profile-picture-service';
 import { UsersService } from '../../services/users/users-service';
-import { ProfileRowLinkComponent } from '../../shared/profile-row-link/profile-row-link';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [
-    MatListModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    ProfileRowLinkComponent,
-    MatCardModule,
-    MatDividerModule,
-  ],
+  imports: [MatListModule, MatIconModule, MatProgressSpinnerModule, ProfileRowLinkComponent, MatCardModule, MatDividerModule],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +34,7 @@ export class UserProfile implements OnInit {
   }
 
   openNameModal(currentName: string): void {
-    this.modalService.openNameModal(currentName).subscribe((newName) => {
+    this.modalService.openNameModal(currentName).subscribe(newName => {
       if (newName) {
         this.updateUserName(newName);
       }
@@ -55,7 +42,7 @@ export class UserProfile implements OnInit {
   }
 
   openPasswordModal(): void {
-    this.modalService.openPasswordModal().subscribe((passwords) => {
+    this.modalService.openPasswordModal().subscribe(passwords => {
       if (passwords?.oldPassword && passwords?.newPassword) {
         this.updateUserPassword(passwords.oldPassword, passwords.newPassword);
       }
@@ -63,18 +50,16 @@ export class UserProfile implements OnInit {
   }
 
   openProfilePictureModal(): void {
-    this.modalService
-      .openProfilePictureModal(this.pictureUrl())
-      .subscribe((file) => {
-        if (file) {
-          this.updateProfilePicture(file);
-        }
-      });
+    this.modalService.openProfilePictureModal(this.pictureUrl()).subscribe(file => {
+      if (file) {
+        this.updateProfilePicture(file);
+      }
+    });
   }
 
   private loadUserProfile(): void {
     this.userService.getUserProfile().subscribe({
-      next: (user) => {
+      next: user => {
         this.user.set(user);
 
         this.loading.set(false);
@@ -86,7 +71,7 @@ export class UserProfile implements OnInit {
   }
 
   private loadProfilePicture(): void {
-    this.profilePictureService.profilePicture$.subscribe((url) => {
+    this.profilePictureService.profilePicture$.subscribe(url => {
       this.pictureUrl.set(url);
     });
 
@@ -128,7 +113,7 @@ export class UserProfile implements OnInit {
     this.userService.updateUserProfile({ picture: file }).subscribe({
       next: () => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
           this.pictureUrl.set(e.target?.result as string);
         };
         reader.readAsDataURL(file);

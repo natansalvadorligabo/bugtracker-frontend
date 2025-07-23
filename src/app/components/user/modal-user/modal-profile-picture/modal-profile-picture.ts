@@ -1,13 +1,9 @@
 import { Component, Inject, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { FormUtilsService } from '../../form/form-utils';
+import { FormUtilsService } from '../../../../shared/form/form-utils';
 
 export interface ModalProfilePictureData {
   title: string;
@@ -17,20 +13,21 @@ export interface ModalProfilePictureData {
 @Component({
   selector: 'app-modal-profile-picture',
   standalone: true,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-  ],
+  imports: [MatDialogModule, MatButtonModule, MatIconModule, ReactiveFormsModule],
   template: `
     <div class="p-6">
-      <h2 mat-dialog-title class="text-xl font-semibold mb-4">
+      <h2
+        mat-dialog-title
+        class="text-xl font-semibold mb-4"
+      >
         {{ data.title }}
       </h2>
 
       <mat-dialog-content>
-        <form [formGroup]="form" class="space-y-1 pt-4">
+        <form
+          [formGroup]="form"
+          class="space-y-1 pt-4"
+        >
           <div class="flex flex-col gap-4 min-h-50">
             <div class="flex justify-center">
               @if (previewUrl()) {
@@ -40,9 +37,7 @@ export interface ModalProfilePictureData {
                 class="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
               />
               } @else {
-              <div
-                class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300"
-              >
+              <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
                 <mat-icon class="text-gray-400 text-4xl">person</mat-icon>
               </div>
               }
@@ -69,9 +64,7 @@ export interface ModalProfilePictureData {
 
             @if (selectedFile) {
             <div class="text-center text-sm text-gray-600">
-              <mat-icon class="text-green-500 text-sm mr-1"
-                >check_circle</mat-icon
-              >
+              <mat-icon class="text-green-500 text-sm mr-1">check_circle</mat-icon>
               Arquivo selecionado: {{ selectedFile.name }}
             </div>
             }
@@ -126,13 +119,7 @@ export class ModalProfilePictureComponent {
       return { required: true };
     }
 
-    const allowedTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-    ];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return { invalidFileType: true };
     }
@@ -153,7 +140,7 @@ export class ModalProfilePictureComponent {
       this.form.get('profilePicture')?.markAsTouched();
 
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         this.previewUrl.set(e.target?.result as string);
       };
       reader.readAsDataURL(this.selectedFile);

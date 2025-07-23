@@ -8,18 +8,28 @@
       </section>
 
       <section class="md:w-1/2">
-        <form [formGroup]="form" class="space-y-1">
-          <mat-form-field appearance="outline" class="w-full">
+        <form
+          [formGroup]="form"
+          class="space-y-1"
+        >
+          <mat-form-field
+            appearance="outline"
+            class="w-full"
+          >
             <mat-label>E-mail</mat-label>
-            <input matInput formControlName="email" />
+            <input
+              matInput
+              formControlName="email"
+            />
             @if (form.get('email')?.invalid) {
-            <mat-error
-              >{{ formUtils.getErrorMessage(form, "email") }}</mat-error
-            >
+            <mat-error>{{ formUtils.getErrorMessage(form, "email") }}</mat-error>
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full mb-0">
+          <mat-form-field
+            appearance="outline"
+            class="w-full mb-0"
+          >
             <mat-label>Senha</mat-label>
             <input
               matInput
@@ -27,9 +37,7 @@
               [type]="hide() ? 'password' : 'text'"
             />
             @if (form.get('password')?.invalid) {
-            <mat-error>
-              {{ formUtils.getErrorMessage(form, "password") }}
-            </mat-error>
+            <mat-error>{{ formUtils.getErrorMessage(form, "password") }}</mat-error>
             }
           </mat-form-field>
 
@@ -63,8 +71,7 @@
                 color="primary"
                 class="mr-2"
                 style="vertical-align: middle"
-              >
-              </mat-progress-spinner>
+              ></mat-progress-spinner>
               } @else { Entrar }
             </button>
           </div>

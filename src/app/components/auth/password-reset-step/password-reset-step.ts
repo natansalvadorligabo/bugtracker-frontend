@@ -1,18 +1,11 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FormUtilsService } from '../form/form-utils';
+import { FormUtilsService } from '../../../shared/form/form-utils';
 
 export interface NewPasswordData {
   password: string;
@@ -22,22 +15,21 @@ export interface NewPasswordData {
 @Component({
   selector: 'app-password-reset-step',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
-  ],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule],
   template: `
     <section class="mb-8">
       <h2 class="text-2xl mb-4">{{ title() }}</h2>
       <p class="text-gray-600">{{ description() }}</p>
     </section>
 
-    <form [formGroup]="form" class="space-y-1">
-      <mat-form-field appearance="outline" class="w-full">
+    <form
+      [formGroup]="form"
+      class="space-y-1"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
         <mat-label>Nova senha</mat-label>
         <input
           matInput
@@ -52,16 +44,17 @@ export interface NewPasswordData {
           [attr.aria-label]="'Esconder senha'"
           [attr.aria-pressed]="hidePassword()"
         >
-          <mat-icon>{{
-            hidePassword() ? 'visibility_off' : 'visibility'
-          }}</mat-icon>
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
         @if (form.get('password')?.invalid && form.get('password')?.touched) {
         <mat-error>{{ formUtils.getErrorMessage(form, 'password') }}</mat-error>
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
         <mat-label>Confirmar nova senha</mat-label>
         <input
           matInput
@@ -76,12 +69,9 @@ export interface NewPasswordData {
           [attr.aria-label]="'Esconder senha'"
           [attr.aria-pressed]="hideConfirmPassword()"
         >
-          <mat-icon>{{
-            hideConfirmPassword() ? 'visibility_off' : 'visibility'
-          }}</mat-icon>
+          <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
-        @if (form.get('confirmPassword')?.invalid &&
-        form.get('confirmPassword')?.touched) {
+        @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
         <mat-error>{{ getConfirmPasswordError() }}</mat-error>
         }
       </mat-form-field>
@@ -110,8 +100,7 @@ export interface NewPasswordData {
             color="primary"
             class="mr-2"
             style="vertical-align: middle"
-          >
-          </mat-progress-spinner>
+          ></mat-progress-spinner>
           } @else { {{ submitButtonText() }} }
         </button>
       </div>
@@ -137,10 +126,7 @@ export class PasswordResetStepComponent {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: [
-        '',
-        [Validators.required, this.validateMatchPassword.bind(this)],
-      ],
+      confirmPassword: ['', [Validators.required, this.validateMatchPassword.bind(this)]],
     });
 
     this.form.get('password')?.valueChanges.subscribe(() => {
@@ -148,9 +134,7 @@ export class PasswordResetStepComponent {
     });
   }
 
-  private validateMatchPassword(
-    control: AbstractControl
-  ): ValidationErrors | null {
+  private validateMatchPassword(control: AbstractControl): ValidationErrors | null {
     const password = control.parent?.get('password')?.value;
     const confirmPassword = control.value;
     return password === confirmPassword ? null : { notMatch: true };

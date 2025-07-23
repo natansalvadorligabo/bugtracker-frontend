@@ -1,20 +1,11 @@
 import { Component, Inject, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { FormUtilsService } from '../../form/form-utils';
+import { FormUtilsService } from '../../../../shared/form/form-utils';
 
 export interface ModalNameData {
   title: string;
@@ -25,23 +16,25 @@ export interface ModalNameData {
 @Component({
   selector: 'app-modal-name',
   standalone: true,
-  imports: [
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-  ],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, ReactiveFormsModule, MatIconModule],
   template: `
     <div class="p-6">
-      <h2 mat-dialog-title class="text-xl font-semibold mb-4">
+      <h2
+        mat-dialog-title
+        class="text-xl font-semibold mb-4"
+      >
         {{ data.title }}
       </h2>
 
       <mat-dialog-content>
-        <form [formGroup]="form" class="space-y-1 pt-4">
-          <mat-form-field appearance="outline" class="w-full">
+        <form
+          [formGroup]="form"
+          class="space-y-1 pt-4"
+        >
+          <mat-form-field
+            appearance="outline"
+            class="w-full"
+          >
             <mat-label>{{ data.placeholder || data.title }}</mat-label>
             <input
               matInput
@@ -82,11 +75,7 @@ export class ModalNameComponent {
   form: FormGroup;
   formUtils = inject(FormUtilsService);
 
-  constructor(
-    public dialogRef: MatDialogRef<ModalNameComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ModalNameData,
-    private fb: FormBuilder
-  ) {
+  constructor(public dialogRef: MatDialogRef<ModalNameComponent>, @Inject(MAT_DIALOG_DATA) public data: ModalNameData, private fb: FormBuilder) {
     this.form = this.fb.group({
       name: [data.currentValue, [Validators.required, Validators.minLength(2)]],
     });

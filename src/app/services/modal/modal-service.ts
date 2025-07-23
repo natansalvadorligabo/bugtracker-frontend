@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { ModalNameComponent } from '../../shared/modal-user/modal-name/modal-name';
-import { ModalPasswordComponent } from '../../shared/modal-user/modal-password/modal-password';
-import { ModalProfilePictureComponent } from '../../shared/modal-user/modal-profile-picture/modal-profile-picture';
+import { ModalNameComponent } from '../../components/user/modal-user/modal-name/modal-name';
+import { ModalPasswordComponent } from '../../components/user/modal-user/modal-password/modal-password';
+import { ModalProfilePictureComponent } from '../../components/user/modal-user/modal-profile-picture/modal-profile-picture';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +24,7 @@ export class ModalService {
     return dialogRef.afterClosed();
   }
 
-  openPasswordModal(): Observable<
-    { oldPassword: string; newPassword: string } | undefined
-  > {
+  openPasswordModal(): Observable<{ oldPassword: string; newPassword: string } | undefined> {
     const dialogRef = this.dialog.open(ModalPasswordComponent, {
       width: '400px',
       data: {
@@ -37,9 +35,7 @@ export class ModalService {
     return dialogRef.afterClosed();
   }
 
-  openProfilePictureModal(
-    currentImageUrl?: string | null
-  ): Observable<File | undefined> {
+  openProfilePictureModal(currentImageUrl?: string | null): Observable<File | undefined> {
     const dialogRef = this.dialog.open(ModalProfilePictureComponent, {
       width: '500px',
       data: {
