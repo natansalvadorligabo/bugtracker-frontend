@@ -1,28 +1,32 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { User, UserPage } from '../../model/user';
-import { UsersService } from '../../services/users/users-service';
 import { AuthService } from '../../services/auth/auth-service';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
+import { UsersService } from '../../services/users/users-service';
 import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-list-users',
   imports: [
     MatButtonModule,
+    MatCardModule,
     MatIconModule,
     AsyncPipe,
     MatTableModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     CommonModule,
     MatPaginatorModule,
     MatChipsModule,
@@ -59,17 +63,13 @@ export class ListUsers {
     this.pageIndex = pageEvent.pageIndex;
     this.pageSize = pageEvent.pageSize;
 
-    this.users$ = this.usersService
-      .getUsers(this.pageIndex, this.pageSize)
-      .pipe(
-        tap(() => {
-
-        }),
-        catchError(() => {
-          this.openSnackBar('Erro ao carregar usuários', 'X');
-          return of({ users: [], totalElements: 0, totalPages: 0 });
-        })
-      );
+    this.users$ = this.usersService.getUsers(this.pageIndex, this.pageSize).pipe(
+      tap(() => {}),
+      catchError(() => {
+        this.openSnackBar('Erro ao carregar usuários', 'X');
+        return of({ users: [], totalElements: 0, totalPages: 0 });
+      })
+    );
   }
 
   onAdd() {
@@ -95,7 +95,7 @@ export class ListUsers {
             this.openSnackBar('Usuário removido com sucesso', 'X');
             this.refresh();
           },
-          error: () => this.openSnackBar('Erro ao remover usuário', 'X')
+          error: () => this.openSnackBar('Erro ao remover usuário', 'X'),
         });
       }
     });

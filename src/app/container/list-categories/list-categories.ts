@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 import { TicketCategory } from '../../model/ticket-categories';
 import { AuthService } from '../../services/auth/auth-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
+import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-list-categories',
@@ -33,6 +35,7 @@ export class ListCategories implements OnInit {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private cdr = inject(ChangeDetectorRef);
+  private dialog = inject(MatDialog);
 
   categories: TicketCategory[] = [];
   isLoading = true;
@@ -72,24 +75,33 @@ export class ListCategories implements OnInit {
   }
 
   deleteCategory(category: TicketCategory) {
-    if (confirm(`Tem certeza que deseja excluir a categoria "${category.description}"?`)) {
-      this.ticketCategoriesService.remove(category.ticketCategoryId).subscribe({
-        next: () => {
-          this.snackBar.open('Categoria excluída com sucesso!', 'Fechar', {
-            duration: 3000,
-            panelClass: ['snackbar-success'],
-          });
-          this.categories = this.categories.filter(cat => cat.ticketCategoryId !== category.ticketCategoryId);
-          this.cdr.detectChanges();
-        },
-        error: (err: any) => {
-          console.error('Erro ao excluir categoria:', err);
-          this.snackBar.open('Erro ao excluir categoria.', 'Fechar', {
-            duration: 3000,
-            panelClass: ['snackbar-error'],
-          });
-        },
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        title: 'Excluir categoria',
+        content: `Tem certeza que deseja excluir a categoria "${category.description}"?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.ticketCategoriesService.remove(category.ticketCategoryId).subscribe({
+          next: () => {
+            this.snackBar.open('Categoria excluída com sucesso!', 'Fechar', {
+              duration: 3000,
+              panelClass: ['snackbar-success'],
+            });
+            this.categories = this.categories.filter(cat => cat.ticketCategoryId !== category.ticketCategoryId);
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Erro ao excluir categoria:', err);
+            this.snackBar.open('Erro ao excluir categoria.', 'Fechar', {
+              duration: 3000,
+              panelClass: ['snackbar-error'],
+            });
+          },
+        });
+      }
+    });
   }
 }

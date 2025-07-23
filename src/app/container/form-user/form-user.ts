@@ -41,6 +41,7 @@ export class FormUser {
   hide = signal(true);
   isSubmitting = false;
   isEditMode = false;
+  isLoadingUserData = signal(false);
   userId: number | null = null;
   pageTitle = 'Novo Usuário';
   submitButtonText = 'Criar Usuário';
@@ -70,14 +71,20 @@ export class FormUser {
       this.userId = Number(userIdParam);
       this.pageTitle = 'Editar Usuário';
       this.submitButtonText = 'Atualizar Usuário';
+      this.isLoadingUserData.set(true);
+      console.log('🚀 Modo de edição ativado. Loading state definido como:', this.isLoadingUserData());
     }
 
     this.loadRoles();
   }
 
   private loadUserData(userId: number) {
+    // O loading já foi iniciado no ngOnInit para modo de edição
+    console.log('🔄 Iniciando carregamento de dados do usuário. Loading state:', this.isLoadingUserData());
+
     this.userService.getUserById(userId).subscribe({
       next: user => {
+        console.log('✅ Dados do usuário carregados, processando...');
         this.user = user;
 
         const userRoleIds =
@@ -116,17 +123,24 @@ export class FormUser {
           email: user.email,
           userRoles: userRoleIds,
         });
+
+        // Delay mínimo para garantir que o spinner seja visível
+        setTimeout(() => {
+          console.log('🎯 Finalizando loading state');
+          this.isLoadingUserData.set(false);
+        }, 500);
       },
       error: err => {
+        console.error('❌ Erro ao carregar dados do usuário:', err);
         this.snackBar.open('Erro ao carregar dados do usuário', 'Fechar', {
           duration: 3000,
           panelClass: ['snackbar-error'],
         });
+        this.isLoadingUserData.set(false);
         this.router.navigate(['/users']);
       },
     });
   }
-
   loadRoles() {
     this.authService.getRoles().subscribe({
       next: data => {

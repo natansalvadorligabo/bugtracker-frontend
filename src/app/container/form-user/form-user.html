@@ -13,6 +13,15 @@
   </section>
 
   <section class="w-full">
+    @if (isLoadingUserData()) {
+    <div class="flex justify-center py-8">
+      <mat-progress-spinner
+        diameter="50"
+        mode="indeterminate"
+      ></mat-progress-spinner>
+    </div>
+    <p class="text-center text-gray-600 mt-4">Carregando dados do usuário...</p>
+    } @else {
     <form
       [formGroup]="form"
       (ngSubmit)="onSubmit()"
@@ -81,5 +90,6 @@
         </button>
       </div>
     </form>
+    }
   </section>
 </div>

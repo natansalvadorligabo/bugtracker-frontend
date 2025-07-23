@@ -17,66 +17,153 @@
     </div>
 
     <div class="px-6">
-      @if (users$ | async; as userPage) {
-      <mat-table [dataSource]="userPage.users">
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
-          <mat-cell *matCellDef="let user"> {{ user.name }} </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="email">
-          <mat-header-cell *matHeaderCellDef> E-mail </mat-header-cell>
-          <mat-cell *matCellDef="let user"> {{ user.email }} </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="roles">
-          <mat-header-cell *matHeaderCellDef> Funções </mat-header-cell>
-          <mat-cell *matCellDef="let user">
-            <div class="role-chips flex flex-wrap gap-1">
-              @for (role of user.roles; track $index) {
-                <mat-chip [class]="getRoleChipClass(role)">
-                  {{ getRoleDisplayName(role) }}
-                </mat-chip>
-              }
-            </div>
-          </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef class="action-column">
-          </mat-header-cell>
-
-          <mat-cell *matCellDef="let user" class="action-column">
+      <mat-card>
+        <mat-card-content>
+          @if (users$ | async; as userPage) { @if (userPage.users.length === 0) {
+          <div class="text-center py-12">
+            <mat-icon class="text-gray-400 text-6xl mb-4">people</mat-icon>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">Nenhum usuário encontrado</h3>
+            <p class="text-gray-600 mb-6">Comece criando seu primeiro usuário no sistema.</p>
             @if (isAdmin) {
-            <button mat-icon-button (click)="onEdit(user)" aria-label="Editar Usuário">
-              <mat-icon>edit</mat-icon>
-            </button>
-
-            <button mat-icon-button color="error" (click)="onDelete(user)" aria-label="Remover usuário">
-              <mat-icon>delete</mat-icon>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="onAdd()"
+              class="flex items-center gap-2 mx-auto"
+            >
+              <mat-icon>add</mat-icon>
+              Novo Usuário
             </button>
             }
-          </mat-cell>
-        </ng-container>
+          </div>
+          } @else {
+          <div class="overflow-x-auto">
+            <mat-table
+              [dataSource]="userPage.users"
+              class="w-full"
+            >
+              <ng-container matColumnDef="name">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  class="text-left font-semibold"
+                >
+                  Nome
+                </mat-header-cell>
+                <mat-cell
+                  *matCellDef="let user"
+                  class="py-4"
+                >
+                  <div class="flex items-center">
+                    <mat-icon class="text-gray-500 mr-3">person</mat-icon>
+                    <span class="text-gray-900 font-medium">{{ user.name }}</span>
+                  </div>
+                </mat-cell>
+              </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
+              <ng-container matColumnDef="email">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  class="text-left font-semibold"
+                >
+                  E-mail
+                </mat-header-cell>
+                <mat-cell
+                  *matCellDef="let user"
+                  class="py-4"
+                >
+                  <div class="flex items-center">
+                    <span class="text-gray-900">{{ user.email }}</span>
+                  </div>
+                </mat-cell>
+              </ng-container>
 
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 15, 20]"
-        showFirstLastButtons
-        [pageIndex]="pageIndex"
-        [pageSize]="pageSize"
-        [length]="userPage.totalElements"
-        (page)="refresh($event)"
-        aria-label="Selecione a página de usuários"
-      ></mat-paginator>
-      } @else {
-      <div class="flex items-center justify-center p-6">
-        <mat-spinner></mat-spinner>
-      </div>
-      }
+              <ng-container matColumnDef="roles">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  class="text-left font-semibold"
+                >
+                  Funções
+                </mat-header-cell>
+                <mat-cell
+                  *matCellDef="let user"
+                  class="py-4"
+                >
+                  <div class="role-chips flex flex-wrap gap-1">
+                    @for (role of user.roles; track $index) {
+                    <mat-chip [class]="getRoleChipClass(role)">{{ getRoleDisplayName(role) }}</mat-chip>
+                    }
+                  </div>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell
+                  *matHeaderCellDef
+                  class="text-right font-semibold"
+                >
+                  Ações
+                </mat-header-cell>
+                <mat-cell
+                  *matCellDef="let user"
+                  class="text-right py-4"
+                >
+                  @if (isAdmin) {
+                  <div class="flex justify-end gap-2">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="onEdit(user)"
+                      matTooltip="Editar usuário"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="onDelete(user)"
+                      matTooltip="Excluir usuário"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                  } @else {
+                  <span class="text-gray-500 text-sm">Apenas visualização</span>
+                  }
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: displayedColumns;"
+                class="hover:bg-gray-50 transition-colors"
+              ></mat-row>
+            </mat-table>
+          </div>
+
+          <mat-paginator
+            [pageSizeOptions]="[5, 10, 15, 20]"
+            showFirstLastButtons
+            [pageIndex]="pageIndex"
+            [pageSize]="pageSize"
+            [length]="userPage.totalElements"
+            (page)="refresh($event)"
+            aria-label="Selecione a página de usuários"
+          ></mat-paginator>
+          } } @else {
+          <div class="flex justify-center items-center py-12">
+            <div class="text-center flex flex-col items-center">
+              <mat-progress-spinner
+                diameter="40"
+                mode="indeterminate"
+                color="primary"
+              ></mat-progress-spinner>
+              <p class="text-gray-600 mt-3 text-sm">Carregando usuários...</p>
+            </div>
+          </div>
+          }
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
 </div>
