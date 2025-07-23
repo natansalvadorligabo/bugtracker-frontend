@@ -42,6 +42,7 @@ export interface UserUpdate {
   email?: string;
   password?: string;
   newPassword?: string;
+  roles?: number[];
   picture?: File;
 }
 

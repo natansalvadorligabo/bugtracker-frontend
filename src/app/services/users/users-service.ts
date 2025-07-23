@@ -1,11 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {
-  User,
-  UserPage,
-  UserProfile,
-  UserUpdate,
-} from '../../model/user';
+import { User, UserPage, UserProfile, UserUpdate } from '../../model/user';
 
 @Injectable({
   providedIn: 'root',
@@ -62,5 +57,21 @@ export class UsersService {
     }
 
     return this.httpClient.put<UserUpdate>(`${this.API_URL}`, formData);
+  }
+
+  updateUser(userId: number, userData: { name: string; email: string; userRoles: number[] }) {
+    const formData = new FormData();
+    formData.append('name', userData.name);
+    formData.append('email', userData.email);
+
+    userData.userRoles.forEach((roleId: number) => {
+      formData.append('userRoles', roleId.toString());
+    });
+
+    return this.httpClient.put(`${this.API_URL}/${userId}`, formData);
+  }
+
+  updateUserById(userId: number, user: UserUpdate) {
+    return this.httpClient.put(`${this.API_URL}/${userId}`, user);
   }
 }

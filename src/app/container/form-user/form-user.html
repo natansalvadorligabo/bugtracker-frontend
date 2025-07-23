@@ -1,47 +1,67 @@
 <div class="flex flex-col justify-between items-start p-6">
   <button
-      matButton
-      (click)="goBack()"
-      class="flex items-center gap-2 mb-6"
-    >
-      <mat-icon>arrow_back</mat-icon>
-      Voltar
+    matButton
+    (click)="goBack()"
+    class="flex items-center gap-2 mb-6"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    Voltar
   </button>
 
   <section class="w-full mb-8">
-    <span class="text-3xl">Novo Usuário</span>
+    <span class="text-3xl">{{ pageTitle }}</span>
   </section>
 
   <section class="w-full">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
-      <mat-form-field appearance="outline" class="w-full">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
         <mat-label>Nome</mat-label>
-        <input matInput formControlName="name" />
+        <input
+          matInput
+          formControlName="name"
+        />
         @if (form.get('name')?.invalid) {
         <mat-error>{{ formUtils.getErrorMessage(form, "name") }}</mat-error>
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
         <mat-label>E-mail</mat-label>
-        <input matInput formControlName="email" />
+        <input
+          matInput
+          formControlName="email"
+        />
         @if (form.get('email')?.invalid) {
         <mat-error>{{ formUtils.getErrorMessage(form, "email") }}</mat-error>
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
         <mat-label>Função</mat-label>
-          <mat-select formControlName="userRoles" multiple>
-            @for (role of roles; track $index) {
-              <mat-option [value]="role.roleId">
-                {{ role.name }}
-              </mat-option>
-            }
-          </mat-select>
-          @if (form.get('userRole')?.invalid) {
-            <mat-error>{{ formUtils.getErrorMessage(form, 'userRole') }}</mat-error>
+        <mat-select
+          formControlName="userRoles"
+          multiple
+        >
+          @for (role of roles; track $index) {
+          <mat-option [value]="role.roleId">{{ role.name }}</mat-option>
           }
+        </mat-select>
+        @if (form.get('userRoles')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, 'userRoles') }}</mat-error>
+        }
       </mat-form-field>
 
       <div class="flex justify-end gap-4 pt-4">
@@ -53,13 +73,13 @@
           class="flex items-center gap-2"
         >
           @if (isSubmitting) {
-          <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
-          } @else {
-            Criar Usuário
-          }
+          <mat-progress-spinner
+            diameter="20"
+            mode="indeterminate"
+          ></mat-progress-spinner>
+          } @else { {{ submitButtonText }} }
         </button>
       </div>
-
     </form>
   </section>
 </div>

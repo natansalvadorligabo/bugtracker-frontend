@@ -1,12 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -15,11 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../model/user';
-import { UsersService } from '../../services/users/users-service';
-import { FormUtilsService } from '../../shared/form/form-utils';
 import { AuthService } from '../../services/auth/auth-service.js';
+import { FormUtilsService } from '../../shared/form/form-utils';
 
 @Component({
   selector: 'app-login',
@@ -45,7 +38,6 @@ export class Login {
   loading = signal(false);
 
   private formBuilder = inject(FormBuilder);
-  private userService = inject(UsersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
@@ -80,7 +72,7 @@ export class Login {
         },
         error: (error: HttpErrorResponse) => {
           this.snackBar.open('E-mail ou senha incorretos.', 'Fechar', {
-            duration: 100000,
+            duration: 2000,
             verticalPosition: 'top',
             horizontalPosition: 'center',
           });
