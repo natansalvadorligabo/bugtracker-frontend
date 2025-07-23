@@ -1,6 +1,5 @@
 <div class="h-screen w-auto">
   <div class="min-h-screen">
-
     <app-ticket-header
       [ticketCount]="tickets.length"
       [showOnlyMyTickets]="showOnlyMyTickets"
@@ -29,9 +28,7 @@
 
     @if (isLoading) {
     <app-ticket-loading></app-ticket-loading>
-    }
-
-    @if (!isLoading) {
+    } @if (!isLoading) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-15 pb-6">
       @for (ticket of tickets; track ticket.ticketId) {
       <app-ticket-card
@@ -43,9 +40,7 @@
       ></app-ticket-card>
       }
     </div>
-    }
-
-    @if (!isLoading && hasNoResults) {
+    } @if (!isLoading && hasNoResults) {
     <app-ticket-empty-state
       [showOnlyMyTickets]="showOnlyMyTickets"
       [isSearching]="isSearching"

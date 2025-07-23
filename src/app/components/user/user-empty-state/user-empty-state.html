@@ -1,0 +1,16 @@
+<div class="text-center py-12">
+  <mat-icon class="text-gray-400 text-6xl mb-4">people</mat-icon>
+  <h3 class="text-xl font-medium text-gray-900 mb-2">Nenhum usuário encontrado</h3>
+  <p class="text-gray-600 mb-6">Comece criando seu primeiro usuário no sistema.</p>
+  @if (isAdmin) {
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onCreateUser()"
+    class="flex items-center gap-2 mx-auto"
+  >
+    <mat-icon>add</mat-icon>
+    Novo Usuário
+  </button>
+  }
+</div>

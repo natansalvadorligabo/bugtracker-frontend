@@ -1,17 +1,15 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
+import { UserEmptyStateComponent } from '../../components/user/user-empty-state/user-empty-state';
+import { UserHeaderComponent } from '../../components/user/user-header/user-header';
+import { UserLoadingComponent } from '../../components/user/user-loading/user-loading';
+import { UserTableComponent } from '../../components/user/user-table/user-table';
 import { User, UserPage } from '../../model/user';
 import { AuthService } from '../../services/auth/auth-service';
 import { UsersService } from '../../services/users/users-service';
@@ -19,18 +17,7 @@ import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmatio
 
 @Component({
   selector: 'app-list-users',
-  imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    AsyncPipe,
-    MatTableModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    CommonModule,
-    MatPaginatorModule,
-    MatChipsModule,
-  ],
+  imports: [CommonModule, AsyncPipe, MatCardModule, UserHeaderComponent, UserTableComponent, UserEmptyStateComponent, UserLoadingComponent],
   templateUrl: './list-users.html',
   styleUrl: './list-users.scss',
 })
@@ -53,6 +40,15 @@ export class ListUsers {
 
   get isAdmin(): boolean {
     return this.authService.isAdmin;
+  }
+
+  getCurrentUserCount(): number {
+    // Para obter o valor síncrono do Observable
+    let count = 0;
+    this.users$?.subscribe(userPage => {
+      count = userPage?.users?.length || 0;
+    });
+    return count;
   }
 
   ngOnInit() {
@@ -99,32 +95,6 @@ export class ListUsers {
         });
       }
     });
-  }
-
-  getRoleDisplayName(role: string): string {
-    switch (role) {
-      case 'ROLE_USER':
-        return 'Normal';
-      case 'ROLE_TECHNICIAN':
-        return 'Técnico';
-      case 'ROLE_ADMIN':
-        return 'Administrador';
-      default:
-        return role;
-    }
-  }
-
-  getRoleChipClass(role: string): string {
-    switch (role) {
-      case 'ROLE_USER':
-        return 'role-user';
-      case 'ROLE_TECHNICIAN':
-        return 'role-technician';
-      case 'ROLE_ADMIN':
-        return 'role-admin';
-      default:
-        return 'role-default';
-    }
   }
 
   openSnackBar(message: string, action?: string) {
