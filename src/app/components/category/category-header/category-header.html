@@ -1,0 +1,19 @@
+<div class="flex justify-between items-center mb-6 px-6 pt-6">
+  <h1 class="text-3xl font-semibold text-gray-900">
+    Gerenciar Categorias @if (categoryCount > 0) {
+    <span class="text-lg font-normal text-gray-600 ml-2">({{ categoryCount }})</span>
+    }
+  </h1>
+
+  @if (isAdmin) {
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onCreateCategory()"
+    class="flex items-center gap-2"
+  >
+    <mat-icon>add</mat-icon>
+    Nova Categoria
+  </button>
+  }
+</div>

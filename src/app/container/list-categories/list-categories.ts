@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { CategoryEmptyStateComponent } from '../../components/category/category-empty-state/category-empty-state';
+import { CategoryHeaderComponent } from '../../components/category/category-header/category-header';
+import { CategoryLoadingComponent } from '../../components/category/category-loading/category-loading';
+import { CategoryTableComponent } from '../../components/category/category-table/category-table';
 import { TicketCategory } from '../../model/ticket-categories';
 import { AuthService } from '../../services/auth/auth-service';
 import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
@@ -19,12 +18,11 @@ import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmatio
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatTooltipModule,
+    CategoryHeaderComponent,
+    CategoryTableComponent,
+    CategoryEmptyStateComponent,
+    CategoryLoadingComponent,
   ],
   templateUrl: './list-categories.html',
   styleUrl: './list-categories.scss',
@@ -40,7 +38,6 @@ export class ListCategories implements OnInit {
   categories: TicketCategory[] = [];
   isLoading = true;
   isAdmin = false;
-  displayedColumns: string[] = ['description', 'actions'];
 
   ngOnInit() {
     this.isAdmin = this.authService.isAdmin;
