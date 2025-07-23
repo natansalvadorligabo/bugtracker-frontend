@@ -1,8 +1,11 @@
 <div class="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
   <app-view-ticket-header
     [isTechnician]="isTechnician"
+    [ticket]="ticket"
+    [isAssigningTicket]="isAssigningTicket"
     (goBack)="goBack()"
     (editTicket)="editTicket()"
+    (assignTicket)="assignTicket()"
   ></app-view-ticket-header>
 
   <app-view-ticket-details

@@ -52,6 +52,7 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   originalMessageText = '';
   currentUser = this.authService.getUserFromToken();
   private shouldScrollToBottom = false;
+  isAssigningTicket = false;
 
   messageForm = this.fb.group({
     message: ['', [Validators.required]],
@@ -189,6 +190,77 @@ export class ViewTicket implements AfterViewChecked, AfterViewInit {
   editTicket() {
     if (this.ticket?.ticketId) {
       this.router.navigate(['/tickets/edit', this.ticket.ticketId]);
+    }
+  }
+
+  assignTicket() {
+    if (this.ticket?.ticketId && !this.isAssigningTicket) {
+      const currentUser = this.authService.getUserFromToken();
+      if (!currentUser?.userId) {
+        this.snackBar.open('Erro ao identificar usuário. Faça login novamente.', 'Fechar', {
+          duration: 5000,
+          panelClass: ['error-snackbar'],
+        });
+        return;
+      }
+
+      this.isAssigningTicket = true;
+
+      const ticketJson = {
+        title: this.ticket.title,
+        description: this.ticket.description,
+        ticketCategoryId: this.ticket.ticketCategoryId,
+        ticketStatus: this.ticket.ticketStatus,
+        receiverId: currentUser.userId,
+      };
+
+      const formData = new FormData();
+      formData.append('ticket', new Blob([JSON.stringify(ticketJson)], { type: 'application/json' }));
+
+      this.ticketService.update(this.ticket.ticketId, formData).subscribe({
+        next: () => {
+          if (this.ticket) {
+            this.ticket.receiver = {
+              userId: currentUser.userId,
+              name: currentUser.name,
+              email: currentUser.email,
+            };
+          }
+
+          this.snackBar.open('Ticket atribuído com sucesso!', 'Fechar', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+          });
+
+          this.isAssigningTicket = false;
+          this.cdr.detectChanges();
+
+          this.reloadTicket();
+        },
+        error: err => {
+          console.error('Error assigning ticket:', err);
+          this.snackBar.open('Erro ao atribuir ticket. Tente novamente.', 'Fechar', {
+            duration: 5000,
+            panelClass: ['error-snackbar'],
+          });
+          this.isAssigningTicket = false;
+        },
+      });
+    }
+  }
+
+  private reloadTicket() {
+    if (this.ticket?.ticketId) {
+      this.ticketService.getTicketById(this.ticket.ticketId).subscribe({
+        next: updatedTicket => {
+          this.ticket = updatedTicket;
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Error reloading ticket:', err);
+        },
+      });
     }
   }
 

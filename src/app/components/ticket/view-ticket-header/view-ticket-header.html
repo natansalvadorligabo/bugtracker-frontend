@@ -8,15 +8,36 @@
     Voltar
   </button>
 
-  @if (isTechnician) {
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="onEditTicket()"
-    class="flex items-center gap-2"
-  >
-    <mat-icon>edit</mat-icon>
-    Editar
-  </button>
-  }
+  <div class="flex gap-2">
+    @if (canAssignTicket) { @if (isAssigningTicket) {
+    <button
+      mat-raised-button
+      color="accent"
+      [disabled]="true"
+      class="flex items-center gap-2"
+    >
+      <mat-spinner diameter="16"></mat-spinner>
+      Atribuindo...
+    </button>
+    } @else {
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="onAssignTicket()"
+    >
+      <mat-icon>assignment_ind</mat-icon>
+      Me atribuir
+    </button>
+    } } @if (isTechnician) {
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onEditTicket()"
+      class="flex items-center gap-2"
+    >
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    }
+  </div>
 </div>

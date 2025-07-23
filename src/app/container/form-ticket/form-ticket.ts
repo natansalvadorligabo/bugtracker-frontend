@@ -1,31 +1,24 @@
-import { MatSelectModule } from '@angular/material/select';
+import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormUtilsService } from '../../shared/form/form-utils';
-import { TicketService } from '../../services/tickets/ticket-service.js';
-import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
-import { ImageUpload } from "../../components/image-upload/image-upload";
 import { forkJoin, map } from 'rxjs';
-import { AuthService } from '../../services/auth/auth-service.js';
-import { UsersService } from '../../services/users/users-service';
+import { ImageUpload } from '../../components/image-upload/image-upload';
 import { User } from '../../model/user';
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { Location } from '@angular/common';
+import { AuthService } from '../../services/auth/auth-service.js';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
+import { TicketService } from '../../services/tickets/ticket-service.js';
+import { UsersService } from '../../services/users/users-service';
+import { FormUtilsService } from '../../shared/form/form-utils';
 
 @Component({
   selector: 'app-form-ticket',
@@ -42,13 +35,12 @@ import { Location } from '@angular/common';
     MatSelectModule,
     MatSnackBarModule,
     ImageUpload,
-    MatProgressSpinnerModule
-],
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './form-ticket.html',
-  styleUrl: './form-ticket.scss'
+  styleUrl: './form-ticket.scss',
 })
 export class FormTicket {
-
   form!: FormGroup;
 
   categories: any[] = [];
@@ -72,6 +64,7 @@ export class FormTicket {
   private router = inject(Router);
 
   ticketId: number | null = null;
+  originalTicket: any = null;
 
   loading = signal(false);
 
@@ -138,7 +131,7 @@ export class FormTicket {
       ticketCategoryId: ['', [Validators.required]],
       ticketStatus: ['PENDING'],
       receiverId: [null],
-      images: [null]
+      images: [null],
     });
 
     this.updateFormPermissions();
@@ -163,37 +156,61 @@ export class FormTicket {
 
     if (this.form.valid) {
       this.loading.set(true);
+
+      const currentReceiverId = this.form.get('receiverId')?.value || null;
+      let ticketStatus = this.form.get('ticketStatus')?.value;
+
+      if (this.ticketId && this.originalTicket) {
+        const originalReceiverId = this.originalTicket.receiver?.userId || null;
+        const originalStatus = this.originalTicket.ticketStatus;
+
+        if (originalReceiverId && !currentReceiverId && originalStatus === 'ATTACHED') {
+          ticketStatus = 'PENDING';
+        }
+      }
+
       const ticketJson = {
         title: this.form.get('title')?.value,
         description: this.form.get('description')?.value,
         ticketCategoryId: this.form.get('ticketCategoryId')?.value,
-        ticketStatus: this.form.get('ticketStatus')?.value,
-        receiverId: this.form.get('receiverId')?.value || null,
+        ticketStatus: ticketStatus,
+        receiverId: currentReceiverId,
       };
 
       const formData = new FormData();
       formData.append('ticket', new Blob([JSON.stringify(ticketJson)], { type: 'application/json' }));
 
-      this.selectedFiles().forEach(file => { formData.append('images', file); });
+      this.selectedFiles().forEach(file => {
+        formData.append('images', file);
+      });
 
-      const request$ = this.ticketId
-        ? this.ticketService.update(this.ticketId, formData)
-        : this.ticketService.save(formData);
+      const request$ = this.ticketId ? this.ticketService.update(this.ticketId, formData) : this.ticketService.save(formData);
 
       request$.subscribe({
         next: () => {
-          this.snackBar.open(
-            this.ticketId ? 'Ticket atualizado com sucesso!' : 'Ticket criado com sucesso!',
-            'Fechar',
-            { duration: 3000, panelClass: ['snackbar-success'] }
-          );
+          let successMessage = this.ticketId ? 'Ticket atualizado com sucesso!' : 'Ticket criado com sucesso!';
 
-          if (!this.ticketId) {
-            this.router.navigate(['/tickets']);
+          if (this.ticketId && this.originalTicket) {
+            const originalReceiverId = this.originalTicket.receiver?.userId || null;
+            const originalStatus = this.originalTicket.ticketStatus;
+
+            if (originalReceiverId && !currentReceiverId && originalStatus === 'ATTACHED') {
+              successMessage += ' Status alterado para "Pendente" devido à remoção da atribuição.';
+            }
           }
+
+          this.snackBar.open(successMessage, 'Fechar', {
+            duration: 4000,
+            panelClass: ['snackbar-success'],
+          });
+
           this.loading.set(false);
+
+          if (this.ticketId) {
+            this.location.back();
+          }
         },
-        error: (err) => {
+        error: err => {
           console.error(err);
           this.snackBar.open('Erro ao salvar o ticket.', 'Fechar', {
             duration: 3000,
@@ -209,59 +226,58 @@ export class FormTicket {
 
   loadCategories() {
     this.ticketCategoriesService.getTicketCategories().subscribe({
-      next: (data) => {
+      next: data => {
         this.categories = data;
       },
-      error: (err) => {
+      error: err => {
         console.error('Erro ao carregar categorias', err);
         this.snackBar.open('Erro ao carregar categorias', 'Fechar', { duration: 3000 });
-      }
+      },
     });
   }
 
   loadTechnicians(callback?: () => void) {
     this.usersService.getTechnicians().subscribe({
-      next: (technicians) => {
+      next: technicians => {
         this.technicians = technicians || [];
 
         if (callback) {
           callback();
         }
       },
-      error: (err) => {
+      error: err => {
         console.error('Erro ao carregar técnicos', err);
         this.snackBar.open('Erro ao carregar técnicos', 'Fechar', { duration: 3000 });
         this.technicians = [];
-      }
+      },
     });
   }
 
   loadTicket(id: number) {
     this.ticketService.getTicketById(id).subscribe({
-      next: (ticket) => {
+      next: ticket => {
+        this.originalTicket = ticket; // Guardar o ticket original para comparação
+
         this.form.patchValue({
           title: ticket.title,
           description: ticket.description,
           ticketCategoryId: ticket.ticketCategoryId,
           ticketStatus: ticket.ticketStatus,
-          receiverId: ticket.receiver?.userId || null
+          receiverId: ticket.receiver?.userId || null,
         });
-
 
         this.updateFormPermissions();
 
         if (ticket.imagesAttachedPaths?.length) {
           const imageBlobObservables = ticket.imagesAttachedPaths.map((filename: string) =>
-            this.ticketService.getTicketImage(filename).pipe(
-              map(blob => URL.createObjectURL(blob))
-            )
+            this.ticketService.getTicketImage(filename).pipe(map(blob => URL.createObjectURL(blob)))
           );
 
           forkJoin<string[]>(imageBlobObservables).subscribe((urls: string[]) => {
             this.existingImageUrls.set(urls);
           });
         }
-      }
+      },
     });
   }
 
