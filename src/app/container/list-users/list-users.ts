@@ -43,7 +43,6 @@ export class ListUsers {
   }
 
   getCurrentUserCount(): number {
-    // Para obter o valor síncrono do Observable
     let count = 0;
     this.users$?.subscribe(userPage => {
       count = userPage?.users?.length || 0;
@@ -62,7 +61,7 @@ export class ListUsers {
     this.users$ = this.usersService.getUsers(this.pageIndex, this.pageSize).pipe(
       tap(() => {}),
       catchError(() => {
-        this.openSnackBar('Erro ao carregar usuários', 'X');
+        this.openSnackBar('Erro ao carregar usuários', 'Fechar');
         return of({ users: [], totalElements: 0, totalPages: 0 });
       })
     );
