@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TicketCardComponent } from '../../components/ticket-card/ticket-card';
-import { TicketEmptyStateComponent } from '../../components/ticket-empty-state/ticket-empty-state';
-import { TicketFiltersComponent } from '../../components/ticket-filters/ticket-filters';
-import { TicketHeaderComponent } from '../../components/ticket-header/ticket-header';
-import { TicketLoadingComponent } from '../../components/ticket-loading/ticket-loading';
-import { TicketSearchComponent } from '../../components/ticket-search/ticket-search';
+import { TicketCardComponent } from '../../components/ticket/ticket-card/ticket-card';
+import { TicketEmptyStateComponent } from '../../components/ticket/ticket-empty-state/ticket-empty-state';
+import { TicketFiltersComponent } from '../../components/ticket/ticket-filters/ticket-filters';
+import { TicketHeaderComponent } from '../../components/ticket/ticket-header/ticket-header';
+import { TicketLoadingComponent } from '../../components/ticket/ticket-loading/ticket-loading';
+import { TicketSearchComponent } from '../../components/ticket/ticket-search/ticket-search';
 import { Ticket } from '../../model/ticket';
 import { TicketCategory } from '../../model/ticket-categories';
 import { AuthService } from '../../services/auth/auth-service';

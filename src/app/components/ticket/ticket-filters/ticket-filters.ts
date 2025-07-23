@@ -4,25 +4,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { TicketCategory } from '../../model/ticket-categories';
+import { TicketCategory } from '../../../model/ticket-categories';
 
 @Component({
   selector: 'app-ticket-filters',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatExpansionModule,
-    MatChipsModule,
-    MatIconModule,
-    MatButtonModule
-  ],
-  templateUrl: './ticket-filters.html'
+  imports: [CommonModule, MatExpansionModule, MatChipsModule, MatIconModule, MatButtonModule],
+  templateUrl: './ticket-filters.html',
 })
 export class TicketFiltersComponent {
   @Input() availableTags: TicketCategory[] = [];
   @Input() selectedTags: TicketCategory[] = [];
   @Input() selectedStatuses: string[] = [];
-  
+
   @Output() toggleTag = new EventEmitter<TicketCategory>();
   @Output() toggleStatus = new EventEmitter<string>();
   @Output() clearTags = new EventEmitter<void>();
