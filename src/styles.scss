@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import "tailwindcss";
+@use "tailwindcss";
 
 html {
   @include mat.theme((
@@ -13,5 +13,93 @@ html {
   ));
 }
 
+:root {
+  @include mat.card-overrides((
+    elevated-container-color: #f9fafb,
+  ));
+  @include mat.sidenav-overrides((
+    container-background-color: #fff,
+    content-background-color: #f9fafb
+  ));
+  @include mat.toolbar-overrides((
+    container-background-color: #f9fafb,
+  ));
+}
+
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border: 0;
+}
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.mat-mdc-table {
+  overflow-x: auto;
+  
+  @media (max-width: 768px) {
+    min-width: 100%;
+    
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      padding: 8px 4px;
+      font-size: 14px;
+    }
+  }
+}
+
+.mat-mdc-form-field {
+  @media (max-width: 768px) {
+    width: 100% !important;
+  }
+}
+
+.mat-mdc-card {
+  @media (max-width: 768px) {
+    margin: 8px;
+    padding: 12px;
+  }
+}
+
+.mat-mdc-button-base {
+  @media (max-width: 768px) {
+    min-height: 44px; 
+  }
+}
+
+.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.flex.gap-2 {
+  gap: 0.5rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    
+    .mat-mdc-raised-button {
+      font-size: 0.875rem;
+      padding: 8px 12px;
+    }
+  }
+}
+

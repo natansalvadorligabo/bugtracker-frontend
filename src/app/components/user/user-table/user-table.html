@@ -1,0 +1,121 @@
+<div class="overflow-x-auto w-full">
+  <mat-table
+    [dataSource]="userPage?.users || []"
+    class="w-full"
+  >
+    <ng-container matColumnDef="name">
+      <mat-header-cell
+        *matHeaderCellDef
+        class="text-left font-semibold min-w-[150px]"
+      >
+        Nome
+      </mat-header-cell>
+      <mat-cell
+        *matCellDef="let user"
+        class="py-4 min-w-[150px]"
+      >
+        <div class="flex items-center">
+          <mat-icon class="text-gray-500 mr-3 hidden sm:block">person</mat-icon>
+          <span class="text-gray-900 font-medium text-sm sm:text-base truncate">{{ user.name }}</span>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <mat-header-cell
+        *matHeaderCellDef
+        class="text-left font-semibold min-w-[180px]"
+      >
+        E-mail
+      </mat-header-cell>
+      <mat-cell
+        *matCellDef="let user"
+        class="py-4 min-w-[180px]"
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <mat-icon class="text-gray-500 text-lg flex-shrink-0">email</mat-icon>
+          <span class="text-gray-600 text-sm sm:text-base truncate">{{ user.email }}</span>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="roles">
+      <mat-header-cell
+        *matHeaderCellDef
+        class="text-left font-semibold min-w-[120px]"
+      >
+        Funções
+      </mat-header-cell>
+      <mat-cell
+        *matCellDef="let user"
+        class="py-4 min-w-[120px]"
+      >
+        <div class="role-chips flex flex-wrap gap-1">
+          @for (role of user.roles; track $index) {
+          <mat-chip
+            [class]="getRoleChipClass(role)"
+            class="text-xs"
+          >
+            {{ getRoleDisplayName(role) }}
+          </mat-chip>
+          }
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell
+        *matHeaderCellDef
+        class="text-right font-semibold min-w-[100px]"
+      >
+        Ações
+      </mat-header-cell>
+      <mat-cell
+        *matCellDef="let user"
+        class="text-right py-4 min-w-[100px]"
+      >
+        @if (isAdmin) {
+        <div class="flex justify-end gap-1">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onEdit(user)"
+            class="text-sm sm:text-base"
+            matTooltip="Editar usuário"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onDelete(user)"
+            class="text-sm sm:text-base"
+            matTooltip="Excluir usuário"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        } @else {
+        <span class="text-gray-500 text-sm">Apenas visualização</span>
+        }
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row
+      *matRowDef="let row; columns: displayedColumns;"
+      class="hover:bg-gray-50 transition-colors"
+    ></mat-row>
+  </mat-table>
+</div>
+
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 15, 20]"
+  showFirstLastButtons
+  [pageIndex]="pageIndex"
+  [pageSize]="pageSize"
+  [length]="userPage?.totalElements || 0"
+  (page)="onPageChange($event)"
+  aria-label="Selecione a página de usuários"
+></mat-paginator>

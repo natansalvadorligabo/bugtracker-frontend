@@ -1,17 +1,1 @@
-<mat-sidenav-container class="container">
-  <mat-sidenav #sidenav mode="side" opened>
-    <div class="flex items-center">
-      <button matIconButton class="example-icon" aria-label="Example icon-button with menu icon">
-        <mat-icon>pest_control</mat-icon>
-      </button>
-      <span>BugTracker</span>
-    </div>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <button matButton (click)="sidenav.toggle()" >toggle</button>
-
-    Main content
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<router-outlet></router-outlet>

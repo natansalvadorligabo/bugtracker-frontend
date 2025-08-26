@@ -1,0 +1,104 @@
+import { Injectable } from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
+} from '@angular/forms';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FormUtilsService {
+  constructor() {}
+
+  validateAllFormFields(formGroup: UntypedFormGroup | UntypedFormArray) {
+    Object.keys(formGroup.controls).forEach((field) => {
+      const control = formGroup.get(field);
+
+      if (control instanceof UntypedFormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (
+        control instanceof UntypedFormGroup ||
+        control instanceof UntypedFormArray
+      ) {
+        control.markAsTouched({ onlySelf: true });
+        this.validateAllFormFields(control);
+      }
+    });
+  }
+
+  getErrorMessage(formGroup: UntypedFormGroup, fieldName: string) {
+    const field = formGroup.get(fieldName) as UntypedFormControl;
+    return this.getErrorMessageFromField(field);
+  }
+
+  getErrorMessageFromField(field: UntypedFormControl) {
+    if (field?.hasError('required')) {
+      return 'Campo obrigatório';
+    }
+    if (field?.hasError('email')) {
+      return 'E-mail inválido';
+    }
+    if (field?.hasError('minlength')) {
+      const requiredLength: number = field.errors
+        ? field.errors['minlength']['requiredLength']
+        : 5;
+      return `Tamanho mínimo precisa ser de ${requiredLength} caracteres.`;
+    }
+    if (field?.hasError('maxlength')) {
+      const requiredLength: number = field.errors
+        ? field.errors['maxlength']['requiredLength']
+        : 200;
+      return `Tamanho máximo excedido de ${requiredLength} caracteres.`;
+    }
+    if (field?.hasError('notMatch')) {
+      return 'As senhas não conferem';
+    }
+    if (field?.hasError('invalidFileType')) {
+      return 'Tipo de arquivo inválido. Use JPG, PNG, GIF ou WebP';
+    }
+    if (field?.hasError('fileTooLarge')) {
+      return 'Arquivo muito grande. Máximo de 5MB';
+    }
+    if (field?.hasError('customError')) {
+      return field.errors ? field.errors['customError'] : 'Campo inválido';
+    }
+
+    return 'Campo inválido';
+  }
+
+  getFormArrayFieldErrorMessage(
+    formGroup: UntypedFormGroup,
+    formArrayName: string,
+    fieldName: string,
+    index: number
+  ) {
+    const formArray = formGroup.get(formArrayName) as UntypedFormArray;
+    const field = formArray.controls[index].get(
+      fieldName
+    ) as UntypedFormControl;
+    return this.getErrorMessageFromField(field);
+  }
+
+  isFormArrayRequired(
+    formGroup: UntypedFormGroup,
+    formArrayName: string
+  ): boolean {
+    const formArray = formGroup.get(formArrayName) as UntypedFormArray;
+    return (
+      formArray.invalid && formArray.hasError('required') && formArray.touched
+    );
+  }
+
+  setErrorMessage(
+    formGroup: UntypedFormGroup,
+    fieldName: string,
+    message: string
+  ) {
+    const field = formGroup.get(fieldName) as UntypedFormControl;
+    if (field) {
+      field.setErrors({ customError: message });
+      field.markAsTouched();
+    }
+  }
+}

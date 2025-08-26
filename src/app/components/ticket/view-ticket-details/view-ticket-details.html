@@ -1,0 +1,103 @@
+<mat-card class="mb-6">
+  <mat-card-header class="mb-4">
+    <mat-card-title class="text-xl font-semibold">
+      {{ ticket?.title }}
+      <span class="text-gray-600">#{{ ticket?.ticketId }}</span>
+    </mat-card-title>
+    <span
+      class="ml-2 p-2 rounded-full text-xs font-medium border"
+      [ngClass]="ticket && ticket.ticketStatus ? getTicketStatusColor(ticket.ticketStatus) : 'bg-gray-100 text-gray-800 border-gray-200'"
+    >
+      {{ ticket && ticket.ticketStatus ? getTicketStatusLabel(ticket.ticketStatus) : '' }}
+    </span>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-gray-500">category</mat-icon>
+          <div>
+            <p class="text-sm text-gray-600 font-medium">Categoria</p>
+            <p class="text-base">{{ ticketCategory }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-gray-500">schedule</mat-icon>
+          <div>
+            <p class="text-sm text-gray-600 font-medium">Data de criação</p>
+            <p class="text-base">{{ ticket?.timestamp | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-gray-500">person</mat-icon>
+          <div>
+            <p class="text-sm text-gray-600 font-medium">Criado por</p>
+            <p class="text-base">{{ ticket?.sender?.name }}</p>
+          </div>
+        </div>
+
+        @if (ticket?.receiver?.name) {
+        <div class="flex items-center gap-3">
+          <mat-icon class="text-gray-500">support_agent</mat-icon>
+          <div>
+            <p class="text-sm text-gray-600 font-medium">Atribuído para</p>
+            <p class="text-base">{{ ticket?.receiver?.name }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="my-6">
+      <h3 class="text-lg mb-1 flex items-center gap-2">
+        <mat-icon>description</mat-icon>
+        Descrição
+      </h3>
+      <div class="bg-gray-50 py-2 rounded-lg">
+        <p class="text-gray-800 whitespace-pre-wrap">{{ ticket?.description || 'Nenhuma descrição fornecida' }}</p>
+      </div>
+    </div>
+
+    @if (ticketImages && ticketImages.length > 0) {
+    <div class="mb-6">
+      <h3 class="text-lg mb-3 flex items-center gap-2">
+        <mat-icon>image</mat-icon>
+        Imagens anexadas
+        <mat-chip class="ml-2">{{ ticketImages.length }}</mat-chip>
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        @for (image of ticketImages; track $index) {
+        <div class="relative group cursor-pointer overflow-hidden rounded-lg border hover:shadow-lg transition-shadow">
+          <img
+            [src]="image"
+            [alt]="'Imagem ' + ($index + 1)"
+            class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div
+            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity duration-300 flex items-center justify-center"
+          >
+            <mat-icon class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">zoom_in</mat-icon>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    } @if (ticket?.ratingId) {
+    <mat-divider class="my-6"></mat-divider>
+    <div class="flex items-center gap-3">
+      <mat-icon class="text-yellow-500">star</mat-icon>
+      <div>
+        <p class="text-sm text-gray-600 font-medium">Avaliação</p>
+        <p class="text-base">{{ ticket?.ratingId }}</p>
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-card>

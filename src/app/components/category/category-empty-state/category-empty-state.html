@@ -1,0 +1,22 @@
+<div class="category-empty-state">
+  <div class="empty-state-icon">
+    <mat-icon>category</mat-icon>
+  </div>
+
+  <h3>Nenhuma categoria encontrada</h3>
+
+  <p class="empty-state-message">Não há categorias cadastradas no sistema.</p>
+
+  @if (isAdmin) {
+  <div class="empty-state-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onCreateCategory()"
+    >
+      <mat-icon>add</mat-icon>
+      Criar Categoria
+    </button>
+  </div>
+  }
+</div>

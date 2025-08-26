@@ -1,0 +1,85 @@
+@if (!isSearching && !isFiltering) {
+<div class="flex flex-col items-center justify-center py-16 px-15">
+  <div class="text-center">
+    <mat-icon
+      class="text-6xl text-gray-300 mb-4"
+      style="font-size: 4rem; width: 4rem; height: 4rem"
+    >
+      assignment
+    </mat-icon>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      @if (showOnlyMyTickets) {
+      <span>Você não possui tickets no momento!</span>
+      } @if (!showOnlyMyTickets) {
+      <span>Não há tickets cadastrados no sistema!</span>
+      }
+    </h3>
+    <p class="text-gray-500">
+      @if (showOnlyMyTickets) {
+      <span>Quando você criar suas primeiras tickets, elas aparecerão aqui.</span>
+      } @if (!showOnlyMyTickets) {
+      <span>Quando alguém criar tickets no sistema, eles aparecerão aqui.</span>
+      }
+    </p>
+  </div>
+</div>
+}
+
+@if (isSearching || isFiltering) {
+<div class="flex flex-col items-center justify-center py-10 px-15">
+  <div class="text-center">
+    <mat-icon
+      class="text-6xl text-gray-300 mb-4"
+      style="font-size: 4rem; width: 4rem; height: 4rem"
+    >
+      search_off
+    </mat-icon>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      @if (isSearching && !isFiltering) {
+      <span>Você não possui tickets com esse título!</span>
+      } @if (!isSearching && isFiltering) {
+      <span>Nenhum ticket encontrado com esses filtros!</span>
+      } @if (isSearching && isFiltering) {
+      <span>Nenhum ticket encontrado com esses critérios!</span>
+      }
+    </h3>
+    <p class="text-gray-500 mb-4">Tente ajustar os filtros ou limpe-os para ver todos os tickets.</p>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      @if (isSearching) {
+      <button
+        mat-stroked-button
+        (click)="onClearSearch()"
+      >
+        <mat-icon>clear</mat-icon>
+        Limpar busca
+      </button>
+      } @if (selectedTagsCount > 0) {
+      <button
+        mat-stroked-button
+        (click)="onClearTags()"
+      >
+        <mat-icon>local_offer_off</mat-icon>
+        Limpar tags
+      </button>
+      } @if (selectedStatusesCount > 0) {
+      <button
+        mat-stroked-button
+        (click)="onClearStatuses()"
+      >
+        <mat-icon>assignment_turned_in</mat-icon>
+        Limpar status
+      </button>
+      } @if ((isSearching && isFiltering) || (selectedTagsCount > 0 && selectedStatusesCount > 0)) {
+      <button
+        mat-stroked-button
+        (click)="onClearFilters()"
+      >
+        <mat-icon>clear_all</mat-icon>
+        Limpar tudo
+      </button>
+      }
+    </div>
+  </div>
+</div>
+}

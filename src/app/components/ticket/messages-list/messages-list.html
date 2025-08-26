@@ -1,0 +1,22 @@
+<div class="flex-1 min-h-0 mb-4 rounded-2xl sm:rounded-3xl">
+  <div
+    #messagesContainer
+    class="messages-container p-2 sm:p-4 h-full overflow-y-auto rounded-2xl sm:rounded-3xl border"
+    style="min-height: 250px; max-height: 350px"
+  >
+    @for (message of ticketMessages; track trackMessage($index, message); let isLast = $last) { @if (message) {
+    <div [class]="isLast ? 'mb-0' : 'mb-4'">
+      <app-message-item
+        [message]="message"
+        [currentUser]="currentUser"
+        [isEditingMessage]="isEditingMessage"
+        [editingMessageId]="editingMessageId"
+        (editMessage)="onEditMessage($event)"
+        (saveEditedMessage)="onSaveEditedMessage()"
+        (cancelEdit)="onCancelEdit()"
+        (editKeydown)="onEditKeydown($event)"
+      ></app-message-item>
+    </div>
+    } }
+  </div>
+</div>

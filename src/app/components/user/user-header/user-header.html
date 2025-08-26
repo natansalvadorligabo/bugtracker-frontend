@@ -1,0 +1,19 @@
+<div class="flex justify-between items-center mb-6 px-6 pt-6">
+  <h1 class="text-3xl font-semibold text-gray-900">
+    Gerenciar Usuários @if (userCount > 0) {
+    <span class="text-lg font-normal text-gray-600 ml-2">({{ userCount }})</span>
+    }
+  </h1>
+
+  @if (isAdmin) {
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onCreateUser()"
+    class="flex items-center gap-2"
+  >
+    <mat-icon>add</mat-icon>
+    Novo Usuário
+  </button>
+  }
+</div>

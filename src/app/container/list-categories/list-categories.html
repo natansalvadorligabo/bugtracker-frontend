@@ -1,0 +1,30 @@
+<div class="h-screen w-auto">
+  <div class="min-h-screen">
+    <app-category-header
+      [isAdmin]="isAdmin"
+      (createCategory)="createCategory()"
+    ></app-category-header>
+
+    <div class="px-6">
+      <mat-card>
+        <mat-card-content>
+          @if (isLoading) {
+          <app-category-loading></app-category-loading>
+          } @else if (categories.length === 0) {
+          <app-category-empty-state
+            [isAdmin]="isAdmin"
+            (createCategory)="createCategory()"
+          ></app-category-empty-state>
+          } @else {
+          <app-category-table
+            [categories]="categories"
+            [isAdmin]="isAdmin"
+            (editCategory)="editCategory($event)"
+            (deleteCategory)="deleteCategory($event)"
+          ></app-category-table>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

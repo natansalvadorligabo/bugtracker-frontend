@@ -1,0 +1,54 @@
+<div class="px-15 py-6">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <h1 class="text-2xl font-bold text-gray-900">Tickets</h1>
+      <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+        {{ ticketCount }} {{ ticketCount === 1 ? 'ticket' : 'tickets' }}
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      @if (canCreateTicket) {
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="onCreateTicket()"
+        class="flex items-center gap-2"
+      >
+        <mat-icon>add</mat-icon>
+        Criar Ticket
+      </button>
+      }
+
+      <button
+        class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-2 border-blue-200 hover:border-blue-300 rounded-lg transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md"
+        (click)="onToggleView()"
+        [attr.aria-label]="'Alternar para ' + (showOnlyMyTickets ? 'todos os tickets' : 'meus tickets')"
+      >
+        <div class="flex items-center gap-2 cursor-pointer">
+          <mat-icon class="text-xl text-blue-600">{{ showOnlyMyTickets ? 'person' : 'groups' }}</mat-icon>
+          <div class="flex flex-col items-start">
+            <span class="text-sm font-medium text-blue-800">{{ currentViewLabel }}</span>
+            <span class="text-xs text-blue-600">{{ showOnlyMyTickets ? 'Clique para ver todos' : 'Clique para ver apenas seus' }}</span>
+          </div>
+        </div>
+        <mat-icon class="text-blue-500 text-base">swap_horiz</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-3 flex items-center gap-2">
+    <div
+      class="flex items-center gap-2 px-3 py-1 rounded-full"
+      [class]="showOnlyMyTickets ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'"
+    >
+      <div
+        class="w-2 h-2 rounded-full"
+        [class]="showOnlyMyTickets ? 'bg-green-500' : 'bg-purple-500'"
+      ></div>
+      <span class="text-sm font-medium">
+        {{ showOnlyMyTickets ? 'Visualizando apenas seus tickets' : 'Visualizando todos os tickets do sistema' }}
+      </span>
+    </div>
+  </div>
+</div>

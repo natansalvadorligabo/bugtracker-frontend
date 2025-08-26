@@ -1,0 +1,66 @@
+<div
+  class="message-item p-3 sm:p-4 rounded-lg border relative shadow-sm"
+  [class.opacity-70]="message.messageId === -1"
+  [class.bg-blue-100]="message.messageId === -1"
+  [class.border-blue-300]="message.messageId === -1"
+  [class.bg-gray-100]="message.messageId !== -1"
+  [class.border-gray-300]="message.messageId !== -1"
+>
+  <div class="flex items-start gap-2 sm:gap-3 mb-2 flex-wrap sm:flex-nowrap">
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <span class="font-semibold text-gray-500 text-sm sm:text-base">{{ message.sender.name || "Usuário desconhecido"}}</span>
+      @if (message.wasEdited) {
+      <span class="text-xs text-gray-400 italic">(editada)</span>
+      }
+    </div>
+    <span class="text-xs sm:text-sm text-gray-500 ml-auto">{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
+
+    @if (message.messageId !== -1 && message.sender.userId === currentUser.userId && !isEditingMessage) {
+    <mat-icon
+      class="cursor-pointer text-gray-500 hover:text-gray-800 transition-colors text-sm sm:text-base"
+      (click)="onEditMessage()"
+      matTooltip="Editar mensagem"
+    >
+      edit
+    </mat-icon>
+    } @if (isEditingMessage && editingMessageId === message.messageId) {
+    <mat-icon
+      class="cursor-pointer text-green-600 hover:text-green-800 transition-colors"
+      (click)="onSaveEditedMessage()"
+      matTooltip="Salvar (Enter)"
+    >
+      check
+    </mat-icon>
+    <mat-icon
+      class="cursor-pointer text-red-600 hover:text-red-800 transition-colors"
+      (click)="onCancelEdit()"
+      matTooltip="Cancelar (Esc)"
+    >
+      close
+    </mat-icon>
+    }
+  </div>
+  @if (isEditingMessage && editingMessageId === message.messageId) {
+  <textarea
+    id="message-{{ message.messageId }}"
+    class="w-full p-2 border border-blue-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
+    rows="2"
+    [value]="message.message"
+    (keydown)="onEditKeydown($event)"
+    placeholder="Digite sua mensagem..."
+  ></textarea>
+  <div class="text-xs text-gray-500 mt-1">Pressione Enter para salvar, Esc para cancelar</div>
+  } @else {
+  <p class="text-gray-800 whitespace-pre-wrap leading-relaxed">{{ message.message }}</p>
+  } @if (message.messageId === -1) {
+  <div class="absolute bottom-2 right-3 flex items-center gap-1 text-xs text-blue-600">
+    <mat-icon
+      class="text-blue-500 animate-spin"
+      style="font-size: 14px; width: 14px; height: 14px"
+    >
+      refresh
+    </mat-icon>
+    <span>Enviando...</span>
+  </div>
+  }
+</div>

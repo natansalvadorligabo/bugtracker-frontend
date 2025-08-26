@@ -1,0 +1,57 @@
+<div class="h-screen w-auto">
+  <div class="min-h-screen">
+    <app-ticket-header
+      [ticketCount]="tickets.length"
+      [showOnlyMyTickets]="showOnlyMyTickets"
+      [currentViewLabel]="currentViewLabel"
+      [canCreateTicket]="canCreateTicket"
+      (toggleView)="toggleTicketView()"
+      (createTicket)="createTicket()"
+    ></app-ticket-header>
+
+    <app-ticket-search
+      [searchTerm]="searchTerm"
+      (searchTermChange)="searchTerm = $event"
+      (clearSearch)="clearSearch()"
+    ></app-ticket-search>
+
+    <app-ticket-filters
+      [availableTags]="availableTags"
+      [selectedTags]="selectedTags"
+      [selectedStatuses]="selectedStatuses"
+      (toggleTag)="toggleTag($event)"
+      (toggleStatus)="toggleStatus($event)"
+      (clearTags)="clearTags()"
+      (clearStatuses)="clearStatuses()"
+      (clearFilters)="clearFilters()"
+    ></app-ticket-filters>
+
+    @if (isLoading) {
+    <app-ticket-loading></app-ticket-loading>
+    } @if (!isLoading) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 lg:px-15 pb-6">
+      @for (ticket of tickets; track ticket.ticketId) {
+      <app-ticket-card
+        [ticket]="ticket"
+        [tags]="getTagsForticket(ticket)"
+        [senderName]="ticket.sender.name"
+        [statusInfo]="getStatusInfo(ticket.ticketStatus)"
+        (ticketClick)="viewTicket($event)"
+      ></app-ticket-card>
+      }
+    </div>
+    } @if (!isLoading && hasNoResults) {
+    <app-ticket-empty-state
+      [showOnlyMyTickets]="showOnlyMyTickets"
+      [isSearching]="isSearching"
+      [isFiltering]="isFiltering"
+      [selectedTagsCount]="selectedTags.length"
+      [selectedStatusesCount]="selectedStatuses.length"
+      (clearSearch)="clearSearch()"
+      (clearTags)="clearTags()"
+      (clearStatuses)="clearStatuses()"
+      (clearFilters)="clearFilters()"
+    ></app-ticket-empty-state>
+    }
+  </div>
+</div>

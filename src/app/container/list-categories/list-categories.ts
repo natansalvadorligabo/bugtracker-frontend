@@ -1,0 +1,104 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { CategoryEmptyStateComponent } from '../../components/category/category-empty-state/category-empty-state';
+import { CategoryHeaderComponent } from '../../components/category/category-header/category-header';
+import { CategoryLoadingComponent } from '../../components/category/category-loading/category-loading';
+import { CategoryTableComponent } from '../../components/category/category-table/category-table';
+import { TicketCategory } from '../../model/ticket-categories';
+import { AuthService } from '../../services/auth/auth-service';
+import { TicketCategoriesService } from '../../services/ticket-categories/ticket-categories-service';
+import { ConfirmationDialog } from '../../shared/confirmation-dialog/confirmation-dialog';
+
+@Component({
+  selector: 'app-list-categories',
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatSnackBarModule,
+    CategoryHeaderComponent,
+    CategoryTableComponent,
+    CategoryEmptyStateComponent,
+    CategoryLoadingComponent,
+  ],
+  templateUrl: './list-categories.html',
+  styleUrl: './list-categories.scss',
+})
+export class ListCategories implements OnInit {
+  private ticketCategoriesService = inject(TicketCategoriesService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private cdr = inject(ChangeDetectorRef);
+  private dialog = inject(MatDialog);
+
+  categories: TicketCategory[] = [];
+  isLoading = true;
+  isAdmin = false;
+
+  ngOnInit() {
+    this.isAdmin = this.authService.isAdmin;
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.isLoading = true;
+    this.ticketCategoriesService.getTicketCategories().subscribe({
+      next: categories => {
+        this.categories = categories;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.snackBar.open('Erro ao carregar categorias.', 'Fechar', {
+          duration: 3000,
+          panelClass: ['snackbar-error'],
+        });
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  createCategory() {
+    this.router.navigate(['/categories/new']);
+  }
+
+  editCategory(categoryId: number) {
+    this.router.navigate(['/categories/edit', categoryId]);
+  }
+
+  deleteCategory(category: TicketCategory) {
+    const dialogRef = this.dialog.open(ConfirmationDialog, {
+      data: {
+        title: 'Excluir categoria',
+        content: `Tem certeza que deseja excluir a categoria "${category.description}"?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.ticketCategoriesService.remove(category.ticketCategoryId).subscribe({
+          next: () => {
+            this.snackBar.open('Categoria excluída com sucesso!', 'Fechar', {
+              duration: 3000,
+              panelClass: ['snackbar-success'],
+            });
+            this.categories = this.categories.filter(cat => cat.ticketCategoryId !== category.ticketCategoryId);
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Erro ao excluir categoria:', err);
+            this.snackBar.open('Erro ao excluir categoria.', 'Fechar', {
+              duration: 3000,
+              panelClass: ['snackbar-error'],
+            });
+          },
+        });
+      }
+    });
+  }
+}

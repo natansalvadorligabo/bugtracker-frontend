@@ -1,0 +1,95 @@
+<div class="flex flex-col justify-between items-start p-6">
+  <button
+    matButton
+    (click)="goBack()"
+    class="flex items-center gap-2 mb-6"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    Voltar
+  </button>
+
+  <section class="w-full mb-8">
+    <span class="text-3xl">{{ pageTitle }}</span>
+  </section>
+
+  <section class="w-full">
+    @if (isLoadingUserData()) {
+    <div class="flex justify-center py-8">
+      <mat-progress-spinner
+        diameter="50"
+        mode="indeterminate"
+      ></mat-progress-spinner>
+    </div>
+    <p class="text-center text-gray-600 mt-4">Carregando dados do usuário...</p>
+    } @else {
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>Nome</mat-label>
+        <input
+          matInput
+          formControlName="name"
+        />
+        @if (form.get('name')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "name") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>E-mail</mat-label>
+        <input
+          matInput
+          formControlName="email"
+        />
+        @if (form.get('email')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, "email") }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+      >
+        <mat-label>Função</mat-label>
+        <mat-select
+          formControlName="userRoles"
+          multiple
+        >
+          @for (role of roles; track $index) {
+          <mat-option [value]="role.roleId">{{ role.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get('userRoles')?.invalid) {
+        <mat-error>{{ formUtils.getErrorMessage(form, 'userRoles') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="flex justify-end gap-4 pt-4">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || isSubmitting"
+          class="flex items-center gap-2"
+        >
+          @if (isSubmitting) {
+          <mat-progress-spinner
+            diameter="20"
+            mode="indeterminate"
+          ></mat-progress-spinner>
+          } @else { {{ submitButtonText }} }
+        </button>
+      </div>
+    </form>
+    }
+  </section>
+</div>
